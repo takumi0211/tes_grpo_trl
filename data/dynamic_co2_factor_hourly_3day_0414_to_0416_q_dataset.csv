@@ -1,0 +1,1591 @@
+dataset,timestep,tes_energy,tes_energy_normalized,is_business_hour,timestamp,prompt,optimal_action,q_action_0,q_action_1,q_action_2,q_action_3
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,8,150.0,0.5,1,2025-04-14T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 08:00:00
+- Current TES energy [kWh]: 150.0
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: load=38.0 kW, co2=0.399 kg-CO2/kWh  ←Now!!!
+  - 09:00: load=32.9 kW, co2=0.348 kg-CO2/kWh
+  - 10:00: load=34.7 kW, co2=0.291 kg-CO2/kWh
+  - 11:00: load=36.0 kW, co2=0.289 kg-CO2/kWh
+  - 12:00: load=33.0 kW, co2=0.278 kg-CO2/kWh
+  - 13:00: load=36.3 kW, co2=0.271 kg-CO2/kWh
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.227054814840123,-8.377054814840124,-8.5298325926179,-8.682610370395679
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,9,112.03433940122835,0.3734477980040945,1,2025-04-14T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 09:00:00
+- Current TES energy [kWh]: 112.03433940122835
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: load=32.9 kW, co2=0.348 kg-CO2/kWh  ←Now!!!
+  - 10:00: load=34.7 kW, co2=0.291 kg-CO2/kWh
+  - 11:00: load=36.0 kW, co2=0.289 kg-CO2/kWh
+  - 12:00: load=33.0 kW, co2=0.278 kg-CO2/kWh
+  - 13:00: load=36.3 kW, co2=0.271 kg-CO2/kWh
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.227054814840123,-8.30622148150679,-8.388165925951235,-8.470110370395679
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,10,79.11334102361323,0.26371113674537744,1,2025-04-14T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 10:00:00
+- Current TES energy [kWh]: 79.11334102361323
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: load=34.7 kW, co2=0.291 kg-CO2/kWh  ←Now!!!
+  - 11:00: load=36.0 kW, co2=0.289 kg-CO2/kWh
+  - 12:00: load=33.0 kW, co2=0.278 kg-CO2/kWh
+  - 13:00: load=36.3 kW, co2=0.271 kg-CO2/kWh
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.227054814840123,-8.227054814840123,-8.229832592617901,-8.23038870484235
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,11,44.400510067489506,0.14800170022496503,1,2025-04-14T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 11:00:00
+- Current TES energy [kWh]: 44.400510067489506
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: load=36.0 kW, co2=0.289 kg-CO2/kWh  ←Now!!!
+  - 12:00: load=33.0 kW, co2=0.278 kg-CO2/kWh
+  - 13:00: load=36.3 kW, co2=0.271 kg-CO2/kWh
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-8.277610927064572,-8.249833149286793,-8.233582870952347,-8.227054814840123
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,12,108.36838849140256,0.3612279616380085,1,2025-04-14T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 12:00:00
+- Current TES energy [kWh]: 108.36838849140256
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: load=33.0 kW, co2=0.278 kg-CO2/kWh  ←Now!!!
+  - 13:00: load=36.3 kW, co2=0.271 kg-CO2/kWh
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-7.119277593731239,-7.076222038175683,-7.044693982063459,-7.0228881481734575
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,13,175.40136882069334,0.5846712294023111,1,2025-04-14T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 13:00:00
+- Current TES energy [kWh]: 175.40136882069334
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: load=36.3 kW, co2=0.271 kg-CO2/kWh  ←Now!!!
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-5.984138983176797,-5.937333149286794,-5.896082870952348,-5.862333149286794
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,14,239.06481192344182,0.7968827064114727,1,2025-04-14T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 14:00:00
+- Current TES energy [kWh]: 239.06481192344182
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: load=37.9 kW, co2=0.291 kg-CO2/kWh  ←Now!!!
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",2,-4.771638983176796,-4.752610927064572,-4.733166482620128,-4.735388148173458
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,15,267.8193021122406,0.8927310070408021,1,2025-04-14T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 15:00:00
+- Current TES energy [kWh]: 267.8193021122406
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: load=43.0 kW, co2=0.329 kg-CO2/kWh  ←Now!!!
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.9308050931745706,-3.9678887048423506,-4.032193982063459,-4.325531768747939
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,16,224.76956876180674,0.7492318958726891,1,2025-04-14T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 16:00:00
+- Current TES energy [kWh]: 224.76956876180674
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: load=36.1 kW, co2=0.402 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.924833149286795,-4.06927759373124,-4.228999815953461,-4.397055371509017
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,17,188.69664483708476,0.6289888161236159,1,2025-04-14T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-14 17:00:00
+- Current TES energy [kWh]: 188.69664483708476
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: past hour -> omitted (state uses zero)
+  - 17:00: load=38.4 kW, co2=0.427 kg-CO2/kWh  ←Now!!!
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=33.7 kW (average cooling demand for next day)
+  - co2_low5_avg=0.295 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.281 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.924833149286795,-4.0980278720656855,-4.298444260397906,-4.501222038175683
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,32,150.28998058968907,0.5009666019656303,1,2025-04-15T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 08:00:00
+- Current TES energy [kWh]: 150.28998058968907
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: load=31.6 kW, co2=0.364 kg-CO2/kWh  ←Now!!!
+  - 09:00: load=32.1 kW, co2=0.337 kg-CO2/kWh
+  - 10:00: load=32.3 kW, co2=0.305 kg-CO2/kWh
+  - 11:00: load=37.8 kW, co2=0.309 kg-CO2/kWh
+  - 12:00: load=30.8 kW, co2=0.298 kg-CO2/kWh
+  - 13:00: load=33.9 kW, co2=0.281 kg-CO2/kWh
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.924833149286795,-4.010527872065686,-4.123444260397906,-4.232750094287908
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,33,118.65506441105816,0.39551688137019386,1,2025-04-15T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 09:00:00
+- Current TES energy [kWh]: 118.65506441105816
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: load=32.1 kW, co2=0.337 kg-CO2/kWh  ←Now!!!
+  - 10:00: load=32.3 kW, co2=0.305 kg-CO2/kWh
+  - 11:00: load=37.8 kW, co2=0.309 kg-CO2/kWh
+  - 12:00: load=30.8 kW, co2=0.298 kg-CO2/kWh
+  - 13:00: load=33.9 kW, co2=0.281 kg-CO2/kWh
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.924833149286795,-3.9789998159534616,-4.0544162042856815,-4.126222038175683
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,34,86.53333674623863,0.2884444558207954,1,2025-04-15T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 10:00:00
+- Current TES energy [kWh]: 86.53333674623863
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: load=32.3 kW, co2=0.305 kg-CO2/kWh  ←Now!!!
+  - 11:00: load=37.8 kW, co2=0.309 kg-CO2/kWh
+  - 12:00: load=30.8 kW, co2=0.298 kg-CO2/kWh
+  - 13:00: load=33.9 kW, co2=0.281 kg-CO2/kWh
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.924833149286795,-3.9285834276212417,-3.959555371509017,-3.986916760954575
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,35,54.25414290392116,0.18084714301307053,1,2025-04-15T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 11:00:00
+- Current TES energy [kWh]: 54.25414290392116
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: load=37.8 kW, co2=0.309 kg-CO2/kWh  ←Now!!!
+  - 12:00: load=30.8 kW, co2=0.298 kg-CO2/kWh
+  - 13:00: load=33.9 kW, co2=0.281 kg-CO2/kWh
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.924833149286795,-3.934138983176797,-3.9706664826201283,-4.009555371509017
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,36,16.470512468290238,0.05490170822763413,1,2025-04-15T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 12:00:00
+- Current TES energy [kWh]: 16.470512468290238
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: load=30.8 kW, co2=0.298 kg-CO2/kWh  ←Now!!!
+  - 13:00: load=33.9 kW, co2=0.281 kg-CO2/kWh
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-27.919864825081156,-3.924833149286795,-3.9401109270645724,-3.9637220381756837
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,37,19.03818985559919,0.0634606328519973,1,2025-04-15T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 13:00:00
+- Current TES energy [kWh]: 19.03818985559919
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: load=33.9 kW, co2=0.281 kg-CO2/kWh  ←Now!!!
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-27.827129578472167,-3.5845553715090177,-3.509138983176797,-3.5049723165101305
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,38,85.1677465338261,0.283892488446087,1,2025-04-15T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 14:00:00
+- Current TES energy [kWh]: 85.1677465338261
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: load=33.8 kW, co2=0.284 kg-CO2/kWh  ←Now!!!
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",2,-2.4646945387323527,-2.4053887048423506,-2.334138983176797,-2.3359442603979064
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,39,118.01122252303824,0.3933707417434608,1,2025-04-15T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 15:00:00
+- Current TES energy [kWh]: 118.01122252303824
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: load=34.3 kW, co2=0.331 kg-CO2/kWh  ←Now!!!
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-1.5512220381756838,-1.6183050931745706,-1.7498331492867947,-1.8946939820634594
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,40,83.75945733517622,0.2791981911172541,1,2025-04-15T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 16:00:00
+- Current TES energy [kWh]: 83.75945733517622
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: load=34.5 kW, co2=0.378 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-1.5512220381756838,-1.6835828709523484,-1.8863606487301259,-2.090527315396793
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,41,49.24290548010225,0.1641430182670075,1,2025-04-15T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-15 17:00:00
+- Current TES energy [kWh]: 49.24290548010225
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: past hour -> omitted (state uses zero)
+  - 17:00: load=36.0 kW, co2=0.416 kg-CO2/kWh  ←Now!!!
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=18.4 kW (average cooling demand for next day)
+  - co2_low5_avg=0.228 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.217 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-1.5512220381756838,-1.7303887048423503,-1.9859442603979058,-2.248860648730126
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,56,13.245565549849076,0.044151885166163585,1,2025-04-16T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 08:00:00
+- Current TES energy [kWh]: 13.245565549849076
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: load=18.6 kW, co2=0.287 kg-CO2/kWh  ←Now!!!
+  - 09:00: load=19.8 kW, co2=0.232 kg-CO2/kWh
+  - 10:00: load=14.6 kW, co2=0.217 kg-CO2/kWh
+  - 11:00: load=19.5 kW, co2=0.219 kg-CO2/kWh
+  - 12:00: load=20.2 kW, co2=0.231 kg-CO2/kWh
+  - 13:00: load=16.9 kW, co2=0.241 kg-CO2/kWh
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-10.325867852289353,-1.5512220381756838,-1.6276109270645724,-1.711360648730126
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,57,28.00957665857526,0.0933652555285842,1,2025-04-16T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 09:00:00
+- Current TES energy [kWh]: 28.00957665857526
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: load=19.8 kW, co2=0.232 kg-CO2/kWh  ←Now!!!
+  - 10:00: load=14.6 kW, co2=0.217 kg-CO2/kWh
+  - 11:00: load=19.5 kW, co2=0.219 kg-CO2/kWh
+  - 12:00: load=20.2 kW, co2=0.231 kg-CO2/kWh
+  - 13:00: load=16.9 kW, co2=0.241 kg-CO2/kWh
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-1.1588456186700058,-1.1526109270645728,-1.1539998159534615,-1.1553887048423506
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,58,41.53091231452698,0.1384363743817566,1,2025-04-16T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 10:00:00
+- Current TES energy [kWh]: 41.53091231452698
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: load=14.6 kW, co2=0.217 kg-CO2/kWh  ←Now!!!
+  - 11:00: load=19.5 kW, co2=0.219 kg-CO2/kWh
+  - 12:00: load=20.2 kW, co2=0.231 kg-CO2/kWh
+  - 13:00: load=16.9 kW, co2=0.241 kg-CO2/kWh
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-0.9175647235464254,-0.8904966986076592,-0.857456729781117,-0.8303887048423505
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,59,126.96504775264177,0.4232168258421392,1,2025-04-16T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 11:00:00
+- Current TES energy [kWh]: 126.96504775264177
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: load=19.5 kW, co2=0.219 kg-CO2/kWh  ←Now!!!
+  - 12:00: load=20.2 kW, co2=0.231 kg-CO2/kWh
+  - 13:00: load=16.9 kW, co2=0.241 kg-CO2/kWh
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-0.005064723546425398,0.019225523614563034,0.0435157707755518,0.07377796182431617
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,60,207.4413950735754,0.691471316911918,1,2025-04-16T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 12:00:00
+- Current TES energy [kWh]: 207.4413950735754
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: load=20.2 kW, co2=0.231 kg-CO2/kWh  ←Now!!!
+  - 13:00: load=16.9 kW, co2=0.241 kg-CO2/kWh
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,0.951463332565799,0.9650588569478964,0.9726824374422185,0.9862779618243162
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,61,287.2691539874185,0.9575638466247284,1,2025-04-16T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 13:00:00
+- Current TES energy [kWh]: 287.2691539874185
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: load=16.9 kW, co2=0.241 kg-CO2/kWh  ←Now!!!
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.9487779618243162,1.9066809901030957,1.5719587678808735,1.2372365456586512
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,62,270.37991136476273,0.9012663712158758,1,2025-04-16T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 14:00:00
+- Current TES energy [kWh]: 270.37991136476273
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: load=17.6 kW, co2=0.257 kg-CO2/kWh  ←Now!!!
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.9487779618243162,1.9202904312075273,1.70070069618192,1.3437562517374757
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,63,252.7375438833757,0.8424584796112523,1,2025-04-16T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 15:00:00
+- Current TES energy [kWh]: 252.7375438833757
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: load=21.7 kW, co2=0.303 kg-CO2/kWh  ←Now!!!
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.9428060179365405,1.850429598430863,1.7640251228129609,1.3670795650307295
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,64,231.08527049357227,0.7702842349785742,1,2025-04-16T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 16:00:00
+- Current TES energy [kWh]: 231.08527049357227
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: load=17.5 kW, co2=0.385 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.9428060179365405,1.7365407095419738,1.5362473450351828,1.1985992711095534
+dynamic_co2_factor_hourly_3day_0414_to_0416.csv,65,213.59692254923615,0.7119897418307872,1,2025-04-16T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+user: Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-04-16 17:00:00
+- Current TES energy [kWh]: 213.59692254923615
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: past hour -> omitted (state uses zero)
+  - 17:00: load=17.8 kW, co2=0.445 kg-CO2/kWh  ←Now!!!
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=30.2 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.223 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Leaving demand unmet causes a large penalty; only select low ASHP ratios when TES has enough energy to bridge the gap.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.9428060179365405,1.6558615734920963,1.368917129047652,1.0819726846032072
