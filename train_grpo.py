@@ -126,7 +126,7 @@ def build_dataset(records: Sequence[PromptRecord]) -> Dataset:
 
 # Reward shaping -----------------------------------------------------------------------
 
-ACTION_PATTERN = re.compile(r"\[(\d+)\]")
+ACTION_PATTERN = re.compile(r"^\s*\[(\d)\]\s*$")
 
 
 def extract_action(completion: object) -> int | None:
@@ -142,7 +142,9 @@ def extract_action(completion: object) -> int | None:
     else:
         content = str(completion)
 
-    match = ACTION_PATTERN.search(content.strip())
+    stripped = content.strip()
+    last_line = stripped.splitlines()[-1] if stripped else ""
+    match = ACTION_PATTERN.match(last_line)
     if not match:
         return None
 
@@ -338,19 +340,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--full-precision", action="store_true", help="Disable 4-bit loading and use full precision LoRA.")
     parser.add_argument("--lora-rank", type=int, default=4, help="LoRA rank.")
     parser.add_argument("--lora-alpha", type=int, default=None, help="LoRA alpha; defaults to 2 * lora_rank.")
-    parser.add_argument("--num-generations", type=int, default=4, help="Number of completions sampled per prompt.")
+    parser.add_argument("--num-generations", type=int, default=8, help="Number of completions sampled per prompt.")
     parser.add_argument("--per-device-train-batch-size", type=int, default=1, help="Prompts per GPU.")
     parser.add_argument("--gradient-accumulation-steps", type=int, default=1, help="Gradient accumulation steps.")
     parser.add_argument("--learning-rate", type=float, default=5e-5, help="Optimizer learning rate.")
     parser.add_argument("--weight-decay", type=float, default=0.01, help="Weight decay.")
     parser.add_argument("--warmup-ratio", type=float, default=0.1, help="Warmup ratio for LR scheduler.")
     parser.add_argument("--lr-scheduler", type=str, default="linear", help="LR scheduler type.")
-    parser.add_argument("--max-steps", type=int, default=100, help="Maximum training steps.")
+    parser.add_argument("--max-steps", type=int, default=1000, help="Maximum training steps.")
     parser.add_argument("--logging-steps", type=int, default=5, help="Logging interval (steps).")
     parser.add_argument("--save-steps", type=int, default=50, help="Checkpoint interval (steps).")
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature.")
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p nucleus sampling.")
-    parser.add_argument("--invalid-penalty", type=float, default=-10.0, help="Reward assigned to malformed outputs.")
+    parser.add_argument("--invalid-penalty", type=float, default=-1.0, help="Reward assigned to malformed outputs.")
     parser.add_argument(
         "--q-reward-mode",
         choices=["raw", "advantage", "softmax"],
