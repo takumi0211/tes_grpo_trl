@@ -1,4 +1,0 @@
-- unslothのコードを用いたGRPOアルゴリズム（gpt_oss_(20B)_GRPO.ipynb）でgpt-oss:20b-4bitを強化学習ファインチューニングするプロジェクトです。
-- data/にあるプロンプトを入力として、LLMに回答を複数回吐かせます。それぞれの行動に対してあらかじめ用意しておいたQ値（q_action_0,q_action_1,q_action_2,q_action_3）を報酬器として学習させたいと考えています。
-- unslothのコードを用いたGRPOアルゴリズム（gpt_oss_(20B)_GRPO.ipynb）をまず、python形式に変換させよう。
-- 

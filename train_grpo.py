@@ -471,11 +471,6 @@ def parse_args() -> argparse.Namespace:
         help="Disable saving merged weights in mxfp4 format.",
     )
     parser.add_argument(
-        "--skip-save-16bit",
-        action="store_true",
-        help="Disable saving merged weights in 16bit format.",
-    )
-    parser.add_argument(
         "--resume-from-checkpoint",
         type=str,
         default=None,
@@ -541,25 +536,23 @@ def main() -> None:
     trainer.train(resume_from_checkpoint=resume_path)
     print("[info] Training complete. Run trainer.save_state() or merge adapters as needed.")
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    if not args.skip_save_lora:
-        adapter_dir = args.output_dir / "lora_adapter"
-        adapter_dir.mkdir(parents=True, exist_ok=True)
-        trainer.model.save_pretrained(adapter_dir)
-        tokenizer.save_pretrained(adapter_dir)
-        print(f"[info] Saved LoRA adapter and tokenizer to {adapter_dir}")
+    save_on_rank_zero = getattr(trainer, "is_world_process_zero", None)
+    should_save = save_on_rank_zero() if callable(save_on_rank_zero) else True
 
-    if not args.skip_save_mxfp4:
-        mxfp4_dir = args.output_dir / "merged_mxfp4"
-        mxfp4_dir.mkdir(parents=True, exist_ok=True)
-        trainer.model.save_pretrained_merged(mxfp4_dir, tokenizer, save_method="mxfp4")
-        print(f"[info] Saved merged mxfp4 model to {mxfp4_dir}")
+    if should_save:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        if not args.skip_save_lora:
+            adapter_dir = args.output_dir / "lora_adapter"
+            adapter_dir.mkdir(parents=True, exist_ok=True)
+            trainer.model.save_pretrained(adapter_dir)
+            tokenizer.save_pretrained(adapter_dir)
+            print(f"[info] Saved LoRA adapter and tokenizer to {adapter_dir}")
 
-    if not args.skip_save_16bit:
-        fp16_dir = args.output_dir / "merged_16bit"
-        fp16_dir.mkdir(parents=True, exist_ok=True)
-        trainer.model.save_pretrained_merged(fp16_dir, tokenizer, save_method="merged_16bit")
-        print(f"[info] Saved merged 16bit model to {fp16_dir}")
+        if not args.skip_save_mxfp4:
+            mxfp4_dir = args.output_dir / "merged_mxfp4"
+            mxfp4_dir.mkdir(parents=True, exist_ok=True)
+            trainer.model.save_pretrained_merged(mxfp4_dir, tokenizer, save_method="mxfp4")
+            print(f"[info] Saved merged mxfp4 model to {mxfp4_dir}")
 
 
 if __name__ == "__main__":
