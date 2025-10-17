@@ -10,6 +10,7 @@ per prompt, and uses the Q-values as the reward signal during GRPO.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 from dataclasses import dataclass
@@ -124,6 +125,55 @@ def build_dataset(records: Sequence[PromptRecord]) -> Dataset:
     return Dataset.from_list(dataset_dicts)
 
 
+class MetricsTracker:
+    def __init__(self, csv_path: Optional[Path], ema_alpha: float = 0.1):
+        self.csv_path = Path(csv_path) if csv_path else None
+        self.ema_alpha = ema_alpha
+        self.ema_regret: Optional[float] = None
+        self.ema_reward: Optional[float] = None
+        if self.csv_path:
+            self.csv_path.parent.mkdir(parents=True, exist_ok=True)
+            if not self.csv_path.exists():
+                with self.csv_path.open("w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(
+                        ["global_step", "parse_rate", "acc_opt", "mean_regret", "mean_reward"]
+                    )
+
+    def update(
+        self,
+        step: int,
+        parse_rate: float,
+        acc_opt: float,
+        batch_regret: Optional[float],
+        batch_reward: Optional[float],
+    ) -> None:
+
+        if batch_regret is not None:
+            if self.ema_regret is None:
+                self.ema_regret = batch_regret
+            else:
+                self.ema_regret = self.ema_alpha * batch_regret + (1 - self.ema_alpha) * self.ema_regret
+        if batch_reward is not None:
+            if self.ema_reward is None:
+                self.ema_reward = batch_reward
+            else:
+                self.ema_reward = self.ema_alpha * batch_reward + (1 - self.ema_alpha) * self.ema_reward
+
+        if self.csv_path:
+            with self.csv_path.open("a", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(
+                    [
+                        step,
+                        f"{parse_rate:.6f}",
+                        f"{acc_opt:.6f}",
+                        f"{(self.ema_regret if self.ema_regret is not None else float('nan')):.6f}",
+                        f"{(self.ema_reward if self.ema_reward is not None else float('nan')):.6f}",
+                    ]
+                )
+
+
 # Reward shaping -----------------------------------------------------------------------
 
 ACTION_PATTERN = re.compile(r"^\s*\[(\d)\]\s*$")
@@ -167,6 +217,7 @@ def build_q_reward_fn(
     invalid_penalty: float,
     reward_mode: str,
     temperature: float,
+    tracker: Optional[MetricsTracker],
 ) -> callable:
     def reward_function(
         *,
@@ -178,14 +229,28 @@ def build_q_reward_fn(
         **_: dict,
     ) -> list[float]:
         rewards: list[float] = []
+        parse_success = 0
+        acc_opt_count = 0
+        regret_sum = 0.0
+        reward_sum = 0.0
+
         for completion, sample_qs in zip(completions, q_values):
             action = extract_action(completion)
             if action is None:
                 rewards.append(invalid_penalty)
+                reward_sum += invalid_penalty
             else:
                 qs = [float(x) for x in sample_qs]
                 if reward_mode == "raw":
-                    rewards.append(qs[action])
+                    reward_value = qs[action]
+                    rewards.append(reward_value)
+                    parse_success += 1
+                    reward_sum += reward_value
+                    max_q = max(qs)
+                    regret_sum += max_q - reward_value
+                    best_action = max(range(len(qs)), key=lambda i: qs[i])
+                    if action == best_action:
+                        acc_opt_count += 1
                     continue
 
                 # Advantage relative to best action
@@ -193,14 +258,41 @@ def build_q_reward_fn(
                 advantages = [q - max_q for q in qs]
 
                 if reward_mode == "advantage":
-                    rewards.append(advantages[action])
+                    reward_value = advantages[action]
                 elif reward_mode == "softmax":
                     tau = max(temperature, 1e-5)
                     scaled = [adv / tau for adv in advantages]
                     weights = softmax(scaled)
-                    rewards.append(weights[action])
+                    reward_value = weights[action]
                 else:
                     raise ValueError(f"Unsupported reward mode: {reward_mode}")
+
+                rewards.append(reward_value)
+                parse_success += 1
+                reward_sum += reward_value
+                regret_sum += max_q - qs[action]
+                best_action = max(range(len(qs)), key=lambda i: qs[i])
+                if action == best_action:
+                    acc_opt_count += 1
+
+        total = len(completions)
+        if (
+            tracker
+            and getattr(trainer_state, "is_world_process_zero", True)
+            and total > 0
+            and getattr(trainer_state, "global_step", None) is not None
+        ):
+            parse_rate = parse_success / total
+            acc_opt = acc_opt_count / parse_success if parse_success > 0 else 0.0
+            avg_reward = reward_sum / total if total > 0 else None
+            avg_regret = regret_sum / parse_success if parse_success > 0 else None
+            tracker.update(
+                trainer_state.global_step,
+                parse_rate,
+                acc_opt,
+                avg_regret,
+                avg_reward,
+            )
         return rewards
 
     return reward_function
@@ -347,7 +439,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=0.01, help="Weight decay.")
     parser.add_argument("--warmup-ratio", type=float, default=0.1, help="Warmup ratio for LR scheduler.")
     parser.add_argument("--lr-scheduler", type=str, default="linear", help="LR scheduler type.")
-    parser.add_argument("--max-steps", type=int, default=1000, help="Maximum training steps.")
+    parser.add_argument("--max-steps", type=int, default=500, help="Maximum training steps.")
     parser.add_argument("--logging-steps", type=int, default=5, help="Logging interval (steps).")
     parser.add_argument("--save-steps", type=int, default=50, help="Checkpoint interval (steps).")
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature.")
@@ -389,6 +481,18 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Path to a checkpoint folder to resume from, or 'latest' to auto-detect the most recent checkpoint.",
     )
+    parser.add_argument(
+        "--metrics-csv",
+        type=Path,
+        default=Path("metrics.csv"),
+        help="Destination CSV file for streaming training metrics (parse rate, regret, reward). Use 'none' to disable.",
+    )
+    parser.add_argument(
+        "--metrics-ema-alpha",
+        type=float,
+        default=0.1,
+        help="Smoothing factor for the exponential moving average applied to regret and reward metrics.",
+    )
     return parser.parse_args()
 
 
@@ -398,7 +502,20 @@ def main() -> None:
 
     records = load_prompt_records(args.data_dir)
     dataset = build_dataset(records)
-    reward_fn = build_q_reward_fn(args.invalid_penalty, args.q_reward_mode, args.q_temperature)
+
+    metrics_path: Optional[Path]
+    if args.metrics_csv and str(args.metrics_csv).lower() not in {"", "none", "null"}:
+        metrics_path = Path(args.metrics_csv)
+    else:
+        metrics_path = None
+
+    metrics_tracker = MetricsTracker(metrics_path, args.metrics_ema_alpha) if metrics_path else None
+    reward_fn = build_q_reward_fn(
+        args.invalid_penalty,
+        args.q_reward_mode,
+        args.q_temperature,
+        metrics_tracker,
+    )
 
     model, tokenizer = prepare_model_and_tokenizer(args)
     trainer = configure_trainer(args, model, tokenizer, dataset, reward_fn)
