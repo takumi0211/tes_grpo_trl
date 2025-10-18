@@ -21,6 +21,7 @@ from typing import Sequence, Optional
 import pandas as pd
 import torch
 from datasets import Dataset
+import unsloth  # ensure unsloth patches are applied before transformers/trl imports
 from transformers import set_seed
 from trl import GRPOConfig, GRPOTrainer
 
@@ -380,6 +381,7 @@ def configure_trainer(
         logging_steps=args.logging_steps,
         save_steps=args.save_steps,
         num_generations=args.num_generations,
+        generation_batch_size=(args.generation_batch_size or args.num_generations),
         temperature=args.temperature,
         top_p=args.top_p,
         max_prompt_length=max_prompt_length,
@@ -387,6 +389,15 @@ def configure_trainer(
         report_to=args.report_to,
         remove_unused_columns=False,
     )
+    # Preserve the intended steps_per_generation while letting TRL clone the args safely.
+    global_batch = max(1, training_args.per_device_train_batch_size * getattr(training_args, "world_size", 1))
+    computed_steps = (
+        training_args.steps_per_generation
+        if training_args.steps_per_generation is not None
+        else max(1, (training_args.generation_batch_size or global_batch) // global_batch)
+    )
+    training_args.__dict__["_target_steps_per_generation"] = computed_steps
+    training_args.steps_per_generation = None
 
     print(
         f"[info] max_prompt_tokens={max_prompt_length} "
@@ -420,6 +431,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lora-rank", type=int, default=4, help="LoRA rank.")
     parser.add_argument("--lora-alpha", type=int, default=None, help="LoRA alpha; defaults to 2 * lora_rank.")
     parser.add_argument("--num-generations", type=int, default=8, help="Number of completions sampled per prompt.")
+    parser.add_argument(
+        "--generation-batch-size",
+        type=int,
+        default=None,
+        help="Batch size used during response generation. Defaults to per-device-train-batch-size × num-generations.",
+    )
     parser.add_argument("--per-device-train-batch-size", type=int, default=1, help="Prompts per GPU.")
     parser.add_argument("--gradient-accumulation-steps", type=int, default=1, help="Gradient accumulation steps.")
     parser.add_argument("--learning-rate", type=float, default=5e-5, help="Optimizer learning rate.")
@@ -520,6 +537,13 @@ def main() -> None:
 
     model, tokenizer = prepare_model_and_tokenizer(args)
     trainer = configure_trainer(args, model, tokenizer, dataset, reward_fn)
+    target_steps = getattr(trainer.args, "_target_steps_per_generation", None)
+    if target_steps is not None:
+        trainer.args.steps_per_generation = target_steps
+        trainer.args.__dict__.pop("_target_steps_per_generation", None)
+        if getattr(trainer.args, "generation_batch_size", None) is None:
+            global_batch = max(1, trainer.args.per_device_train_batch_size * getattr(trainer.args, "world_size", 1))
+            trainer.args.generation_batch_size = global_batch * max(1, target_steps)
 
     print(f"[info] Starting GRPO training for {len(dataset)} prompts...")
     resume_path: Optional[str] = None

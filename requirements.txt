@@ -1,16 +1,15 @@
 # Core trainer stack
-torch==2.5.1
-torchvision==0.20.1
-accelerate==1.10.1
-transformers==4.57.1
-trl==0.23.1
-peft==0.18.0
-datasets==4.2.0
-pandas==2.3.3
-sentencepiece==0.2.1
-bitsandbytes==0.45.5
-matplotlib==3.9.2
+# Core trainer stack (install torch/torchvision first from the PyTorch index)
+accelerate>=1.9.0
+transformers==4.56.2
+trl==0.22.2
+peft>=0.16.0,<0.18
+datasets>=2.19.0
+pandas>=2.2.0
+sentencepiece>=0.2.0
+bitsandbytes>=0.45.0
+matplotlib>=3.9.0
 
-# Unsloth long-context finetuning
+# Unsloth long-context finetuning (track main branch)
 unsloth[base] @ git+https://github.com/unslothai/unsloth
 unsloth_zoo[base] @ git+https://github.com/unslothai/unsloth-zoo
