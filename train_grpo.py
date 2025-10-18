@@ -241,19 +241,6 @@ def build_q_reward_fn(
                 reward_sum += invalid_penalty
             else:
                 qs = [float(x) for x in sample_qs]
-                if reward_mode == "raw":
-                    reward_value = qs[action]
-                    rewards.append(reward_value)
-                    parse_success += 1
-                    reward_sum += reward_value
-                    max_q = max(qs)
-                    regret_sum += max_q - reward_value
-                    best_action = max(range(len(qs)), key=lambda i: qs[i])
-                    if action == best_action:
-                        acc_opt_count += 1
-                    continue
-
-                # Advantage relative to best action
                 max_q = max(qs)
                 advantages = [q - max_q for q in qs]
 
@@ -447,7 +434,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--invalid-penalty", type=float, default=-1.0, help="Reward assigned to malformed outputs.")
     parser.add_argument(
         "--q-reward-mode",
-        choices=["raw", "advantage", "softmax"],
+        choices=["advantage", "softmax"],
         default="softmax",
         help="How to map Q-values to scalar rewards.",
     )

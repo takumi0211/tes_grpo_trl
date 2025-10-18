@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "delete 16bit save"
+git commit -m "delete q raw"
 git push origin main
