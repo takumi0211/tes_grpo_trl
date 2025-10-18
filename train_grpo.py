@@ -535,7 +535,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--generation-batch-size",
         type=int,
-        default=1,
+        default=None,
         help="Batch size used during response generation. Defaults to per-device-train-batch-size × num-generations.",
     )
     parser.add_argument("--per-device-train-batch-size", type=int, default=1, help="Prompts per GPU.")
