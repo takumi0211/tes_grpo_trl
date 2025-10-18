@@ -525,8 +525,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-seq-length",
         type=int,
-        default=6000,
-        help="Total max sequence length (prompt + completion). Defaults to 6000 tokens for long reasoning windows.",
+        default=10000,
+        help="Total max sequence length (prompt + completion). Defaults to 10000 tokens for long reasoning windows.",
     )
     parser.add_argument("--full-precision", action="store_true", help="Disable 4-bit loading and use full precision LoRA.")
     parser.add_argument("--lora-rank", type=int, default=4, help="LoRA rank.")
