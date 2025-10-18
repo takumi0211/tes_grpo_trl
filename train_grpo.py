@@ -443,7 +443,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=0.01, help="Weight decay.")
     parser.add_argument("--warmup-ratio", type=float, default=0.1, help="Warmup ratio for LR scheduler.")
     parser.add_argument("--lr-scheduler", type=str, default="linear", help="LR scheduler type.")
-    parser.add_argument("--max-steps", type=int, default=200, help="Maximum training steps.")
+    parser.add_argument("--max-steps", type=int, default=20, help="Maximum training steps.")
     parser.add_argument("--logging-steps", type=int, default=5, help="Logging interval (steps).")
     parser.add_argument("--save-steps", type=int, default=20, help="Checkpoint interval (steps).")
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature.")
