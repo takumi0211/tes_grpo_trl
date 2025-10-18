@@ -175,6 +175,72 @@ class MetricsTracker:
                 )
 
 
+class GenerationLogger:
+    """
+    Streams every generated completion alongside its prompt and reward details.
+    """
+
+    def __init__(self, csv_path: Optional[Path]):
+        self.csv_path = Path(csv_path) if csv_path else None
+        if self.csv_path:
+            self.csv_path.parent.mkdir(parents=True, exist_ok=True)
+            if not self.csv_path.exists():
+                with self.csv_path.open("w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(
+                        [
+                            "global_step",
+                            "batch_index",
+                            "prompt_json",
+                            "completion_json",
+                            "parsed_action",
+                            "optimal_action",
+                            "reward_value",
+                            "regret_value",
+                            "q_values_json",
+                        ]
+                    )
+
+    def log(
+        self,
+        *,
+        step: Optional[int],
+        batch_index: int,
+        prompt: object,
+        completion: object,
+        parsed_action: Optional[int],
+        reward_value: float,
+        q_values: Sequence[float],
+        optimal_action: int,
+        regret_value: Optional[float],
+    ) -> None:
+        if not self.csv_path:
+            return
+
+        prompt_json = json.dumps(prompt, ensure_ascii=True)
+        if isinstance(completion, (list, dict)):
+            completion_json = json.dumps(completion, ensure_ascii=True)
+        else:
+            completion_json = json.dumps(str(completion), ensure_ascii=True)
+        q_values_json = json.dumps([float(x) for x in q_values], ensure_ascii=True)
+
+        with self.csv_path.open("a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(
+                [
+                    "" if step is None else step,
+                    batch_index,
+                    prompt_json,
+                    completion_json,
+                    "" if parsed_action is None else parsed_action,
+                    optimal_action,
+                    reward_value,
+                    "" if regret_value is None else regret_value,
+                    q_values_json,
+                ]
+            )
+
+
 # Reward shaping -----------------------------------------------------------------------
 
 ACTION_PATTERN = re.compile(r"^\s*\[(\d)\]\s*$")
@@ -219,6 +285,7 @@ def build_q_reward_fn(
     reward_mode: str,
     temperature: float,
     tracker: Optional[MetricsTracker],
+    generation_logger: Optional[GenerationLogger],
 ) -> callable:
     def reward_function(
         *,
@@ -235,14 +302,25 @@ def build_q_reward_fn(
         regret_sum = 0.0
         reward_sum = 0.0
 
-        for completion, sample_qs in zip(completions, q_values):
+        current_step = getattr(trainer_state, "global_step", None)
+        is_world_zero = getattr(trainer_state, "is_world_process_zero", True)
+        if callable(is_world_zero):
+            is_world_zero = is_world_zero()
+        should_log = generation_logger is not None and is_world_zero
+
+        for batch_index, (prompt_entry, completion, sample_qs, opt_action) in enumerate(
+            zip(prompts, completions, q_values, optimal_action)
+        ):
+            qs = [float(x) for x in sample_qs]
+            max_q = max(qs)
             action = extract_action(completion)
+            regret_value: Optional[float] = None
+
             if action is None:
-                rewards.append(invalid_penalty)
-                reward_sum += invalid_penalty
+                reward_value = invalid_penalty
+                rewards.append(reward_value)
+                reward_sum += reward_value
             else:
-                qs = [float(x) for x in sample_qs]
-                max_q = max(qs)
                 advantages = [q - max_q for q in qs]
 
                 if reward_mode == "advantage":
@@ -258,10 +336,24 @@ def build_q_reward_fn(
                 rewards.append(reward_value)
                 parse_success += 1
                 reward_sum += reward_value
-                regret_sum += max_q - qs[action]
+                regret_value = max_q - qs[action]
+                regret_sum += regret_value
                 best_action = max(range(len(qs)), key=lambda i: qs[i])
                 if action == best_action:
                     acc_opt_count += 1
+
+            if should_log:
+                generation_logger.log(
+                    step=current_step,
+                    batch_index=batch_index,
+                    prompt=prompt_entry,
+                    completion=completion,
+                    parsed_action=action,
+                    reward_value=reward_value,
+                    q_values=qs,
+                    optimal_action=int(opt_action),
+                    regret_value=regret_value,
+                )
 
         total = len(completions)
         if (
@@ -349,6 +441,7 @@ def prepare_model_and_tokenizer(args) -> tuple[torch.nn.Module, object]:
     model.config.use_cache = False
     tokenizer.padding_side = "left"
     tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.model_max_length = args.max_seq_length
     return model, tokenizer
 
 
@@ -411,6 +504,14 @@ def configure_trainer(
         args=training_args,
         train_dataset=dataset,
     )
+
+    # Enforce tight generation bounds so Unsloth does not fall back to extremely long defaults.
+    model.generation_config.max_length = args.max_seq_length
+    model.generation_config.max_new_tokens = max_completion_length
+    if hasattr(trainer, "generation_config"):
+        trainer.generation_config.max_length = args.max_seq_length
+        trainer.generation_config.max_new_tokens = max_completion_length
+
     return trainer
 
 
@@ -434,11 +535,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--generation-batch-size",
         type=int,
-        default=None,
+        default=1,
         help="Batch size used during response generation. Defaults to per-device-train-batch-size × num-generations.",
     )
     parser.add_argument("--per-device-train-batch-size", type=int, default=1, help="Prompts per GPU.")
-    parser.add_argument("--gradient-accumulation-steps", type=int, default=1, help="Gradient accumulation steps.")
+    parser.add_argument("--gradient-accumulation-steps", type=int, default=8, help="Gradient accumulation steps.")
     parser.add_argument("--learning-rate", type=float, default=5e-5, help="Optimizer learning rate.")
     parser.add_argument("--weight-decay", type=float, default=0.01, help="Weight decay.")
     parser.add_argument("--warmup-ratio", type=float, default=0.1, help="Warmup ratio for LR scheduler.")
@@ -492,6 +593,12 @@ def parse_args() -> argparse.Namespace:
         default=0.1,
         help="Smoothing factor for the exponential moving average applied to regret and reward metrics.",
     )
+    parser.add_argument(
+        "--generations-csv",
+        type=Path,
+        default=Path("generations.csv"),
+        help="Destination CSV for saving every generated completion. Use 'none' to disable.",
+    )
     return parser.parse_args()
 
 
@@ -515,6 +622,16 @@ def main() -> None:
             f"Run watch_metrics.py --metrics-csv {metrics_path} for live plots."
         )
 
+    generations_path: Optional[Path]
+    if args.generations_csv and str(args.generations_csv).lower() not in {"", "none", "null"}:
+        generations_path = Path(args.generations_csv)
+    else:
+        generations_path = None
+
+    generation_logger = GenerationLogger(generations_path) if generations_path else None
+    if generations_path:
+        print(f"[info] Streaming generated completions to {generations_path}.")
+
     if torch.cuda.is_available():
         device_count = torch.cuda.device_count()
         gpu_names = [torch.cuda.get_device_name(i) for i in range(device_count)]
@@ -533,6 +650,7 @@ def main() -> None:
         args.q_reward_mode,
         args.q_temperature,
         metrics_tracker,
+        generation_logger,
     )
 
     model, tokenizer = prepare_model_and_tokenizer(args)
