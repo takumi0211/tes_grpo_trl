@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "add print(GPU)"
+git commit -m "update requirements.txt"
 git push origin main
