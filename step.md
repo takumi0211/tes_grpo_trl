@@ -9,12 +9,12 @@
 ```bash
 mkdir -p ~/workspace && cd ~/workspace
 git --version || (sudo apt-get update && sudo apt-get install -y git)
-'''
+```
 
-'''bash
+```bash
 git clone https://github.com/takumi0211/GRPO_TES.git
 cd GRPO_TES
-'''
+```
 
 ```bash
 python3 -m venv .venv
