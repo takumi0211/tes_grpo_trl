@@ -9,6 +9,7 @@ datasets==4.2.0
 pandas==2.2.3
 sentencepiece==0.2.1
 bitsandbytes==0.44.2
+matplotlib==3.9.2
 
 # Unsloth long-context finetuning
 unsloth[base] @ git+https://github.com/unslothai/unsloth

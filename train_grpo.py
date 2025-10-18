@@ -492,6 +492,11 @@ def main() -> None:
         metrics_path = None
 
     metrics_tracker = MetricsTracker(metrics_path, args.metrics_ema_alpha) if metrics_path else None
+    if metrics_path:
+        print(
+            f"[info] Streaming metrics to {metrics_path}. "
+            f"Run watch_metrics.py --metrics-csv {metrics_path} for live plots."
+        )
     reward_fn = build_q_reward_fn(
         args.invalid_penalty,
         args.q_reward_mode,
