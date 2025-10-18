@@ -497,6 +497,20 @@ def main() -> None:
             f"[info] Streaming metrics to {metrics_path}. "
             f"Run watch_metrics.py --metrics-csv {metrics_path} for live plots."
         )
+
+    if torch.cuda.is_available():
+        device_count = torch.cuda.device_count()
+        gpu_names = [torch.cuda.get_device_name(i) for i in range(device_count)]
+        print(f"[info] Detected CUDA devices ({device_count}): {', '.join(gpu_names)}")
+    elif torch.backends.mps.is_available():
+        print("[info] Detected Apple Metal (MPS) backend.")
+    elif torch.backends.hip.is_built():
+        device_count = torch.cuda.device_count()
+        gpu_names = [torch.cuda.get_device_name(i) for i in range(device_count)]
+        print(f"[info] Detected HIP devices ({device_count}): {', '.join(gpu_names)}")
+    else:
+        print("[warn] No GPU backend detected. Unsloth requires CUDA/HIP/XPU; training will fail on CPU-only setups.")
+
     reward_fn = build_q_reward_fn(
         args.invalid_penalty,
         args.q_reward_mode,
