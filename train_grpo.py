@@ -539,7 +539,7 @@ def configure_trainer(
     trainer = GRPOTrainer(
         model=model,
         processing_class=tokenizer,
-        reward_funcs=reward_fn,
+        reward_funcs=[reward_fn],
         args=training_args,
         train_dataset=dataset,
     )
@@ -608,7 +608,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--save-steps", type=int, default=20, help="Checkpoint interval (steps).")
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature.")
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p nucleus sampling.")
-    parser.add_argument("--invalid-penalty", type=float, default=-1.0, help="Reward assigned to malformed outputs.")
+    parser.add_argument("--invalid-penalty", type=float, default=-0.5, help="Reward assigned to malformed outputs.")
     parser.add_argument(
         "--q-reward-mode",
         choices=["advantage", "softmax"],
