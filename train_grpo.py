@@ -460,6 +460,22 @@ def configure_trainer(
             f"(max prompt tokens={max_prompt_length}). Increase --max-seq-length."
         )
 
+    num_generations = args.num_generations
+    if num_generations is None or num_generations <= 0:
+        raise ValueError("--num-generations must be a positive integer.")
+
+    generation_batch_size = args.generation_batch_size if args.generation_batch_size is not None else 1
+    if generation_batch_size <= 0:
+        raise ValueError("--generation-batch-size must be a positive integer.")
+
+    if args.steps_per_generation is not None and args.steps_per_generation <= 0:
+        raise ValueError("--steps-per-generation must be a positive integer when provided.")
+    if args.steps_per_generation is not None:
+        steps_per_generation = args.steps_per_generation
+    else:
+        # Default vertical schedule: gather all completions over ceil(G / batch_size) micro-steps.
+        steps_per_generation = max(1, math.ceil(num_generations / generation_batch_size))
+
     training_args = GRPOConfig(
         output_dir=args.output_dir,
         seed=args.seed,
@@ -473,21 +489,24 @@ def configure_trainer(
         max_steps=args.max_steps,
         logging_steps=args.logging_steps,
         save_steps=args.save_steps,
-        num_generations=args.num_generations,
-        generation_batch_size=(args.generation_batch_size or args.num_generations),
+        num_generations=num_generations,
+        generation_batch_size=generation_batch_size,
+        steps_per_generation=steps_per_generation,
         temperature=args.temperature,
         top_p=args.top_p,
         max_prompt_length=max_prompt_length,
         max_completion_length=max_completion_length,
         report_to=args.report_to,
         remove_unused_columns=False,
+        optim=args.optim,
     )
     # Preserve the intended steps_per_generation while letting TRL clone the args safely.
     global_batch = max(1, training_args.per_device_train_batch_size * getattr(training_args, "world_size", 1))
+    effective_generation_batch = training_args.generation_batch_size or global_batch
     computed_steps = (
         training_args.steps_per_generation
         if training_args.steps_per_generation is not None
-        else max(1, (training_args.generation_batch_size or global_batch) // global_batch)
+        else max(1, (effective_generation_batch or global_batch) // global_batch)
     )
     training_args.__dict__["_target_steps_per_generation"] = computed_steps
     training_args.steps_per_generation = None
@@ -496,6 +515,26 @@ def configure_trainer(
         f"[info] max_prompt_tokens={max_prompt_length} "
         f"(avg={avg_prompt_length:.1f}), max_completion_tokens={max_completion_length}"
     )
+    if training_args.num_generations and effective_generation_batch:
+        parallel_per_prompt = effective_generation_batch / training_args.num_generations
+    else:
+        parallel_per_prompt = None
+    schedule_msg = (
+        "[info] Generation schedule: "
+        f"num_generations={training_args.num_generations}, "
+        f"generation_batch_size={effective_generation_batch}, "
+        f"steps_per_generation={computed_steps}"
+    )
+    if parallel_per_prompt is not None:
+        schedule_msg += f", parallel_completions_per_prompt≈{parallel_per_prompt:.2f}"
+    if (
+        training_args.num_generations
+        and effective_generation_batch
+        and effective_generation_batch < training_args.num_generations
+    ):
+        schedule_msg += " (vertical low-memory mode)"
+    print(schedule_msg)
+    print(f"[info] Optimizer backend: {training_args.optim}")
 
     trainer = GRPOTrainer(
         model=model,
@@ -521,12 +560,17 @@ def configure_trainer(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="GRPO finetuning with Q-value rewards.")
     parser.add_argument("--data-dir", type=Path, default=Path("data"), help="Directory containing *_q_dataset.csv files.")
-    parser.add_argument("--model-name", type=str, default="unsloth/gpt-oss-20b", help="Base checkpoint to finetune.")
+    parser.add_argument(
+        "--model-name",
+        type=str,
+        default="unsloth/gpt-oss-20b-4bit",
+        help="Base checkpoint to finetune (defaults to unsloth/gpt-oss-20b-4bit).",
+    )
     parser.add_argument(
         "--max-seq-length",
         type=int,
-        default=10000,
-        help="Total max sequence length (prompt + completion). Defaults to 10000 tokens for long reasoning windows.",
+        default=5000,
+        help="Total max sequence length (prompt + completion). Defaults to 5000 tokens for long reasoning windows.",
     )
     parser.add_argument("--full-precision", action="store_true", help="Disable 4-bit loading and use full precision LoRA.")
     parser.add_argument("--lora-rank", type=int, default=4, help="LoRA rank.")
@@ -535,11 +579,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--generation-batch-size",
         type=int,
+        default=1,
+        help="Batch size used during response generation. Defaults to 1 (sequential 'vertical' generation).",
+    )
+    parser.add_argument(
+        "--steps-per-generation",
+        type=int,
         default=None,
-        help="Batch size used during response generation. Defaults to per-device-train-batch-size × num-generations.",
+        help=(
+            "Number of micro generation loops to collect num-generations samples per step. "
+            "Defaults to ceil(num-generations / generation-batch-size) when omitted."
+        ),
     )
     parser.add_argument("--per-device-train-batch-size", type=int, default=1, help="Prompts per GPU.")
     parser.add_argument("--gradient-accumulation-steps", type=int, default=8, help="Gradient accumulation steps.")
+    parser.add_argument(
+        "--optim",
+        type=str,
+        default="paged_adamw_8bit",
+        help="Optimizer identifier passed to GRPOConfig, e.g. 'paged_adamw_8bit' or 'adamw_torch'.",
+    )
     parser.add_argument("--learning-rate", type=float, default=5e-5, help="Optimizer learning rate.")
     parser.add_argument("--weight-decay", type=float, default=0.01, help="Weight decay.")
     parser.add_argument("--warmup-ratio", type=float, default=0.1, help="Warmup ratio for LR scheduler.")
