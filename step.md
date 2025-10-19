@@ -54,26 +54,10 @@ python -m pip install -r requirements.txt
 `requirements.txt` には Unsloth/Unsloth-Zoo の Git 依存を含むため、ここでビルドが入ります。  
 （この時点で `bitsandbytes==0.48.1`, `matplotlib==3.10.7` などが入ることを確認済み）
 
-## 5. インポート確認
+## 5. 学習実行
 
 ```bash
-python - <<'PY'
-import torch
-print("torch:", torch.__version__, "cuda:", torch.cuda.is_available(), "has int1?", hasattr(torch, "int1"))
-from transformers import PreTrainedModel, TrainingArguments
-from trl import GRPOConfig, GRPOTrainer
-print("transformers / trl OK")
-PY
-```
-
-問題がなければ準備完了です。
-
-## 6. 学習実行
-
-```bash
-python train_grpo.py \
-  --metrics-csv metrics.csv \
-  --output-dir outputs
+python train_grpo.py
 ```
 
 進捗は別ターミナルで `python watch_metrics.py --metrics-csv metrics.csv` を回すとリアルタイム表示できます。
