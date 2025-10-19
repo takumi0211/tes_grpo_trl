@@ -427,7 +427,7 @@ def prepare_model_and_tokenizer(args) -> tuple[torch.nn.Module, object]:
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=args.model_name,
         max_seq_length=args.max_seq_length,
-        load_in_4bit=not args.full_precision,
+        load_in_4bit=True,
         offload_embedding=True,
     )
     model = FastLanguageModel.get_peft_model(
@@ -439,6 +439,7 @@ def prepare_model_and_tokenizer(args) -> tuple[torch.nn.Module, object]:
         random_state=args.seed,
     )
     model.config.use_cache = False
+    model.generation_config.use_cache = True
     tokenizer.padding_side = "left"
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.model_max_length = args.max_seq_length
@@ -557,9 +558,11 @@ def configure_trainer(
     # Enforce tight generation bounds so Unsloth does not fall back to extremely long defaults.
     model.generation_config.max_length = args.max_seq_length
     model.generation_config.max_new_tokens = max_completion_length
+    model.generation_config.use_cache = True
     if hasattr(trainer, "generation_config"):
         trainer.generation_config.max_length = args.max_seq_length
         trainer.generation_config.max_new_tokens = max_completion_length
+        trainer.generation_config.use_cache = True
 
     return trainer
 
@@ -582,7 +585,6 @@ def parse_args() -> argparse.Namespace:
         default=5000,
         help="Total max sequence length (prompt + completion). Defaults to 5000 tokens for long reasoning windows.",
     )
-    parser.add_argument("--full-precision", action="store_true", help="Disable 4-bit loading and use full precision LoRA.")
     parser.add_argument("--lora-rank", type=int, default=4, help="LoRA rank.")
     parser.add_argument("--lora-alpha", type=int, default=None, help="LoRA alpha; defaults to 2 * lora_rank.")
     parser.add_argument("--num-generations", type=int, default=4, help="Number of completions sampled per prompt.")
