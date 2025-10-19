@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "変更"
+git commit -m "add test"
 git push origin main
