@@ -464,17 +464,27 @@ def configure_trainer(
     if num_generations is None or num_generations <= 0:
         raise ValueError("--num-generations must be a positive integer.")
 
-    generation_batch_size = args.generation_batch_size if args.generation_batch_size is not None else 1
-    if generation_batch_size <= 0:
-        raise ValueError("--generation-batch-size must be a positive integer.")
+    user_generation_batch = args.generation_batch_size
+    if user_generation_batch is not None and user_generation_batch <= 0:
+        raise ValueError("--generation-batch-size must be a positive integer when provided.")
 
-    if args.steps_per_generation is not None and args.steps_per_generation <= 0:
+    user_steps_per_generation = args.steps_per_generation
+    if user_steps_per_generation is not None and user_steps_per_generation <= 0:
         raise ValueError("--steps-per-generation must be a positive integer when provided.")
-    if args.steps_per_generation is not None:
-        steps_per_generation = args.steps_per_generation
+
+    if user_generation_batch is not None and user_steps_per_generation is not None:
+        raise ValueError("Specify at most one of --generation-batch-size or --steps-per-generation.")
+
+    if user_steps_per_generation is not None:
+        steps_per_generation = user_steps_per_generation
+        generation_batch_size_arg = user_generation_batch
+    elif user_generation_batch is not None:
+        steps_per_generation = None
+        generation_batch_size_arg = user_generation_batch
     else:
-        # Default vertical schedule: gather all completions over ceil(G / batch_size) micro-steps.
-        steps_per_generation = max(1, math.ceil(num_generations / generation_batch_size))
+        # Default vertical schedule: run num_generations micro-steps with the smallest legal generation batch.
+        steps_per_generation = num_generations
+        generation_batch_size_arg = None
 
     training_args = GRPOConfig(
         output_dir=args.output_dir,
@@ -490,7 +500,7 @@ def configure_trainer(
         logging_steps=args.logging_steps,
         save_steps=args.save_steps,
         num_generations=num_generations,
-        generation_batch_size=generation_batch_size,
+        generation_batch_size=generation_batch_size_arg,
         steps_per_generation=steps_per_generation,
         temperature=args.temperature,
         top_p=args.top_p,
@@ -563,8 +573,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model-name",
         type=str,
-        default="unsloth/gpt-oss-20b-4bit",
-        help="Base checkpoint to finetune (defaults to unsloth/gpt-oss-20b-4bit).",
+        default="unsloth/gpt-oss-20b",
+        help="Base checkpoint to finetune (defaults to unsloth/gpt-oss-20b MXFP4 quant).",
     )
     parser.add_argument(
         "--max-seq-length",
@@ -579,8 +589,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--generation-batch-size",
         type=int,
-        default=1,
-        help="Batch size used during response generation. Defaults to 1 (sequential 'vertical' generation).",
+        default=None,
+        help=(
+            "Batch size used during response generation. Must be divisible by num-generations. "
+            "Leave unset to let --steps-per-generation control the schedule."
+        ),
     )
     parser.add_argument(
         "--steps-per-generation",
