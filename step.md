@@ -19,6 +19,7 @@ WORKDIR=${WORKDIR:-~/workspace}
 REPO_URL=${REPO_URL:-https://github.com/takumi0211/GRPO_TES.git}
 PYTHON=${PYTHON:-python3}
 CUDA_HOME_DEFAULT=${CUDA_HOME_DEFAULT:-/usr/local/cuda}
+USE_INFERENCE_ONLY=${USE_INFERENCE_ONLY:-0}
 
 mkdir -p "${WORKDIR}"
 cd "${WORKDIR}"
@@ -43,6 +44,9 @@ else
 fi
 export CUDA_HOME PATH="$CUDA_HOME/bin:$PATH" LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 
+if [ "${USE_INFERENCE_ONLY}" = "1" ]; then
+  export FLASH_ATTENTION_DISABLE_BACKWARD=1
+fi
 python -m pip install --no-cache-dir --no-build-isolation \
     "flash-attn==2.6.3"
 
@@ -109,6 +113,7 @@ python -m pip install --no-cache-dir --no-build-isolation \
 
 ビルドが通らない場合は [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention) の README に従って wheel を自作するか、対応する CUDA Toolkit へ切り替えてください。
 `nvcc` が `/usr/bin/nvcc` など別パスに存在する場合は、`/usr/local/cuda` など実際の CUDA ルートへシンボリックリンクを張る（例: `sudo ln -sfn /usr/local/cuda /usr/local/cuda-12.8`）か、環境変数で直接パスを指定してください。
+推論専用で学習を行わない場合は `export FLASH_ATTENTION_DISABLE_BACKWARD=1` をセットしてからインストールするとバックワード用カーネルをスキップでき、ビルド時間が大幅に短縮されます。
 
 ## 4. Transformers / TRL / Tokenizers の固定
 
@@ -146,3 +151,44 @@ python train_grpo.py
 - `generation_batch_size` / `steps_per_generation` はスクリプト内で整合を取るようにしてあるため、CLI 側で特別な指定は不要。
 - `requirements.txt` には `torch`/`torchvision` を含めていない（または入れる場合は `==2.9.0` 等で固定）ことで、再インストール時に 2.5 系へ戻されないようにしている。
 - FlashAttention 2 を導入した場合は `python test.py` を実行し、起動バナーに `FA2 = True` が表示されること（同時に `FlashAttention 2 not detected` の警告が消えること）を確認。
+- 推論専用で高速化したい場合は `USE_INFERENCE_ONLY=1` を指定してワンライナーを実行するとバックワード用カーネルのビルドがスキップされます。例: `USE_INFERENCE_ONLY=1 bash ~/workspace/setup_grpo_tes.sh`
+
+---
+
+### Docker/NVIDIA PyTorch コンテナでのセットアップ（A100/H100 向け簡易ルート）
+
+1. **ホスト側準備**
+   ```bash
+   sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+   sudo systemctl restart docker
+   docker run --gpus all -it --rm nvcr.io/nvidia/pytorch:24.08-py3 bash
+   ```
+
+2. **コンテナ内で仮想環境と依存を構築**
+   ```bash
+   python -m venv /opt/venvs/grpo_tes
+   source /opt/venvs/grpo_tes/bin/activate
+   python -m pip install -U pip
+   git clone https://github.com/takumi0211/GRPO_TES.git /workspace/GRPO_TES
+   cd /workspace/GRPO_TES
+
+   python -m pip install --no-cache-dir \
+       "torch==2.9.0" \
+       "torchvision==0.24.0"
+
+   export FLASH_ATTENTION_DISABLE_BACKWARD=1  # 推論専用の場合。学習するなら外す
+   python -m pip install --no-cache-dir --no-build-isolation flash-attn==2.6.3
+
+   python -m pip install --no-cache-dir --force-reinstall \
+       "transformers==4.56.2" \
+       "trl==0.22.2" \
+       "tokenizers==0.22.0"
+
+   python -m pip install -r requirements.txt
+   ```
+
+3. **テスト実行 (`test.py`)**
+   ```bash
+   python test.py
+   ```
+   ここで `--- Done ---` の後に `Generated XX tokens in Ys (ZZ tokens/s)` が表示され、起動バナーに `FA2 = True` と出力されれば FlashAttention 2 が有効になっています。
