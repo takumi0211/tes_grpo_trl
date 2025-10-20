@@ -39,7 +39,9 @@ Unsloth 2025.10 系では FlashAttention 2 を検出すると自動的に高速�
 CUDA 12.8 の開発ツールチェーン（`nvcc`）が必要なので、先に CUDA Toolkit をインストールし `CUDA_HOME` を正しく設定してください。
 
 ```bash
-export CUDA_HOME=/usr/local/cuda-12.8          # インストール先に合わせて修正
+readlink -f "$(which nvcc)"                    # 実際の nvcc の場所を確認
+ls -d /usr/local/cuda*                         # インストール済み CUDA のディレクトリを確認
+export CUDA_HOME=/usr/local/cuda               # 上記の出力に合わせて変更
 export PATH="$CUDA_HOME/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 nvcc --version                                 # バージョン表示で確認
@@ -53,6 +55,7 @@ python -m pip install --no-cache-dir --no-build-isolation \
 ```
 
 ビルドが通らない場合は [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention) の README に従って wheel を自作するか、対応する CUDA Toolkit へ切り替えてください。
+`nvcc` が `/usr/bin/nvcc` など別パスに存在する場合は、`/usr/local/cuda` など実際の CUDA ルートへシンボリックリンクを張る（例: `sudo ln -sfn /usr/local/cuda /usr/local/cuda-12.8`）か、環境変数で直接パスを指定してください。
 
 ## 4. Transformers / TRL / Tokenizers の固定
 
