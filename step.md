@@ -61,3 +61,47 @@ python train_grpo.py
 ```
 
 進捗は別ターミナルで `python watch_metrics.py --metrics-csv metrics.csv` を回すとリアルタイム表示できます。
+
+## 6. CUDA 対応 PyTorch 入れ替え（2025-10-20）
+
+GH200 (CUDA 12.8 ドライバ) 上で CPU ビルドの PyTorch が入ってしまった場合のリカバリー手順です。仮想環境を有効化した状態から開始します。
+
+```bash
+source ~/workspace/GRPO_TES/.venv/bin/activate
+```
+
+既存の CPU ビルドを削除します。
+
+```bash
+python -m pip uninstall -y torch torchvision torchaudio
+```
+
+CUDA 12.x 対応ホイールを公式インデックスから再インストールします。
+
+```bash
+python -m pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cu124 \
+    torch torchvision torchaudio
+```
+
+GPU が正しく認識されることを確認します。
+
+```bash
+python - <<'PYCODE'
+import torch
+print(torch.version.cuda)
+print(torch.cuda.is_available())
+print(torch.cuda.get_device_name())
+PYCODE
+```
+
+Unsloth 側の依存更新が必要な場合は同時に実行します。
+
+```bash
+python -m pip install --upgrade unsloth
+```
+
+CUDA デバイスを明示して動作検証します。
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python test.py
+```
