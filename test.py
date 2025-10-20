@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import time
 
 import torch
 
@@ -170,15 +171,29 @@ def main() -> None:
     print(f"--- Streaming response from {model_name} ({device}, 4-bit) ---\n", flush=True)
 
     with torch.inference_mode():
-        model.generate(
+        start_time = time.perf_counter()
+        output = model.generate(
             **model_inputs,
             streamer=streamer,
             max_new_tokens=5000,
             do_sample=True,
             temperature=0.8,
             top_p=0.9,
+            return_dict_in_generate=True,
+            output_scores=False,
         )
-    print("\n--- Done ---")
+        elapsed = time.perf_counter() - start_time
+
+    sequences = getattr(output, "sequences", output)
+    input_length = model_inputs["input_ids"].shape[-1]
+    total_length = sequences.shape[-1]
+    new_tokens = max(total_length - input_length, 0)
+    tokens_per_sec = new_tokens / elapsed if elapsed > 0 else float("inf")
+
+    print(
+        f"\n--- Done ---\nGenerated {new_tokens} tokens in {elapsed:.2f}s "
+        f"({tokens_per_sec:.2f} tokens/s)"
+    )
 
 
 if __name__ == "__main__":
