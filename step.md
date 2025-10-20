@@ -5,50 +5,6 @@
 ---
 
 ## 1. 仮想環境の作成と基本ツール更新
-### 0. ぜんぶ一発でやりたい人向け（1回のコピペでOK）
-
-以下をそのまま1回コピペで実行すると、リポジトリ取得〜仮想環境作成〜依存インストール〜学習開始まで一括で進みます（Linux/macOS想定）。
-
-```bash
-set -euxo pipefail
-
-# 0) Git が無ければ導入（macOS は Xcode CLT、Linux は apt）
-if ! command -v git >/dev/null 2>&1; then
-  if [ "$(uname)" = "Darwin" ]; then
-    xcode-select --install || true
-  else
-    sudo apt-get update && sudo apt-get install -y git
-  fi
-fi
-
-# 1) 作業ディレクトリとリポジトリ
-mkdir -p ~/workspace && cd ~/workspace
-if [ ! -d GRPO_TES/.git ]; then
-  git clone https://github.com/takumi0211/GRPO_TES.git
-fi
-cd GRPO_TES
-
-# 2) 仮想環境と基本ツール
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip wheel setuptools
-
-# 3) PyTorch / TorchVision（Unsloth の torchao が前提とするバージョン）
-python -m pip install --no-cache-dir \
-    "torch==2.9.0" \
-    "torchvision==0.24.0"
-
-# 4) Transformers / TRL / Tokenizers の固定
-python -m pip install --no-cache-dir --force-reinstall \
-    "transformers==4.56.2" \
-    "trl==0.22.2" \
-    "tokenizers==0.22.0"
-
-# 5) 残りの依存
-python -m pip install -r requirements.txt
-```
-
-### 1-2. 手動でステップを確認しながら進めたい場合
 
 ```bash
 mkdir -p ~/workspace && cd ~/workspace
@@ -77,7 +33,7 @@ python -m pip install --no-cache-dir \
     "torchvision==0.24.0"
 ```
 
-## 4. Transformers / TRL / Tokenizers の固定
+## 3. Transformers / TRL / Tokenizers の固定
 
 公式デモに合わせて、以下 3 つを明示的に再インストールします。  
 （`trl==0.22.2` は `transformers==4.56.2` と組み合わせる前提で動作確認済み）
@@ -89,7 +45,7 @@ python -m pip install --no-cache-dir --force-reinstall \
     "tokenizers==0.22.0"
 ```
 
-## 5. 残りの依存をまとめて導入
+## 4. 残りの依存をまとめて導入
 
 ```bash
 python -m pip install -r requirements.txt
@@ -98,7 +54,7 @@ python -m pip install -r requirements.txt
 `requirements.txt` には Unsloth/Unsloth-Zoo の Git 依存を含むため、ここでビルドが入ります。  
 （この時点で `bitsandbytes==0.48.1`, `matplotlib==3.10.7` などが入ることを確認済み）
 
-## 6. 学習実行
+## 5. 学習実行
 
 ```bash
 python train_grpo.py
@@ -106,4 +62,3 @@ python train_grpo.py
 
 進捗は別ターミナルで `python watch_metrics.py --metrics-csv metrics.csv` を回すとリアルタイム表示できます。
 
----

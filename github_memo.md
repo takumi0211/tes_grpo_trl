@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "delete flash attention"
+git commit -m "add test.py"
 git push origin main
