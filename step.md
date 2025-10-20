@@ -5,60 +5,47 @@
 ---
 
 ## 1. 仮想環境の作成と基本ツール更新
+### 0. ぜんぶ一発でやりたい人向け（1回のコピペでOK）
 
-### 1-1. ワンライナーで一括実行したい場合
-
-以下をそのままコピペして実行すると、仮想環境の作成から FlashAttention 2 のビルドまで一度で完了します（`~/workspace/GRPO_TES` ディレクトリ以下に環境を構築）。CUDA のインストールパスが異なる場合は途中の `CUDA_HOME` を適宜変更してください。
+以下をそのまま1回コピペで実行すると、リポジトリ取得〜仮想環境作成〜依存インストール〜学習開始まで一括で進みます（Linux/macOS想定）。
 
 ```bash
-cat <<'EOF' > ~/workspace/setup_grpo_tes.sh
-#!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 
-WORKDIR=${WORKDIR:-~/workspace}
-REPO_URL=${REPO_URL:-https://github.com/takumi0211/GRPO_TES.git}
-PYTHON=${PYTHON:-python3}
-CUDA_HOME_DEFAULT=${CUDA_HOME_DEFAULT:-/usr/local/cuda}
-USE_INFERENCE_ONLY=${USE_INFERENCE_ONLY:-0}
+# 0) Git が無ければ導入（macOS は Xcode CLT、Linux は apt）
+if ! command -v git >/dev/null 2>&1; then
+  if [ "$(uname)" = "Darwin" ]; then
+    xcode-select --install || true
+  else
+    sudo apt-get update && sudo apt-get install -y git
+  fi
+fi
 
-mkdir -p "${WORKDIR}"
-cd "${WORKDIR}"
-
-if [ ! -d GRPO_TES ]; then
-  git clone "${REPO_URL}"
+# 1) 作業ディレクトリとリポジトリ
+mkdir -p ~/workspace && cd ~/workspace
+if [ ! -d GRPO_TES/.git ]; then
+  git clone https://github.com/takumi0211/GRPO_TES.git
 fi
 cd GRPO_TES
 
-${PYTHON} -m venv .venv
+# 2) 仮想環境と基本ツール
+python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools
 
+# 3) PyTorch / TorchVision（Unsloth の torchao が前提とするバージョン）
 python -m pip install --no-cache-dir \
     "torch==2.9.0" \
     "torchvision==0.24.0"
 
-if command -v nvcc >/dev/null 2>&1; then
-  CUDA_HOME=$(dirname "$(dirname "$(readlink -f "$(command -v nvcc)")")")
-else
-  CUDA_HOME=${CUDA_HOME_DEFAULT}
-fi
-export CUDA_HOME PATH="$CUDA_HOME/bin:$PATH" LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
-
-if [ "${USE_INFERENCE_ONLY}" = "1" ]; then
-  export FLASH_ATTENTION_DISABLE_BACKWARD=1
-fi
-python -m pip install --no-cache-dir --no-build-isolation \
-    "flash-attn==2.6.3"
-
+# 4) Transformers / TRL / Tokenizers の固定
 python -m pip install --no-cache-dir --force-reinstall \
     "transformers==4.56.2" \
     "trl==0.22.2" \
     "tokenizers==0.22.0"
 
+# 5) 残りの依存
 python -m pip install -r requirements.txt
-EOF
-
-bash ~/workspace/setup_grpo_tes.sh
 ```
 
 ### 1-2. 手動でステップを確認しながら進めたい場合
@@ -90,30 +77,6 @@ python -m pip install --no-cache-dir \
     "torchvision==0.24.0"
 ```
 
-## 3. FlashAttention 2 の導入（推奨）
-
-Unsloth 2025.10 系では FlashAttention 2 を検出すると自動的に高速なカーネルを呼び出します。  
-CUDA 12.8 の開発ツールチェーン（`nvcc`）が必要なので、先に CUDA Toolkit をインストールし `CUDA_HOME` を正しく設定してください。
-
-```bash
-readlink -f "$(which nvcc)"                    # 実際の nvcc の場所を確認
-ls -d /usr/local/cuda*                         # インストール済み CUDA のディレクトリを確認
-export CUDA_HOME=/usr/local/cuda               # 上記の出力に合わせて変更
-export PATH="$CUDA_HOME/bin:$PATH"
-export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
-nvcc --version                                 # バージョン表示で確認
-```
-
-Toolchain の準備が出来たら FlashAttention 2 をビルドします（Torch 2.9.0 + CUDA 12.8 の組み合わせで確認済み）。
-
-```bash
-python -m pip install --no-cache-dir --no-build-isolation \
-    "flash-attn==2.6.3"
-```
-
-ビルドが通らない場合は [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention) の README に従って wheel を自作するか、対応する CUDA Toolkit へ切り替えてください。
-`nvcc` が `/usr/bin/nvcc` など別パスに存在する場合は、`/usr/local/cuda` など実際の CUDA ルートへシンボリックリンクを張る（例: `sudo ln -sfn /usr/local/cuda /usr/local/cuda-12.8`）か、環境変数で直接パスを指定してください。
-
 ## 4. Transformers / TRL / Tokenizers の固定
 
 公式デモに合わせて、以下 3 つを明示的に再インストールします。  
@@ -144,9 +107,3 @@ python train_grpo.py
 進捗は別ターミナルで `python watch_metrics.py --metrics-csv metrics.csv` を回すとリアルタイム表示できます。
 
 ---
-
-### メモ
-- Unsloth からの警告に合わせ、`train_grpo.py` 冒頭で `import unsloth` を最初に呼ぶよう修正済み。
-- `generation_batch_size` / `steps_per_generation` はスクリプト内で整合を取るようにしてあるため、CLI 側で特別な指定は不要。
-- `requirements.txt` には `torch`/`torchvision` を含めていない（または入れる場合は `==2.9.0` 等で固定）ことで、再インストール時に 2.5 系へ戻されないようにしている。
-- FlashAttention 2 を導入した場合は `python test.py` を実行し、起動バナーに `FA2 = True` が表示されること（同時に `FlashAttention 2 not detected` の警告が消えること）を確認。
