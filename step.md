@@ -6,6 +6,59 @@
 
 ## 1. 仮想環境の作成と基本ツール更新
 
+### 1-1. ワンライナーで一括実行したい場合
+
+以下をそのままコピペして実行すると、仮想環境の作成から FlashAttention 2 のビルドまで一度で完了します（`~/workspace/GRPO_TES` ディレクトリ以下に環境を構築）。CUDA のインストールパスが異なる場合は途中の `CUDA_HOME` を適宜変更してください。
+
+```bash
+cat <<'EOF' > ~/workspace/setup_grpo_tes.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+WORKDIR=${WORKDIR:-~/workspace}
+REPO_URL=${REPO_URL:-https://github.com/takumi0211/GRPO_TES.git}
+PYTHON=${PYTHON:-python3}
+CUDA_HOME_DEFAULT=${CUDA_HOME_DEFAULT:-/usr/local/cuda}
+
+mkdir -p "${WORKDIR}"
+cd "${WORKDIR}"
+
+if [ ! -d GRPO_TES ]; then
+  git clone "${REPO_URL}"
+fi
+cd GRPO_TES
+
+${PYTHON} -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip wheel setuptools
+
+python -m pip install --no-cache-dir \
+    "torch==2.9.0" \
+    "torchvision==0.24.0"
+
+if command -v nvcc >/dev/null 2>&1; then
+  CUDA_HOME=$(dirname "$(dirname "$(readlink -f "$(command -v nvcc)")")")
+else
+  CUDA_HOME=${CUDA_HOME_DEFAULT}
+fi
+export CUDA_HOME PATH="$CUDA_HOME/bin:$PATH" LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
+
+python -m pip install --no-cache-dir --no-build-isolation \
+    "flash-attn==2.6.3"
+
+python -m pip install --no-cache-dir --force-reinstall \
+    "transformers==4.56.2" \
+    "trl==0.22.2" \
+    "tokenizers==0.22.0"
+
+python -m pip install -r requirements.txt
+EOF
+
+bash ~/workspace/setup_grpo_tes.sh
+```
+
+### 1-2. 手動でステップを確認しながら進めたい場合
+
 ```bash
 mkdir -p ~/workspace && cd ~/workspace
 git --version || (sudo apt-get update && sudo apt-get install -y git)

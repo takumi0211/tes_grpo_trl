@@ -173,7 +173,7 @@ def main() -> None:
         model.generate(
             **model_inputs,
             streamer=streamer,
-            max_new_tokens=256,
+            max_new_tokens=5000,
             do_sample=True,
             temperature=0.8,
             top_p=0.9,
