@@ -62,25 +62,47 @@ python train_grpo.py
 
 進捗は別ターミナルで `python watch_metrics.py --metrics-csv metrics.csv` を回すとリアルタイム表示できます。
 
-## 6. CUDA 対応 PyTorch セットアップ（2025-10-20）
+## 6. 新規 CUDA 仮想環境フルセットアップ（2025-10-20）
 
-仮想環境を新しく作り直した直後に、GPU ビルドの PyTorch を導入して検証するための手順です。  
-（既に CPU ビルドが入っている環境を使い回す場合は、先に `python -m pip uninstall -y torch torchvision torchaudio` を実行してください。）
+仮想環境を完全に作り直したケース向けの再構築手順です。  
+（既存の `.venv` を消す場合は `rm -rf .venv` を実行してから以下に進んでください。）
 
 ```bash
 cd ~/workspace/GRPO_TES
+python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools
 ```
 
-CUDA 12.x 対応ホイールを公式インデックスからインストールします。ドライバ 570.148.08 (CUDA 12.8) で動作確認済みです。
+CUDA 12.x 対応の PyTorch / TorchVision / Torchaudio をインストールします。ホイールはドライバ 570.148.08 (CUDA 12.8) で動作確認済みです。
 
 ```bash
 python -m pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cu124 \
     torch torchvision torchaudio
 ```
 
-GPU が正しく認識されることを確認します。
+Unsloth デモと整合するバージョンを改めて導入します。
+
+```bash
+python -m pip install --no-cache-dir --force-reinstall \
+    "transformers==4.56.2" \
+    "trl==0.22.2" \
+    "tokenizers==0.22.0"
+```
+
+残りの依存関係をまとめて入れ直します。
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+必要に応じて Unsloth 本体をアップデートします。
+
+```bash
+python -m pip install --upgrade unsloth
+```
+
+CUDA を利用できるか確認します。
 
 ```bash
 python - <<'PYCODE'
@@ -91,13 +113,7 @@ print(torch.cuda.get_device_name())
 PYCODE
 ```
 
-Unsloth 側の依存更新が必要な場合は同時に実行します。
-
-```bash
-python -m pip install --upgrade unsloth
-```
-
-CUDA デバイスを明示して動作検証します。
+テストスクリプトで GPU を明示的に指定して動作確認します。
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python test.py
