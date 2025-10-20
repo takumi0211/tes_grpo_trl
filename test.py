@@ -5,15 +5,26 @@ Quick smoke test for unsloth/gpt-oss-20b 4-bit inference with streaming output.
 
 from __future__ import annotations
 
+import importlib.util
+import os
 import sys
 
 import torch
 import time
 
 
+def _configure_hf_download_stack() -> None:
+    """Harden Hugging Face downloads against flaky Xet CAS outages."""
+    os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
+    if importlib.util.find_spec("hf_transfer") is not None:
+        os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+
+
 def main() -> None:
     if not torch.cuda.is_available():
         raise SystemExit("A CUDA device is required to run unsloth/gpt-oss-20b.")
+
+    _configure_hf_download_stack()
 
     try:
         from unsloth import FastLanguageModel

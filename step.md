@@ -22,18 +22,15 @@ source .venv/bin/activate
 python -m pip install --upgrade pip wheel setuptools
 ```
 
-## 2. PyTorch / TorchVision / TorchAudio のインストール
+## 2. PyTorch / TorchVision のインストール
 
-Unsloth 2025.10 系は `torch>=2.2,<2.6` を前提とし、2.6 以降では拡張モジュールをロードできません。  
-CUDA 12.1 (H100) 環境で成功した組み合わせは以下の通りです。別バージョンの CUDA イメージを使う場合は [`docs.unsloth.ai`](https://docs.unsloth.ai/get-started/install-update/pip-install?utm_source=openai) の表に合わせて `cu118`/`cu124` などへ置き換えてください。
+Unsloth が内部で利用する `torchao` は `torch.int1` を前提にしており、`torch>=2.9.0` が必要です。  
+CUDA ランタイムは依存として自動取得されるため PyPI 本家からで問題ありません。
 
 ```bash
 python -m pip install --no-cache-dir \
-    --index-url https://download.pytorch.org/whl/cu121 \
-    "torch==2.5.1" \
-    "torchvision==0.20.1" \
-    "torchaudio==2.5.1" \
-    "torchao==0.13.0"
+    "torch==2.9.0" \
+    "torchvision==0.24.0"
 ```
 
 ## 3. Transformers / TRL / Tokenizers の固定
@@ -55,12 +52,7 @@ python -m pip install -r requirements.txt
 ```
 
 `requirements.txt` には Unsloth/Unsloth-Zoo の Git 依存を含むため、ここでビルドが入ります。  
-インストールログで `Skipping import of cpp extensions due to incompatible torch version` が出た場合は Step 2 のバージョン指定を再確認してください。  
-不安な場合は Unsloth の自動診断をその場で実行すると、環境に合わせた推奨コマンドが表示されます。
-
-```bash
-wget -qO- https://raw.githubusercontent.com/unslothai/unsloth/main/unsloth/_auto_install.py | python -
-```
+（この時点で `bitsandbytes==0.48.1`, `matplotlib==3.10.7` などが入ることを確認済み）
 
 ## 5. 学習実行
 
