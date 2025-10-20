@@ -12,8 +12,8 @@ import time
 
 
 def main() -> None:
-    if not torch.cuda.is_available() and not torch.backends.mps.is_available():
-        raise SystemExit("A CUDA or MPS device is required to run unsloth/gpt-oss-20b.")
+    if not torch.cuda.is_available():
+        raise SystemExit("A CUDA device is required to run unsloth/gpt-oss-20b.")
 
     try:
         from unsloth import FastLanguageModel
@@ -31,7 +31,7 @@ def main() -> None:
             "This script requires the `transformers` package. Install it with `pip install transformers`."
         ) from exc
 
-    device = "cuda" if torch.cuda.is_available() else "mps"
+    device = "cuda"
     model_name = "unsloth/gpt-oss-20b"
 
     model, tokenizer = FastLanguageModel.from_pretrained(
