@@ -110,6 +110,8 @@ class PromptRecord:
 
 
 def _safe_float(value: object) -> float:
+    # CSV に空文字や 'nan' が入っていた場合でも float() が例外なく扱えるようにしています。
+    # 文字列を通す時は str(value) → float() の順でキャストするのがポイントです。
     if isinstance(value, (int, float)):
         return float(value)
     return float(str(value))
@@ -126,6 +128,8 @@ def load_prompt_records(data_root: Path) -> list[PromptRecord]:
     for csv_path in csv_paths:
         df = pd.read_csv(csv_path)
         for _, row in df.iterrows():
+            # pandas.iterrows で 1 レコードずつ取り出し、Q 値やメタ情報を構造化します。
+            # CSV の列が文字列になるケースもあるため _safe_float を通しておくと安全です。
             q_values = [_safe_float(row[col]) for col in Q_VALUE_COLUMNS]
             prompt = to_chat_messages(str(row["prompt"]))
             metadata = {
@@ -153,6 +157,8 @@ def build_dataset(records: Sequence[PromptRecord]) -> Dataset:
     # 一緒に保持することで後段のロギングでも情報損失を避けています。
     dataset_dicts = []
     for rec in records:
+        # metadata_json として保存しておくと、分散ワーカーで json.loads するだけで辞書に戻せます。
+        # 解析時に pandas へ渡す場合も JSON カラムで扱えるので便利です。
         dataset_dicts.append(
             {
                 "prompt": rec.prompt,
@@ -374,6 +380,8 @@ def build_q_reward_fn(
                 reward_value = invalid_penalty
                 rewards.append(reward_value)
                 reward_sum += reward_value
+                # モデルが `[digit]` フォーマットを守れなかった場合は即ペナルティ。
+                # GRPO におけるフォーマット学習の初期段階ではここが大量に発生します。
             else:
                 # Q 値の最大値との差 (advantage) を使うので max_q を計算しておきます。
                 # reward_mode=softmax の時は advantage を温度付きで確率に変換します。
@@ -397,6 +405,8 @@ def build_q_reward_fn(
                 best_action = max(range(len(qs)), key=lambda i: qs[i])
                 if action == best_action:
                     acc_opt_count += 1
+                # acc_opt_count は最適アクションのヒット率を近似する指標で、reward_fn 内でカウントしておくと
+                # 追加の post-processing を書かなくても学習の収束具合が見えて便利です。
 
             if should_log:
                 generation_logger.log(
@@ -422,6 +432,8 @@ def build_q_reward_fn(
             acc_opt = acc_opt_count / parse_success if parse_success > 0 else 0.0
             avg_reward = reward_sum / total if total > 0 else None
             avg_regret = regret_sum / parse_success if parse_success > 0 else None
+            # metrics.csv には EMA 値のみを書き込み、バッチ平均は即座に捨てています。
+            # 生データが欲しい場合は generations.csv または wandb ログに集約してください。
             tracker.update(
                 trainer_state.global_step,
                 parse_rate,
@@ -478,6 +490,8 @@ def _inspect_lora_targets(model, target_modules: list[str], target_parameters: O
     """
     module_hits: dict[str, int] = {name: 0 for name in target_modules}
     for module_name, _ in model.named_modules():
+        # named_modules は階層構造をピリオド区切りで返すため、LoRA のターゲットとはサフィックス一致で比較します。
+        # 例: decoder.layers.7.self_attn.q_proj -> target "q_proj" にヒット。
         for target in target_modules:
             if module_name.endswith(target):
                 module_hits[target] += 1
@@ -486,6 +500,8 @@ def _inspect_lora_targets(model, target_modules: list[str], target_parameters: O
     if target_parameters:
         param_hits = {name: 0 for name in target_parameters}
         for param_name, _ in model.named_parameters():
+            # パラメータ名は ".weight" や ".bias" が付くので部分一致でチェックし、
+            # "7.mlp.experts.gate_up_proj.weight" のようなケースも取りこぼさないようにしています。
             for target in target_parameters:
                 if target in param_name:
                     param_hits[target] += 1
@@ -599,11 +615,18 @@ def prepare_model_and_tokenizer(args) -> tuple[torch.nn.Module, object]:
     module_hits, param_hits = _inspect_lora_targets(model, target_modules, target_parameters)
     missing_modules = [name for name, count in module_hits.items() if count == 0]
     if missing_modules:
+        # gate_up_proj などが 0 件の場合、モデル実装側で名称が異なる（例: gate_up_projs）可能性があります。
+        # その際は `python -m torchinfo` や `model.named_modules()` で実名を確認し、CLI から上書きしてください。
         print(f"[warn] No modules matched LoRA target suffixes: {', '.join(missing_modules)}")
     if target_parameters:
         missing_params = [name for name, count in param_hits.items() if count == 0]
         if missing_params:
+            # MoE の融合実装（MXFP4）では experts 配下の層名が変わる報告があるため、
+            # ここで警告が出たら Step2 ドキュメント記載のワンライナーで実際のパスを把握するのが確実です。
             print(f"[warn] No parameters matched LoRA target_parameters: {', '.join(missing_params)}")
+        else:
+            # すべての target_parameters がヒットした場合は安心して学習を進められるので、軽く成功ログを出します。
+            print(f"[info] LoRA target_parameters all matched: {len(target_parameters)} entries")
 
     lora_config = LoraConfig(
         r=args.lora_rank,
@@ -831,6 +854,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-steps", type=int, default=20, help="Maximum training steps.")
     parser.add_argument("--logging-steps", type=int, default=5, help="Logging interval (steps).")
     parser.add_argument("--save-steps", type=int, default=20, help="Checkpoint interval (steps).")
+    # 長期学習を行う場合は `--max-steps 200 --save-steps 50` のように変更してチェックポイントを増やすと良いです。
+    # logging_steps は metrics.csv の行数にも直結するので、蒸留段階では 1~2 ステップでも構いません。
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature.")
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p nucleus sampling.")
     parser.add_argument("--invalid-penalty", type=float, default=-0.5, help="Reward assigned to malformed outputs.")
@@ -966,6 +991,9 @@ def main() -> None:
     set_seed(args.seed)
 
     records = load_prompt_records(args.data_dir)
+    # Dataset.from_list は遅延ロードをサポートしないため、データ量が多い場合は
+    # 事前に `datasets.load_dataset("csv", data_files=...)` へ移行することも視野に入れてください。
+    # 今回は既存コードとの互換性を優先し、Python リスト → Dataset の方針にしています。
     dataset = build_dataset(records)
 
     metrics_path: Optional[Path]
@@ -981,6 +1009,8 @@ def main() -> None:
             f"[info] Streaming metrics to {metrics_path}. "
             f"Run watch_metrics.py --metrics-csv {metrics_path} for live plots."
         )
+        # watch_metrics.py は matplotlib を使う簡易ダッシュボードなので、
+        # トンネル越しで GUI が無い場合は `--backend Agg` で PNG 出力するなど工夫してください。
 
     generations_path: Optional[Path]
     if args.generations_csv and str(args.generations_csv).lower() not in {"", "none", "null"}:
@@ -992,6 +1022,8 @@ def main() -> None:
     generation_logger = GenerationLogger(generations_path) if generations_path else None
     if generations_path:
         print(f"[info] Streaming generated completions to {generations_path}.")
+        # generations.csv はステップごとの生 outputs を保存するため非常に大きなファイルになります。
+        # デバッグ以外では `--generations-csv none` にしてディスク使用量を抑えるのがおすすめです。
 
     if torch.cuda.is_available():
         device_count = torch.cuda.device_count()
@@ -1004,6 +1036,8 @@ def main() -> None:
             except ImportError:
                 print("[warn] flash-attn package not found. Install flash-attn for FlashAttention kernels on H100.")
         # CUDA がある場合は GPU 名を一覧表示。クラスタで複数 GPU を使う際の確認に便利です。
+        # Hopper/H100 で flash-attn>=3 が入っていれば FusedRotary まで有効になるので、このログだけでセットアップの
+        # 成否が一目で分かります。もし導入していなければ Step2 の手順 3 を再実行してください。
     elif torch.backends.mps.is_available():
         print("[info] Detected Apple Metal (MPS) backend.")
     elif hasattr(torch.backends, "hip") and torch.backends.hip.is_built():
@@ -1054,12 +1088,15 @@ def main() -> None:
                 resume_path = None
             else:
                 print(f"[info] Resuming from checkpoint: {resume_path}")
+        # TRL は resume_from_checkpoint を渡すと内部で TrainerState を復元しますが、LoRA の差し替えは
+        # 既に apply された状態で継続されます。チェックポイントに正しい adapters.json があるか確認しておきましょう。
 
     trainer.train(resume_from_checkpoint=resume_path)
     print("[info] Training complete.")
 
     save_on_rank_zero = getattr(trainer, "is_world_process_zero", None)
     should_save = save_on_rank_zero() if callable(save_on_rank_zero) else True
+    # rank0 判定は DDP/FSdp で全員が保存しないようにする保険です。単機 GPU なら常に True です。
 
     if should_save:
         args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -1071,6 +1108,8 @@ def main() -> None:
             trainer.model.save_pretrained(adapter_dir)
             tokenizer.save_pretrained(adapter_dir)
             print(f"[info] Saved LoRA adapter and tokenizer to {adapter_dir}")
+        else:
+            print("[info] Skipped LoRA adapter save as requested (use --skip-save-lora).")
 
         if not args.skip_save_merged:
             # merge_and_unload は LoRA を本体に統合した状態でモデルを戻してくれます。
@@ -1081,6 +1120,8 @@ def main() -> None:
             base_model.save_pretrained(merged_dir)
             tokenizer.save_pretrained(merged_dir)
             print(f"[info] Saved merged model to {merged_dir}")
+        else:
+            print("[info] Skipped merged model export (--skip-save-merged).")
 
 
 if __name__ == "__main__":
