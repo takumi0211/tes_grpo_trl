@@ -1,5 +1,5 @@
-dataset,timestep,tes_energy,tes_energy_normalized,is_business_hour,timestamp,prompt,optimal_action,q_action_0,q_action_1,q_action_2,q_action_3
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,8,150.0,0.5,1,2025-05-26T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+timestep,timestamp,prompt,optimal_action,q_action_0,q_action_1,q_action_2,q_action_3,reward_action_0,reward_action_1,reward_action_2,reward_action_3
+8,2025-05-26T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -51,8 +51,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-12.539360918979423,-12.5421386967572,-12.544916474534977,-12.547694252312755
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,9,100.5771596859764,0.3352571989532547,1,2025-05-26T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-12.539360918979424,-12.5421386967572,-12.544916474534975,-12.547694252312755,0.2605110774650668,0.2533742402809312,0.2464329204831948,0.239681761770807
+9,2025-05-26T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -104,8 +104,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-12.679302468745624,-12.630355129622933,-12.584858024301179,-12.545969135412289
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,10,160.0672817482055,0.5335576058273517,1,2025-05-26T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-12.679302468745624,-12.630355129622933,-12.58485802430118,-12.545969135412289,0.111154224331156,0.1813433211592518,0.2858202423060681,0.421682212203524
+10,2025-05-26T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -157,8 +157,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-11.366802468745624,-11.3345217962896,-11.305691357634512,-11.28346913541229
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,11,221.00963797938434,0.7366987932646144,1,2025-05-26T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-11.366802468745624,-11.3345217962896,-11.305691357634512,-11.28346913541229,0.1532695828679486,0.2116650505538571,0.2823957515918422,0.3526696149863519
+11,2025-05-26T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -210,8 +210,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-10.068527585646091,-10.029302468745623,-9.99352758564609,-9.964360918979423
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,12,281.7788659325433,0.939262886441811,1,2025-05-26T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-10.068527585646091,-10.029302468745623,-9.99352758564609,-9.964360918979423,0.1345669390212205,0.199200714527827,0.2848782121434438,0.3813541343075086
+12,2025-05-26T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -263,8 +263,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-8.689360918979425,-8.672694252312757,-8.764301355407836,-9.224023577630058
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,13,277.2734521546308,0.9242448405154359,1,2025-05-26T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-8.689360918979425,-8.672694252312757,-8.764301355407836,-9.224023577630058,0.3761133986214439,0.444325479879734,0.177769243728874,0.0017918777699481
+13,2025-05-26T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -316,8 +316,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.226524690967844,-8.258849340266442,-8.731071562488665
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,14,234.9213677166207,0.783071225722069,1,2025-05-26T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.226524690967844,-8.258849340266442,-8.731071562488665,0.382532661154766,0.3568692948300108,0.2583003618085271,0.002297682206696
+14,2025-05-26T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -369,8 +369,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.224083141201646,-8.247358024301178,-8.25741647453498
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,15,187.56708287689753,0.6252236095896584,1,2025-05-26T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.224083141201646,-8.247358024301178,-8.25741647453498,0.2942546279693705,0.281298540550944,0.222887619556223,0.2015592119234624
+15,2025-05-26T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -422,8 +422,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.234858024301179,-8.255691357634511,-8.276524690967845
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,16,142.41264594710142,0.4747088198236714,1,2025-05-26T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.234858024301179,-8.255691357634511,-8.276524690967845,0.3204037901899205,0.2750091216913013,0.2232899014241331,0.181297186694645
+16,2025-05-26T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -475,8 +475,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.26852758564609,-8.336246913190067,-8.390749807868314
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,17,100.58802409734497,0.33529341365781656,1,2025-05-26T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.26852758564609,-8.336246913190067,-8.390749807868314,0.4750793128469062,0.2911994341876169,0.1479412296356602,0.0857800233298165
+17,2025-05-26T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -528,8 +528,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.301524690967845,-8.389024690967846,-8.476524690967846
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,32,56.48578904402272,0.18828596348007573,1,2025-05-27T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.301524690967845,-8.389024690967846,-8.476524690967846,0.5879047738250728,0.2590757632339029,0.1079988459114354,0.0450206170295888
+32,2025-05-27T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -581,8 +581,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.255691357634511,-8.297358024301179,-8.339024690967845
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,33,12.980062392965642,0.04326687464321881,1,2025-05-27T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-8.219580246523401,-8.255691357634511,-8.297358024301179,-8.339024690967845,0.4066363781603845,0.2833855265603383,0.1868192531193198,0.1231588421599573
+33,2025-05-27T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -634,8 +634,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-40.09949237100103,-8.219580246523401,-8.225135802078956,-8.230691357634512
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,34,13.75795112362308,0.0458598370787436,1,2025-05-27T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-40.09949237100103,-8.219580246523401,-8.225135802078956,-8.230691357634512,1.241253065661383e-139,0.3520136677846923,0.3329906622255331,0.3149956699897747
+34,2025-05-27T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -687,8 +687,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-38.887990197320754,-7.815413579856734,-7.778249807868312,-7.754302468745623
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,35,81.10383701687212,0.27034612338957376,1,2025-05-27T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-38.887990197320754,-7.815413579856734,-7.778249807868312,-7.754302468745623,2.6350900525942524e-136,0.232959859849152,0.3378168495158727,0.4292232906349751
+35,2025-05-27T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -740,8 +740,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-6.4734106851784885,-6.454302468745623,-6.441802468745623,-6.429302468745623
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,36,143.328378442933,0.4777612614764433,1,2025-05-27T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-6.4734106851784885,-6.454302468745623,-6.441802468745623,-6.429302468745623,0.1946778849065471,0.2356690486900194,0.2670480179588265,0.3026050484446069
+36,2025-05-27T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -793,8 +793,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-5.117518901611355,-5.092855129622933,-5.074799574067377,-5.056744018511822
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,37,209.30988587129502,0.6976996195709834,1,2025-05-27T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-5.117518901611355,-5.092855129622933,-5.074799574067377,-5.056744018511822,0.1770238210688157,0.2265401123502275,0.2713684743426852,0.3250675922382715
+37,2025-05-27T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -846,8 +846,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.8098580243011786,-3.9609106851784888,-4.105355129622933
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,38,169.68524609333548,0.5656174869777849,1,2025-05-27T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.8098580243011786,-3.9609106851784888,-4.105355129622933,0.7139942196421029,0.2246929511553069,0.0496107825338643,0.0117020466687258
+38,2025-05-27T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -899,8 +899,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.831744018511822,-3.991466240734044,-4.1511884629562665
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,39,132.2900916193787,0.4409669720645957,1,2025-05-27T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.831744018511822,-3.991466240734044,-4.1511884629562665,0.7608076100323101,0.1923622886057449,0.038945307559939,0.0078847938020058
+39,2025-05-27T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -952,8 +952,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.8320802465234007,-4.0053551296229335,-4.1720217962896005
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,40,93.8914446610772,0.31297148220359067,1,2025-05-27T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.8320802465234007,-4.0053551296229335,-4.1720217962896005,0.7663087693116916,0.1931028409209087,0.0341401486164954,0.0064482411509045
+40,2025-05-27T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1005,8 +1005,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.8595217962895996,-4.0470217962896005,-4.2345217962896005
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,41,58.3346112331333,0.19444870411044435,1,2025-05-27T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.8595217962896,-4.0470217962896005,-4.2345217962896005,0.8160658295513495,0.1562906238402957,0.0239679434372016,0.0036756031711531
+41,2025-05-27T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1058,8 +1058,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.876524690967845,-4.094244018511822,-4.305355129622933
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,56,18.72583714323433,0.06241945714411443,1,2025-05-28T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,-3.694244018511822,-3.876524690967845,-4.094244018511822,-4.305355129622933,0.8459482899999493,0.136681241469985,0.0154940833981812,0.0018763851318844
+56,2025-05-28T08:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1111,8 +1111,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-49.92247426803284,-3.694244018511822,-3.7230744571669097,-3.738688462956267
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,57,5.5040623201750165,0.01834687440058339,1,2025-05-28T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",1,-49.92247426803284,-3.694244018511822,-3.7230744571669097,-3.738688462956267,7.1584559477433555e-202,0.4182851166936672,0.3135186697102192,0.2681962135961136
+57,2025-05-28T09:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1164,8 +1164,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",2,-67.37908697742202,-12.151309199644238,-3.344244018511822,-3.352577351845156
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,58,28.101650532804847,0.09367216844268282,1,2025-05-28T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",2,-67.37908697742202,-12.151309199644238,-3.344244018511822,-3.352577351845156,4.1390365271613656e-279,2.938262725650682e-39,0.520821285372744,0.479178714627256
+58,2025-05-28T10:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1217,8 +1217,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-29.42476176596668,-2.7743625889861043,-2.7095217962896,-2.6886884629562666
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,59,83.7907142998296,0.279302380999432,1,2025-05-28T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-29.42476176596668,-2.7743625889861043,-2.7095217962896,-2.688688462956266,3.444641392956265e-117,0.1898265902655522,0.3630421341487345,0.4471312755857133
+59,2025-05-28T11:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1270,8 +1270,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-1.9624782647821406,-1.89347080541897,-1.8178551296229333,-1.799463346055799
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,60,137.44895799011553,0.45816319330038513,1,2025-05-28T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-1.9624782647821408,-1.89347080541897,-1.8178551296229333,-1.799463346055799,0.0810006559432472,0.1615043127008408,0.3440161501206454,0.4134788812352665
+60,2025-05-28T12:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1323,8 +1323,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-1.0558700483492747,-0.99241814454166,-0.9223580243011787,-0.9095217962896001
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,61,195.73272821815462,0.6524424273938487,1,2025-05-28T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-1.055870048349275,-0.99241814454166,-0.9223580243011787,-0.9095217962896,0.0908467458945831,0.1713473895908182,0.3452587777305513,0.3925470867840472
+61,2025-05-28T13:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1376,8 +1376,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-0.151703381682608,-0.08964036676388215,-0.02096913541228984,-0.009521796289600037
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,62,253.04505774127006,0.8434835258042335,1,2025-05-28T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",3,-0.151703381682608,-0.0896403667638821,-0.0209691354122898,-0.0095217962896,0.0934485381316518,0.1738236083035873,0.3454173351798195,0.3873105183849413
+62,2025-05-28T14:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1429,8 +1429,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",2,0.8066299516507254,0.8506374110138957,0.8946448703770666,0.8461372996801174
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,63,275.56426971229996,0.9185475657076665,1,2025-05-28T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",2,0.8066299516507254,0.8506374110138957,0.8946448703770666,0.8461372996801174,0.1550730026556582,0.2408009321657991,0.3739212367008514,0.2302048284776911
+63,2025-05-28T15:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1482,8 +1482,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.5335337592659555,1.5272049906175473,1.514268005536274,1.2237859302746397
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,64,225.72626613083844,0.7524208871027948,1,2025-05-28T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.5335337592659557,1.527204990617547,1.514268005536274,1.2237859302746397,0.3560491866054735,0.334213897422767,0.2936566855072656,0.0160802304644938
+64,2025-05-28T16:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1535,8 +1535,8 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.5335337592659555,1.445260546173103,1.3503791166473853,1.2621059035545326
-dynamic_co2_factor_hourly_3day_0526_to_0528.csv,65,185.6878123277359,0.6189593744257864,1,2025-05-28T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.5335337592659557,1.445260546173103,1.3503791166473853,1.2621059035545326,0.6097302055130526,0.2522156416330793,0.097657860143096,0.040396292710772
+65,2025-05-28T17:00:00,"system: You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
 system: Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
 user: Objective:
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
@@ -1588,4 +1588,4 @@ Decision requirements:
 - Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.5401419756988213,1.382919753476599,1.2256975312543767,1.0684753090321542
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).",0,1.5401419756988213,1.382919753476599,1.2256975312543767,1.0684753090321542,0.7938907407015139,0.1647985177808915,0.0342094321931258,0.0071013093244687
