@@ -19,13 +19,18 @@ PENALTY = -0.5
 
 
 # プロンプトデータセットを読み込む関数
-def load_prompt_dataset(data_dir: str = "data") -> Dataset:
-    # 指定ディレクトリ内のCSVファイルをソートして取得
-    files = sorted(glob(os.path.join(data_dir, "*.csv")))
-    # CSVファイルが見つからない場合にエラーを発生
+def load_prompt_dataset(data_dir: str = "data", harmony_only: bool = True) -> Dataset:
+    """Load all CSV prompts (defaults to Harmony-formatted files)."""
+
+    def _list(pattern):
+        return sorted(glob(os.path.join(data_dir, pattern)))
+
+    files = _list("*_harmony.csv") if harmony_only else _list("*.csv")
+    if not files and harmony_only:
+        # Harmony変換前の環境でも動くようにフォールバック
+        files = _list("*.csv")
     if not files:
         raise FileNotFoundError(f"No CSV files found in {data_dir}")
-    # CSVファイルを読み込んでデータセットを作成 (train split)
     return load_dataset("csv", data_files=files, split="train")
 
 
