@@ -11,7 +11,7 @@ MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 100
-PROMPTS_PER_STEP = 16
+PROMPTS_PER_STEP = 12
 NUM_GENERATIONS = 8
 MAX_PROMPT_LEN = 1000
 MAX_COMPLETION_LEN = 4000 
@@ -88,10 +88,10 @@ args = GRPOConfig(
     # vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
     vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
 
-    # 「1ステップ=16プロンプト×各8生成」を担保
+    # 「1ステップ=12プロンプト×各8生成」を担保
     num_generations=NUM_GENERATIONS,
-    generation_batch_size=PROMPTS_PER_STEP * NUM_GENERATIONS,  # 16 prompts * 8 generations
-    per_device_train_batch_size=16,    # 16
+    generation_batch_size=PROMPTS_PER_STEP * NUM_GENERATIONS,  # 12 prompts * 8 generations
+    per_device_train_batch_size=PROMPTS_PER_STEP,    # 12
     gradient_accumulation_steps=1,     # 1
     
     # 長さまわり
@@ -105,7 +105,7 @@ trainer = GRPOTrainer(
     processing_class=tok,   # 現行API名（左パディング必須）
     args=args,
     reward_funcs=reward_fn,
-    train_dataset=stream,   # ← 毎ステップ16件だけ供給
+    train_dataset=stream,   # ← 毎ステップ12件だけ供給
 )
 trainer.train()
 
