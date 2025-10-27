@@ -86,6 +86,7 @@ args = GRPOConfig(
     use_vllm=True,
     vllm_mode="colocate",
     vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
+    vllm_kv_cache_dtype="fp8",
     vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
 
     # 「1ステップ=12プロンプト×各8生成」を担保
