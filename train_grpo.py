@@ -8,7 +8,7 @@ from data_reward import load_prompt_dataset, reward_fn
 import os, random
 
 MODEL_ID = "openai/gpt-oss-20b"
-OUT = "runs/grpo_gptoss20b_lora4_colocate"
+OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 100
 PROMPTS_PER_STEP = 16
@@ -50,8 +50,7 @@ lora = LoraConfig(
 )
 model = get_peft_model(model, lora)
 
-# ----------------- Dataset (あなたのデータローダ) -----------------
-# 必須: load_prompt_dataset() は "prompt" 列（と報酬用の追加列）を返す想定
+# ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
 random.seed(SEED)
 
@@ -86,13 +85,16 @@ args = GRPOConfig(
     # 生成エンジン（vLLM）
     use_vllm=True,
     vllm_mode="colocate",
-    vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
-    # vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
+    # vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
+    vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
 
     # 「1ステップ=16プロンプト×各8生成」を担保
     num_generations=NUM_GENERATIONS,
+    generation_batch_size=PROMPTS_PER_STEP * NUM_GENERATIONS,  # 16 prompts * 8 generations
     per_device_train_batch_size=16,    # 16
     gradient_accumulation_steps=1,     # 1
+    
+    # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
     max_completion_length=MAX_COMPLETION_LEN,
 )
