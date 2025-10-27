@@ -15,7 +15,7 @@
 - TRL (GRPO): 0.23.1（vLLMコロケート対応の安定版）
 - vLLM: 0.10.2（colocate利用; GPT‑OSS用の 0.10.1+gptoss でも可）
 - PEFT: 0.17.1 以上（`target_modules="all-linear"`, `target_parameters` を使用）
-- 追加: `kernels`（TransformersのMXFP4カーネル依存）, `triton>=3.4`（MXFP4用 Triton; PyTorch 2.8 では同梱・互換、2.7 系は明示導入推奨）, `datasets`, `pandas`, `accelerate`
+- 追加: `triton>=3.4`（MXFP4用 Triton; PyTorch 2.8 では同梱・互換、2.7 系は明示導入推奨）, `datasets`, `pandas`, `accelerate`, `huggingface_hub>=0.25`
 
 注:
 - 本スクリプトは `Mxfp4Config(dequantize=True)` を用いて MXFP4 から BF16 にデクオンした上で LoRA 学習します。MXFP4 での後方伝播カーネルは現状不要です。
@@ -88,7 +88,7 @@ uv pip install \
   "peft>=0.17.1" \
   "accelerate>=1.10.0" \
   datasets pandas \
-  kernels \
+  "huggingface_hub>=0.25" \
   "triton>=3.4"
 
 # もし torch が未導入の場合（vLLM 同梱解決が失敗した環境向け）
@@ -97,9 +97,27 @@ uv pip install \
 ```
 
 補足:
-- `kernels` は Transformers の MXFP4 実装が参照する Triton カーネル（`kernels-community/triton_kernels`）のローダです。`hf cache scan` に `kernels-community/triton_kernels` が出現すれば取得済みです。
+- MXFP4 の Triton カーネル（`kernels-community/triton_kernels`）は Transformers が初回実行時に自動で HF Cache へ取得します。手動で「kernels」パッケージを入れる必要はありません。
 - `triton>=3.4` は MXFP4 カーネル実行に必要です。PyTorch 2.8 では同梱されていますが、明示導入しておくと環境差での欠落を避けられます（2.7 系では必須）。
 - 既存の CUDA Toolkit のインストールは不要です（ホイールにバイナリ同梱）。必要なのは十分に新しい NVIDIA Driver です。
+
+### MXFP4 カーネルのキャッシュ確認（任意）
+初回実行後に、下記のいずれかで HF Cache に `kernels-community/triton_kernels` が入っていることを確認できます。
+
+```
+# 新CLI
+hf cache scan | grep -F "kernels-community/triton_kernels" || true
+
+# 代替: Python から確認
+python - << 'PY'
+from huggingface_hub import scan_cache_dir
+import os
+cache_dir = os.path.expanduser(os.getenv("HF_HOME", "~/.cache/huggingface")) + "/hub"
+info = scan_cache_dir(cache_dir)
+found = any("kernels-community/triton_kernels" in r.repo_id for r in info.repos)
+print("kernels-community/triton_kernels cached:", found)
+PY
+```
 
 ---
 
@@ -151,7 +169,7 @@ python train_grpo.py
 - vRAM 不足: `GRPOConfig.vllm_gpu_memory_utilization` を下げる、`MAX_COMPLETION_LEN` を短くする、`NUM_GENERATIONS` を減らす。
 - CUDA/ドライバ不整合: `nvidia-smi` のドライバが 570 未満なら更新（DC GPU で互換パッケージ運用の例外はあるが、基本は 570+）。PyTorch を `cu128` ホイールで再インストール。
 - vLLM が起動できない: `pip freeze | grep vllm` で 0.10.2 であること、`torch` が 2.8.0 であることを確認。
-- ImportError: MXFP4 関連で `kernels`/`triton` が未インストールだとロードで失敗します。`uv pip install kernels "triton>=3.4"` を追加実行。
+- ImportError: MXFP4 関連で `triton` が未導入だと失敗します。`uv pip install "triton>=3.4"` を追加実行し、初回実行で自動的に `kernels-community/triton_kernels` がキャッシュされることを確認してください。
 
 ---
 
