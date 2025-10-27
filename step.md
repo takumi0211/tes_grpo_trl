@@ -132,17 +132,6 @@ cd tes_grpo_trl
 
 ---
 
-## 4. データの前処理（Harmony 変換, 1–3分）
-
-`data/*.csv` がある前提です。プロンプト列を Harmony 形式に変換します。
-
-```
-python convert_to_harmony.py data --overwrite
-```
-
-出力は `*_harmony.csv` として `data/` 内に生成されます。`data_reward.py` は Harmony 形式を優先して自動検出します。
-
----
 
 ## 5. 実行（学習の開始）
 
