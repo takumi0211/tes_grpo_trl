@@ -9,17 +9,18 @@
 ## 対応バージョンまとめ（検証済み）
 
 - Python: 3.11 または 3.12
-- NVIDIA Driver: 550+ を推奨（CUDA 12.8 系ホイールに対応）
+- NVIDIA Driver: 570+ を推奨（CUDA 12.8 の公式要件。DC GPUは互換パッケージで R470/R525/R535/R545 も可だが推奨は570+）
 - PyTorch: 2.8.0（CUDA 12.8ビルド）
 - Transformers: 4.57.1 以上（`Mxfp4Config` 利用のため）
 - TRL (GRPO): 0.23.1（vLLMコロケート対応の安定版）
 - vLLM: 0.10.2（colocate利用; GPT‑OSS用の 0.10.1+gptoss でも可）
 - PEFT: 0.17.1 以上（`target_modules="all-linear"`, `target_parameters` を使用）
-- 追加: `kernels`（TransformersのMXFP4カーネル依存）, `datasets`, `pandas`, `accelerate`
+- 追加: `kernels`（TransformersのMXFP4カーネル依存）, `triton>=3.4`（MXFP4用 Triton; PyTorch 2.8 では同梱・互換、2.7 系は明示導入推奨）, `datasets`, `pandas`, `accelerate`
 
 注:
 - 本スクリプトは `Mxfp4Config(dequantize=True)` を用いて MXFP4 から BF16 にデクオンした上で LoRA 学習します。MXFP4 での後方伝播カーネルは現状不要です。
 - `openai/gpt-oss-20b` の推論は vLLM をコロケート起動で使用します（TRLが内部で起動・停止）。
+ - MXFP4 利用時のハード前提: Compute Capability 7.5 以上（T4/以降, Ampere/Ada/Hopper/Blackwell 等）
 
 ---
 
@@ -37,7 +38,15 @@ sudo apt-get install -y git git-lfs curl build-essential python3-distutils
 git lfs install
 ```
 
-表示例: ドライバ 550.x 以上、CUDA 12.x ランタイムが読み取れればOKです。
+表示例: ドライバ 570.x 以上、CUDA 12.8 ランタイムが読み取れればOKです。データセンターGPUでは互換パッケージにより R470/R525/R535/R545 でも動作可ですが、トラブル回避のため 570+ を推奨します。
+（確認）
+```
+nvidia-smi | head -n 3
+python - << 'PY'
+from torch import cuda
+print('compute capability:', cuda.get_device_capability())
+PY
+```
 
 ---
 
@@ -79,7 +88,8 @@ uv pip install \
   "peft>=0.17.1" \
   "accelerate>=1.10.0" \
   datasets pandas \
-  kernels
+  kernels \
+  "triton>=3.4"
 
 # もし torch が未導入の場合（vLLM 同梱解決が失敗した環境向け）
 # CUDA 12.8 の公式ホイールからインストール
@@ -87,7 +97,8 @@ uv pip install \
 ```
 
 補足:
-- `kernels` は Transformers の MXFP4 実装が参照する Triton カーネル（`kernels-community/triton_kernels`）のパッケージ名です。
+- `kernels` は Transformers の MXFP4 実装が参照する Triton カーネル（`kernels-community/triton_kernels`）のローダです。`hf cache scan` に `kernels-community/triton_kernels` が出現すれば取得済みです。
+- `triton>=3.4` は MXFP4 カーネル実行に必要です。PyTorch 2.8 では同梱されていますが、明示導入しておくと環境差での欠落を避けられます（2.7 系では必須）。
 - 既存の CUDA Toolkit のインストールは不要です（ホイールにバイナリ同梱）。必要なのは十分に新しい NVIDIA Driver です。
 
 ---
@@ -138,9 +149,9 @@ python train_grpo.py
 ## 6. うまくいかない時のチェック
 
 - vRAM 不足: `GRPOConfig.vllm_gpu_memory_utilization` を下げる、`MAX_COMPLETION_LEN` を短くする、`NUM_GENERATIONS` を減らす。
-- CUDA/ドライバ不整合: `nvidia-smi` のドライバが古い場合は 550+ へ更新。PyTorch を `cu128` ホイールで再インストール。
+- CUDA/ドライバ不整合: `nvidia-smi` のドライバが 570 未満なら更新（DC GPU で互換パッケージ運用の例外はあるが、基本は 570+）。PyTorch を `cu128` ホイールで再インストール。
 - vLLM が起動できない: `pip freeze | grep vllm` で 0.10.2 であること、`torch` が 2.8.0 であることを確認。
-- ImportError: `kernels` が未インストールだと MXFP4 のロードで失敗することがあります。`uv pip install kernels` を追加実行。
+- ImportError: MXFP4 関連で `kernels`/`triton` が未インストールだとロードで失敗します。`uv pip install kernels "triton>=3.4"` を追加実行。
 
 ---
 
@@ -161,3 +172,8 @@ uv pip freeze > requirements.txt
 - GPT‑OSS 20B は MXFP4 での軽量ロードを公式にサポートし、学習時は BF16 へデクオンして LoRA を当てる構成が推奨です。
 - TRL の GRPO は vLLM の生成エンジンをコロケート起動でき、`sleep mode` により生成⇄学習の切替で VRAM を解放できます。
 
+参考URL:
+- CUDA 12.8/ドライバ 570+ 要件（互換パッケージの例外含む）: https://docs.nvidia.com/deeplearning/frameworks/support-matrix/index.html#pytorch
+- CUDA 12.8 リリースノート（最小ドライバ例: Linux 570.124.06）: https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/cuda-toolkit-12-8-0/index.html
+- MXFP4 の前提（Accelerate, kernels, Triton≥3.4 と Compute Capability 7.5+）: https://huggingface.co/docs/transformers/main/en/quantization/mxfp4
+- vLLM（CUDA 12.8 をデフォルトにビルド）: https://docs.vllm.ai/en/latest/getting_started/installation/cuda.html
