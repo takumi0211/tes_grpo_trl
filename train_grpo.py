@@ -83,7 +83,15 @@ class StepStream(IterableDataset):
             idxs = random.sample(range(self.n), self.k)
             for i in idxs:
                 row = self.base[i]
-                sample = {k: row[k] for k in self.keys}
+                sample = {}
+                for key in self.keys:
+                    value = row[key]
+                    if key == "prompt":
+                        sample[key] = value
+                    else:
+                        sample[key] = torch.atleast_1d(
+                            torch.tensor(value, dtype=torch.float32)
+                        )
                 yield sample
 
 stream = StepStream(base, k=PROMPTS_PER_STEP)
