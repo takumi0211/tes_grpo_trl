@@ -55,19 +55,36 @@ base = load_prompt_dataset()
 random.seed(SEED)
 
 class StepStream(IterableDataset):
-    """毎ステップちょうどk件のプロンプトをランダム抽出して流すストリーム"""
+    """毎ステップちょうどk件のプロンプトをランダム抽出して流すストリーム
+
+    注意: HF/Accelerate はワーカー間でバッチを結合するとき、
+    末端の型が PyTorch Tensor でないと `concatenate` で失敗します。
+    そのため学習に不要な列（例: `timestep`, `timestamp`, `optimal_action`,
+    `q_action_*` などのメタ情報）は落とし、報酬に使う列のみ通します。
+    """
+
+    KEEP_KEYS = {
+        "prompt",
+        "reward_action_0",
+        "reward_action_1",
+        "reward_action_2",
+        "reward_action_3",
+    }
+
     def __init__(self, base_ds, k):
         self.base = base_ds
         self.k = k
         self.n = len(base_ds)
-        self.keys = list(base_ds.features.keys())
+        # データセットに実際に存在するキーとの積集合を使う
+        self.keys = [k for k in self.KEEP_KEYS if k in base_ds.features]
 
     def __iter__(self):
         while True:
-            idxs = random.sample(range(self.n), self.k)  # 重複なしで16件
+            idxs = random.sample(range(self.n), self.k)
             for i in idxs:
                 row = self.base[i]
-                yield {k: row[k] for k in self.keys}
+                sample = {k: row[k] for k in self.keys}
+                yield sample
 
 stream = StepStream(base, k=PROMPTS_PER_STEP)
 
@@ -86,7 +103,7 @@ args = GRPOConfig(
     use_vllm=True,
     vllm_mode="colocate",
     vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
-    vllm_kv_cache_dtype="fp8",
+    # vllm_kv_cache_dtype="fp8",
     vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
 
     # 「1ステップ=12プロンプト×各8生成」を担保

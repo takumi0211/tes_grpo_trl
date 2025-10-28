@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "delete kernels from step.md"
+git commit -m "change StepStream"
 git push origin main
