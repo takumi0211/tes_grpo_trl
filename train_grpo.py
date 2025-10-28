@@ -35,8 +35,8 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto",
 )
 
-# --- LoRA r=4（一般的な対象） ---
-# LoRA: MoE MLP を確実に含めるために全層を自動列挙（例）
+# --- LoRA r=4 ---
+# LoRA: MoE MLP を確実に含めるために全層を自動列挙
 expert_params = []
 for name, module in model.named_modules():
     if "mlp.experts" in name and (name.endswith("gate_up_proj") or name.endswith("down_proj")):
@@ -46,7 +46,7 @@ lora = LoraConfig(
     r=4, lora_alpha=8,
     target_modules="all-linear",
     target_parameters=expert_params,      # ← 固定列挙から自動列挙に
-    task_type="CAUSAL_LM",                # Enum でも可
+    task_type="CAUSAL_LM",            
 )
 model = get_peft_model(model, lora)
 
