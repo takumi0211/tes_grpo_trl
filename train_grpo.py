@@ -14,9 +14,10 @@ TOTAL_STEPS = 10
 PROMPTS_PER_STEP = 1          # distinct prompts sampled per micro-step
 NUM_GENERATIONS = 4           # completions sampled per prompt
 GRADIENT_ACCUMULATION_STEPS = 4
-TRAIN_BATCH_SIZE = NUM_GENERATIONS  # micro-batch = one prompt worth of completions
+TRAIN_BATCH_SIZE = NUM_GENERATIONS/2  # unique prompts per device per micro-step
+GENERATION_BATCH_SIZE = PROMPTS_PER_STEP * NUM_GENERATIONS
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 3000
+MAX_COMPLETION_LEN = 4000
 SEED = 42
 
 # --- Logging setup ---
@@ -99,7 +100,8 @@ base = load_prompt_dataset()
 random.seed(SEED)
 
 class StepStream(IterableDataset):
-    """毎ステップちょうどk件のプロンプトをランダム抽出して流すストリーム
+    """毎ステップちょうどk件のプロンプトをランダム抽出し、num_generations 分だけ複製した
+    マイクロバッチを返すストリーム。各イテレーションで `num_generations` 件の dict をまとめて返す。
 
     注意: HF/Accelerate はワーカー間でバッチを結合するとき、
     末端の型が PyTorch Tensor でないと `concatenate` で失敗します。
@@ -140,11 +142,30 @@ class StepStream(IterableDataset):
                         sample[key] = torch.atleast_1d(
                             torch.tensor(value, dtype=torch.float32)
                         )
+                micro_batch = []
                 for _ in range(self.num_generations):
-                    yield {
-                        key: (value.clone() if isinstance(value, torch.Tensor) else value)
-                        for key, value in sample.items()
-                    }
+                    micro_batch.append(
+                        {
+                            key: (value.clone() if isinstance(value, torch.Tensor) else value)
+                            for key, value in sample.items()
+                        }
+                    )
+                yield micro_batch
+
+def _microbatch_collate(batch):
+    """IterableDataset から返されるマイクロバッチ(list[dict])をそのまま渡すための
+    シンプルなコレータ。batch_size=1想定だが、安全のためフラット化も行う。"""
+    if not batch:
+        return batch
+    if len(batch) == 1:
+        return batch[0]
+    flattened = []
+    for item in batch:
+        if isinstance(item, list):
+            flattened.extend(item)
+        else:
+            flattened.append(item)
+    return flattened
 
 stream = StepStream(base, k=PROMPTS_PER_STEP, num_generations=NUM_GENERATIONS)
 logger.info(
@@ -177,7 +198,7 @@ args = GRPOConfig(
 
     # 各マイクロステップで 1 プロンプト × 4 completion を生成
     num_generations=NUM_GENERATIONS,
-    generation_batch_size=TRAIN_BATCH_SIZE,
+    generation_batch_size=GENERATION_BATCH_SIZE,
     per_device_train_batch_size=TRAIN_BATCH_SIZE,
     gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
     
@@ -188,8 +209,8 @@ args = GRPOConfig(
         "use_cache": True,
     },
 )
-micro_batch_completions = TRAIN_BATCH_SIZE
-total_completions_per_update = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
+micro_batch_completions = NUM_GENERATIONS * PROMPTS_PER_STEP
+total_completions_per_update = micro_batch_completions * GRADIENT_ACCUMULATION_STEPS
 split_batches_flag = getattr(args.accelerator_config, "split_batches", None)
 logger.info(
     "Generation config | num_generations=%d | generation_batch_size=%s | per_device_train_batch_size=%d | "
@@ -211,6 +232,7 @@ trainer = GRPOTrainer(
     reward_funcs=reward_fn,
     train_dataset=stream,   # ← 各マイクロステップで 4 completion（1 prompt × 4）を供給
 )
+trainer.data_collator = _microbatch_collate
 logger.info("Starting training | total_steps=%d | output_dir=%s", TOTAL_STEPS, OUT)
 trainer.train()
 
