@@ -134,6 +134,7 @@ args = GRPOConfig(
     gradient_checkpointing=True,
     seed=SEED,
     accelerator_config={"split_batches": True},
+    logging_steps=1,
 
     # 生成エンジン（vLLM）
     use_vllm=False,
