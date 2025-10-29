@@ -11,8 +11,10 @@ MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
-PROMPTS_PER_STEP = 4
-NUM_GENERATIONS = 4
+PROMPTS_PER_STEP = 1          # distinct prompts sampled per micro-step
+NUM_GENERATIONS = 4           # completions sampled per prompt
+GRADIENT_ACCUMULATION_STEPS = 4
+TRAIN_BATCH_SIZE = NUM_GENERATIONS  # micro-batch = one prompt worth of completions
 MAX_PROMPT_LEN = 1000
 MAX_COMPLETION_LEN = 2500
 SEED = 42
@@ -68,6 +70,30 @@ lora = LoraConfig(
 )
 model = get_peft_model(model, lora)
 
+# --- Inspect LoRA layers being trained ---
+logger.info(
+    "LoRA target parameters enumerated (%d): %s",
+    len(expert_params),
+    expert_params if expert_params else "all linear layers",
+)
+trainable_lora_params = [
+    f"{name} shape={tuple(param.shape)}"
+    for name, param in model.named_parameters()
+    if param.requires_grad and "lora" in name.lower()
+]
+if trainable_lora_params:
+    preview = trainable_lora_params[:20]
+    remainder = len(trainable_lora_params) - len(preview)
+    suffix = f" ... (+{remainder} more)" if remainder > 0 else ""
+    logger.info(
+        "Trainable LoRA parameters (%d): %s%s",
+        len(trainable_lora_params),
+        preview,
+        suffix,
+    )
+else:
+    logger.warning("No LoRA parameters detected as trainable.")
+
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
 random.seed(SEED)
@@ -89,10 +115,11 @@ class StepStream(IterableDataset):
         "prompt",
     )
 
-    def __init__(self, base_ds, k):
+    def __init__(self, base_ds, k, num_generations):
         self.base = base_ds
         self.k = k
         self.n = len(base_ds)
+        self.num_generations = num_generations
         # データセットに実際に存在するキーとの積集合を使う
         dense_keys = [k for k in self.KEEP_KEYS if k in base_ds.features and k != "prompt"]
         if "prompt" in base_ds.features:
@@ -113,12 +140,17 @@ class StepStream(IterableDataset):
                         sample[key] = torch.atleast_1d(
                             torch.tensor(value, dtype=torch.float32)
                         )
-                yield sample
+                for _ in range(self.num_generations):
+                    yield {
+                        key: (value.clone() if isinstance(value, torch.Tensor) else value)
+                        for key, value in sample.items()
+                    }
 
-stream = StepStream(base, k=PROMPTS_PER_STEP)
+stream = StepStream(base, k=PROMPTS_PER_STEP, num_generations=NUM_GENERATIONS)
 logger.info(
-    "StepStream configured | prompts_per_step=%d | dataset_rows=%d | keep_keys=%s",
+    "StepStream configured | prompts_per_micro_step=%d | num_generations=%d | dataset_rows=%d | keep_keys=%s",
     PROMPTS_PER_STEP,
+    NUM_GENERATIONS,
     len(base),
     stream.keys,
 )
@@ -143,26 +175,32 @@ args = GRPOConfig(
     # # vllm_kv_cache_dtype="fp8",
     # vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
 
-    # 「1ステップ=12プロンプト×各8生成」を担保
+    # 各マイクロステップで 1 プロンプト × 4 completion を生成
     num_generations=NUM_GENERATIONS,
-    generation_batch_size=PROMPTS_PER_STEP,  # 12 prompts
-    per_device_train_batch_size=PROMPTS_PER_STEP,    # 12
-    gradient_accumulation_steps=1,     # 1
+    generation_batch_size=TRAIN_BATCH_SIZE,
+    per_device_train_batch_size=TRAIN_BATCH_SIZE,
+    gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
     
     # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
     max_completion_length=MAX_COMPLETION_LEN,
+    generation_kwargs={
+        "use_cache": True,
+    },
 )
-total_completions_per_step = PROMPTS_PER_STEP * NUM_GENERATIONS
+micro_batch_completions = TRAIN_BATCH_SIZE
+total_completions_per_update = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
 split_batches_flag = getattr(args.accelerator_config, "split_batches", None)
 logger.info(
     "Generation config | num_generations=%d | generation_batch_size=%s | per_device_train_batch_size=%d | "
-    "split_batches=%s | total_completions_per_step=%d",
+    "grad_accum=%d | split_batches=%s | completions_per_micro_step=%d | completions_per_update=%d",
     NUM_GENERATIONS,
     args.generation_batch_size,
     args.per_device_train_batch_size,
+    GRADIENT_ACCUMULATION_STEPS,
     split_batches_flag,
-    total_completions_per_step,
+    micro_batch_completions,
+    total_completions_per_update,
 )
 
 # 実行
@@ -171,7 +209,7 @@ trainer = GRPOTrainer(
     processing_class=tok,   # 現行API名（左パディング必須）
     args=args,
     reward_funcs=reward_fn,
-    train_dataset=stream,   # ← 毎ステップ12件だけ供給
+    train_dataset=stream,   # ← 各マイクロステップで 4 completion（1 prompt × 4）を供給
 )
 logger.info("Starting training | total_steps=%d | output_dir=%s", TOTAL_STEPS, OUT)
 trainer.train()
