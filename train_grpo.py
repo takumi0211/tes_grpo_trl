@@ -13,10 +13,10 @@ OUT = "runs/grpo_gptoss20b_lora4_tes"
 TOTAL_STEPS = 10
 PROMPTS_PER_STEP = 1          # distinct prompts sampled per micro-step
 NUM_GENERATIONS = 4           # completions sampled per prompt
-GRADIENT_ACCUMULATION_STEPS = 4
+GRADIENT_ACCUMULATION_STEPS = 3
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # micro-batch = one prompt worth of completions
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 2500
+MAX_COMPLETION_LEN = 3000
 SEED = 42
 
 # --- Logging setup ---
