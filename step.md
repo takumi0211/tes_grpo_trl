@@ -24,32 +24,6 @@
 
 ---
 
-## 0. システム前提の確認（5分）
-
-以下は Ubuntu 22.04/24.04 相当を想定しています。
-
-```
-# GPUとドライバの確認
-nvidia-smi
-
-# 便利ツール（入っていなければ）
-sudo apt-get update -y
-sudo apt-get install -y git git-lfs curl build-essential python3-distutils
-git lfs install
-```
-
-表示例: ドライバ 570.x 以上、CUDA 12.8 ランタイムが読み取れればOKです。データセンターGPUでは互換パッケージにより R470/R525/R535/R545 でも動作可ですが、トラブル回避のため 570+ を推奨します。
-（確認）
-```
-nvidia-smi | head -n 3
-python - << 'PY'
-from torch import cuda
-print('compute capability:', cuda.get_device_capability())
-PY
-```
-
----
-
 ## 1. Python 環境の用意（uv 推奨, 3分）
 
 uv は高速なパッケージ管理ツールです。未導入ならインストールします。
@@ -96,29 +70,6 @@ uv pip install \
 # uv pip install --index-url https://download.pytorch.org/whl/cu128 "torch==2.8.0" "torchvision==0.19.0" "torchaudio==2.8.0"
 ```
 
-補足:
-- MXFP4 の Triton カーネル（`kernels-community/triton_kernels`）は Transformers が初回実行時に自動で HF Cache へ取得します。手動で「kernels」パッケージを入れる必要はありません。
-- `triton>=3.4` は MXFP4 カーネル実行に必要です。PyTorch 2.8 では同梱されていますが、明示導入しておくと環境差での欠落を避けられます（2.7 系では必須）。
-- 既存の CUDA Toolkit のインストールは不要です（ホイールにバイナリ同梱）。必要なのは十分に新しい NVIDIA Driver です。
-
-### MXFP4 カーネルのキャッシュ確認（任意）
-初回実行後に、下記のいずれかで HF Cache に `kernels-community/triton_kernels` が入っていることを確認できます。
-
-```
-# 新CLI
-hf cache scan | grep -F "kernels-community/triton_kernels" || true
-
-# 代替: Python から確認
-python - << 'PY'
-from huggingface_hub import scan_cache_dir
-import os
-cache_dir = os.path.expanduser(os.getenv("HF_HOME", "~/.cache/huggingface")) + "/hub"
-info = scan_cache_dir(cache_dir)
-found = any("kernels-community/triton_kernels" in r.repo_id for r in info.repos)
-print("kernels-community/triton_kernels cached:", found)
-PY
-```
-
 ---
 
 ## 3. リポジトリの取得（1分）
@@ -136,10 +87,6 @@ cd tes_grpo_trl
 ## 5. 実行（学習の開始）
 
 ```
-# 省メモリ・ノイズ抑制の環境変数（任意）
-export TOKENIZERS_PARALLELISM=false
-export HF_HUB_ENABLE_HF_TRANSFER=1
-
 # 学習を開始
 python train_grpo.py
 ```

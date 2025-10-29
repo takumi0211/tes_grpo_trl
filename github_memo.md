@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "add logging and narrow doen the number"
+git commit -m "change step.md"
 git push origin main
