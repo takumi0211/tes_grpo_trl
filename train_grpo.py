@@ -108,15 +108,16 @@ args = GRPOConfig(
     seed=SEED,
 
     # 生成エンジン（vLLM）
-    use_vllm=True,
-    vllm_mode="colocate",
-    vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
-    # vllm_kv_cache_dtype="fp8",
-    vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
+    use_vllm=False,
+    # vllm_mode="colocate",
+    # vllm_gpu_memory_utilization=0.35,  # 学習と取り合わないよう枠を抑える
+    # # vllm_kv_cache_dtype="fp8",
+    # vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
 
     # 「1ステップ=12プロンプト×各8生成」を担保
     num_generations=NUM_GENERATIONS,
-    generation_batch_size=PROMPTS_PER_STEP * NUM_GENERATIONS,  # 12 prompts * 8 generations
+    # generation_batch_size=PROMPTS_PER_STEP * NUM_GENERATIONS,  # 12 prompts * 8 generations
+    generation_batch_size=PROMPTS_PER_STEP,  # 12 prompts
     per_device_train_batch_size=PROMPTS_PER_STEP,    # 12
     gradient_accumulation_steps=1,     # 1
     
