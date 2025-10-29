@@ -1,21 +1,39 @@
 # train_grpo_single_gpu.py
-from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config
+from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config, logging as hf_logging
 from peft import LoraConfig, get_peft_model
 from trl import GRPOTrainer, GRPOConfig
 import torch
 from torch.utils.data import IterableDataset 
 from data_reward import load_prompt_dataset, reward_fn
-import os, random
+import os, random, logging
 
 MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 100
-PROMPTS_PER_STEP = 12
-NUM_GENERATIONS = 6
+PROMPTS_PER_STEP = 4
+NUM_GENERATIONS = 4
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 4000 
+MAX_COMPLETION_LEN = 2500
 SEED = 42
+
+# --- Logging setup ---
+os.makedirs(OUT, exist_ok=True)
+logger = logging.getLogger("train_grpo")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    _formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+    _stream_handler = logging.StreamHandler()
+    _stream_handler.setFormatter(_formatter)
+    _file_handler = logging.FileHandler(os.path.join(OUT, "training.log"), mode="a")
+    _file_handler.setFormatter(_formatter)
+    logger.addHandler(_stream_handler)
+    logger.addHandler(_file_handler)
+    logger.propagate = False
+
+hf_logging.set_verbosity_info()
+hf_logging.enable_default_handler()
+hf_logging.enable_explicit_format()
 
 # --- Tokenizer ---
 tok = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True)
@@ -63,20 +81,23 @@ class StepStream(IterableDataset):
     `q_action_*` などのメタ情報）は落とし、報酬に使う列のみ通します。
     """
 
-    KEEP_KEYS = {
-        "prompt",
+    KEEP_KEYS = (
         "reward_action_0",
         "reward_action_1",
         "reward_action_2",
         "reward_action_3",
-    }
+        "prompt",
+    )
 
     def __init__(self, base_ds, k):
         self.base = base_ds
         self.k = k
         self.n = len(base_ds)
         # データセットに実際に存在するキーとの積集合を使う
-        self.keys = [k for k in self.KEEP_KEYS if k in base_ds.features]
+        dense_keys = [k for k in self.KEEP_KEYS if k in base_ds.features and k != "prompt"]
+        if "prompt" in base_ds.features:
+            dense_keys.append("prompt")
+        self.keys = dense_keys
 
     def __iter__(self):
         while True:
@@ -95,6 +116,12 @@ class StepStream(IterableDataset):
                 yield sample
 
 stream = StepStream(base, k=PROMPTS_PER_STEP)
+logger.info(
+    "StepStream configured | prompts_per_step=%d | dataset_rows=%d | keep_keys=%s",
+    PROMPTS_PER_STEP,
+    len(base),
+    stream.keys,
+)
 
 # ----------------- TRL/GRPO + vLLM (colocate) -----------------
 # colocate: 学習プロセス内でvLLMを起動（省メモリのため sleep を有効化）。
@@ -106,6 +133,7 @@ args = GRPOConfig(
     bf16=True,
     gradient_checkpointing=True,
     seed=SEED,
+    accelerator_config={"split_batches": True},
 
     # 生成エンジン（vLLM）
     use_vllm=False,
@@ -116,7 +144,6 @@ args = GRPOConfig(
 
     # 「1ステップ=12プロンプト×各8生成」を担保
     num_generations=NUM_GENERATIONS,
-    # generation_batch_size=PROMPTS_PER_STEP * NUM_GENERATIONS,  # 12 prompts * 8 generations
     generation_batch_size=PROMPTS_PER_STEP,  # 12 prompts
     per_device_train_batch_size=PROMPTS_PER_STEP,    # 12
     gradient_accumulation_steps=1,     # 1
@@ -124,6 +151,17 @@ args = GRPOConfig(
     # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
     max_completion_length=MAX_COMPLETION_LEN,
+)
+total_completions_per_step = PROMPTS_PER_STEP * NUM_GENERATIONS
+split_batches_flag = getattr(args.accelerator_config, "split_batches", None)
+logger.info(
+    "Generation config | num_generations=%d | generation_batch_size=%s | per_device_train_batch_size=%d | "
+    "split_batches=%s | total_completions_per_step=%d",
+    NUM_GENERATIONS,
+    args.generation_batch_size,
+    args.per_device_train_batch_size,
+    split_batches_flag,
+    total_completions_per_step,
 )
 
 # 実行
@@ -134,9 +172,11 @@ trainer = GRPOTrainer(
     reward_funcs=reward_fn,
     train_dataset=stream,   # ← 毎ステップ12件だけ供給
 )
+logger.info("Starting training | total_steps=%d | output_dir=%s", TOTAL_STEPS, OUT)
 trainer.train()
 
 # 保存（LoRAアダプタ形式）
 trainer.save_model(OUT)
 tok.save_pretrained(OUT)
+logger.info("Training artifacts saved to %s", OUT)
 print("✅ finished")
