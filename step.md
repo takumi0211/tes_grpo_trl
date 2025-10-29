@@ -98,6 +98,11 @@ python train_grpo.py
 
 成果物は `runs/grpo_gptoss20b_lora4_tes/` に保存されます（LoRA アダプタとトークナイザ）。
 
+nvidia chipの使用状況確認
+```
+watch -n 5 nvidia-smi
+```
+
 ---
 
 ## 6. うまくいかない時のチェック
