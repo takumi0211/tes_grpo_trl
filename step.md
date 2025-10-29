@@ -101,6 +101,10 @@ python train_grpo.py
 nvidia chipの使用状況確認
 ```
 watch -n 5 nvidia-smi
+
+```
+```
+nvidia-smi dmon -s pucvmt -d 5
 ```
 
 ---
