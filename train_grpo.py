@@ -10,7 +10,7 @@ import os, random, logging
 MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
-TOTAL_STEPS = 100
+TOTAL_STEPS = 10
 PROMPTS_PER_STEP = 4
 NUM_GENERATIONS = 4
 MAX_PROMPT_LEN = 1000
