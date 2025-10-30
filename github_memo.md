@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change train_batch_size"
+git commit -m "well done"
 git push origin main
