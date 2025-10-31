@@ -143,3 +143,4 @@ uv pip freeze > requirements.txt
 - CUDA 12.8 リリースノート（最小ドライバ例: Linux 570.124.06）: https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/cuda-toolkit-12-8-0/index.html
 - MXFP4 の前提（Accelerate, kernels, Triton≥3.4 と Compute Capability 7.5+）: https://huggingface.co/docs/transformers/main/en/quantization/mxfp4
 - vLLM（CUDA 12.8 をデフォルトにビルド）: https://docs.vllm.ai/en/latest/getting_started/installation/cuda.html
+- FlashAttention 2（インストール要件と GPU サポート）: https://pypi.org/project/flash-attn/
