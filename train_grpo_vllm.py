@@ -1,4 +1,6 @@
-# train_grpo_single_gpu.py
+# train_grpo_vllm.py
+from __future__ import annotations
+
 from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config, logging as hf_logging
 from transformers.training_args import OptimizerNames
 from transformers.utils import (
@@ -11,28 +13,47 @@ from transformers.utils import (
     is_torch_hpu_available,
 )
 from peft import LoraConfig, get_peft_model
-from trl import GRPOTrainer, GRPOConfig
 from accelerate.utils import DistributedType
+from trl import GRPOTrainer, GRPOConfig
 import torch
-from torch.utils.data import IterableDataset 
+from torch.utils.data import IterableDataset
 from data_reward import load_prompt_dataset, reward_fn
-import os, random, logging
+import os
+import random
+import logging
 
+# ---------------------------
+# ハイパーパラメータ
+# ---------------------------
 MODEL_ID = "openai/gpt-oss-20b"
-OUT = "runs/grpo_gptoss20b_lora4_tes"
+OUT = "runs/grpo_gptoss20b_lora4_vllm_server"
 
 TOTAL_STEPS = 10
-PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
-NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完了数
+PROMPTS_PER_STEP = 1
+NUM_GENERATIONS = 4
 GRADIENT_ACCUMULATION_STEPS = 4
-TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
+TRAIN_BATCH_SIZE = NUM_GENERATIONS
 MAX_PROMPT_LEN = 1000
 MAX_COMPLETION_LEN = 5000
 SEED = 42
 
-# --- ロギング設定 ---
+# vLLM server mode 接続設定（環境変数で上書き可能）
+VLLM_SERVER_HOST = os.getenv("VLLM_SERVER_HOST", "localhost")
+VLLM_SERVER_PORT = int(os.getenv("VLLM_SERVER_PORT", "8000"))
+VLLM_SERVER_BASE_URL = os.getenv(
+    "VLLM_SERVER_BASE_URL",
+    f"http://{VLLM_SERVER_HOST}:{VLLM_SERVER_PORT}",
+)
+VLLM_TP_SIZE = int(os.getenv("VLLM_TENSOR_PARALLEL_SIZE", "2"))
+
+# 学習側は eager Attention を固定（生成側の vLLM で FlashAttention-3 を利用）
+ATTENTION_IMPL = "eager"
+
+# ---------------------------
+# ロギング
+# ---------------------------
 os.makedirs(OUT, exist_ok=True)
-logger = logging.getLogger("train_grpo")
+logger = logging.getLogger("train_grpo_vllm")
 logger.setLevel(logging.INFO)
 if not logger.handlers:
     _formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
@@ -48,41 +69,39 @@ hf_logging.set_verbosity_info()
 hf_logging.enable_default_handler()
 hf_logging.enable_explicit_format()
 
-# --- トークナイザー ---
+# ---------------------------
+# トークナイザー & モデル
+# ---------------------------
 tok = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True)
 tok.padding_side = "left"
 if tok.pad_token is None:
     tok.pad_token = tok.eos_token
 
-# --- MXFP4 -> BF16 にデクオンして学習（公式ルート） ---
-# 参考: OpenAI/Transformersのcookbook・ブログで Mxfp4Config(dequantize=True) を明記。:contentReference[oaicite:5]{index=5}
 quant_cfg = Mxfp4Config(dequantize=True)
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
     torch_dtype=torch.float16,
     quantization_config=quant_cfg,
-    attn_implementation="eager",  # 学習側はeagerが安定
-    use_cache=False,               # 勾配チェックポイントと相性良
+    attn_implementation=ATTENTION_IMPL,
+    use_cache=False,
     device_map="auto",
 )
 logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
 
-# --- LoRA r=4 ---
-# LoRA: MoE MLP を確実に含めるために全層を自動列挙
 expert_params = []
 for name, module in model.named_modules():
     if "mlp.experts" in name and (name.endswith("gate_up_proj") or name.endswith("down_proj")):
         expert_params.append(name)
 
 lora = LoraConfig(
-    r=4, lora_alpha=8,
+    r=4,
+    lora_alpha=8,
     target_modules="all-linear",
-    target_parameters=expert_params,      # ← 固定列挙から自動列挙に
-    task_type="CAUSAL_LM",            
+    target_parameters=expert_params,
+    task_type="CAUSAL_LM",
 )
 model = get_peft_model(model, lora)
 
-# --- 学習対象のLoRAレイヤーを確認 ---
 logger.info(
     "LoRA target parameters enumerated (%d): %s",
     len(expert_params),
@@ -106,18 +125,15 @@ if trainable_lora_params:
 else:
     logger.warning("No LoRA parameters detected as trainable.")
 
-# ----------------- Dataset (データローダ) ----------------
+# ---------------------------
+# データストリーム
+# ---------------------------
 base = load_prompt_dataset()
 random.seed(SEED)
 
-class StepStream(IterableDataset):
-    """毎ステップちょうどk件のプロンプトをランダム抽出して流すストリーム
 
-    注意: HF/Accelerate はワーカー間でバッチを結合するとき、
-    末端の型が PyTorch Tensor でないと `concatenate` で失敗します。
-    そのため学習に不要な列（例: `timestep`, `timestamp`, `optimal_action`,
-    `q_action_*` などのメタ情報）は落とし、報酬に使う列のみ通します。
-    """
+class StepStream(IterableDataset):
+    """マイクロステップ毎に PROMPTS_PER_STEP × NUM_GENERATIONS を供給するストリーム。"""
 
     KEEP_KEYS = (
         "reward_action_0",
@@ -132,8 +148,7 @@ class StepStream(IterableDataset):
         self.k = k
         self.n = len(base_ds)
         self.num_generations = num_generations
-        # データセットに実際に存在するキーとの積集合を使う
-        dense_keys = [k for k in self.KEEP_KEYS if k in base_ds.features and k != "prompt"]
+        dense_keys = [key for key in self.KEEP_KEYS if key in base_ds.features and key != "prompt"]
         if "prompt" in base_ds.features:
             dense_keys.append("prompt")
         self.keys = dense_keys
@@ -149,14 +164,13 @@ class StepStream(IterableDataset):
                     if key == "prompt":
                         sample[key] = value
                     else:
-                        sample[key] = torch.atleast_1d(
-                            torch.tensor(value, dtype=torch.float32)
-                        )
+                        sample[key] = torch.atleast_1d(torch.tensor(value, dtype=torch.float32))
                 for _ in range(self.num_generations):
                     yield {
                         key: (value.clone() if isinstance(value, torch.Tensor) else value)
                         for key, value in sample.items()
                     }
+
 
 stream = StepStream(base, k=PROMPTS_PER_STEP, num_generations=NUM_GENERATIONS)
 logger.info(
@@ -168,12 +182,11 @@ logger.info(
 )
 
 
+# ---------------------------
+# 逐次バックプロップ Trainer
+# ---------------------------
 class SequentialGRPOTrainer(GRPOTrainer):
-    """各完了を順次逆伝播するGRPOTrainerを継承したもの。
-
-    プロンプトごとにG個の完了の論理バッチを維持するが、
-    各順伝播/逆伝播を1つずつ実行するため、アクティベーションがメモリに蓄積されない。
-    """
+    """1 プロンプト内の複数 completion を順番に backprop する Trainer."""
 
     @staticmethod
     def _infer_batch_size(inputs: dict) -> int:
@@ -188,8 +201,6 @@ class SequentialGRPOTrainer(GRPOTrainer):
 
     @staticmethod
     def _select_micro_batch(inputs: dict, index: int) -> dict:
-        """準備されたトレーナーの入力を単一の完了にスライスする。"""
-
         micro = {}
         for key, value in inputs.items():
             if isinstance(value, torch.Tensor):
@@ -208,7 +219,6 @@ class SequentialGRPOTrainer(GRPOTrainer):
 
     def training_step(self, model, inputs, num_items_in_batch=None):  # noqa: D401
         if is_sagemaker_mp_enabled():
-            # SageMakerで実行中はデフォルト実装にフォールバック
             return super().training_step(model, inputs, num_items_in_batch=num_items_in_batch)
 
         cp_context, inputs = self._prepare_context_parallel_inputs(model, inputs)
@@ -221,7 +231,6 @@ class SequentialGRPOTrainer(GRPOTrainer):
             inputs = self._prepare_inputs(inputs)
             batch_size = self._infer_batch_size(inputs)
 
-            # デフォルトのTrainerのempty-cacheのリズムを反映
             if batch_size < 1:
                 raise ValueError("Mini-batch is empty; cannot run training step")
 
@@ -240,8 +249,6 @@ class SequentialGRPOTrainer(GRPOTrainer):
                 ):
                     loss = loss / self.current_gradient_accumulation_steps
 
-                # 論理的な完了グループ全体で平均化し、
-                # 元のバッチセマンティクスに一致させる（勾配を合計する代わりに1/Gスケーリング）
                 if batch_size > 1 and self.loss_type != "dapo":
                     loss = loss / batch_size
 
@@ -283,11 +290,13 @@ class SequentialGRPOTrainer(GRPOTrainer):
                 else:
                     torch.cuda.empty_cache()
 
-            return total_loss if total_loss is not None else torch.tensor(0.0, device=self.args.device)
+            zero = torch.tensor(0.0, device=self.args.device)
+            return total_loss if total_loss is not None else zero
 
-# ----------------- TRL/GRPO + vLLM (colocate) -----------------
-# colocate: 学習プロセス内でvLLMを起動（省メモリのため sleep を有効化）。
-# ※ vLLM 0.10.2 を使用（TRLのサポートバージョン）
+
+# ---------------------------
+# GRPO Config（vLLM server mode）
+# ---------------------------
 args = GRPOConfig(
     output_dir=OUT,
     max_steps=TOTAL_STEPS,
@@ -299,32 +308,39 @@ args = GRPOConfig(
     accelerator_config={"split_batches": True},
     logging_steps=1,
 
-    # 生成エンジン（vLLM）
-    use_vllm=False,
-    # vllm_mode="colocate",
-    # vllm_gpu_memory_utilization=0.35,  # 学習と競合しないよう枠を抑える
-    # # vllm_kv_cache_dtype="fp8",
-    # vllm_enable_sleep_mode=True,       # 生成←→学習の切替でVRAMを返す（初回のみ起床遅延あり）
+    # vLLM server mode 設定
+    use_vllm=True,
+    vllm_mode="server",
+    vllm_tensor_parallel_size=VLLM_TP_SIZE,
+    vllm_server_host=VLLM_SERVER_HOST,
+    vllm_server_port=VLLM_SERVER_PORT,
+    vllm_server_base_url=VLLM_SERVER_BASE_URL,
+    vllm_server_timeout=60,
+    vllm_gpu_memory_utilization=0.8,
+    vllm_kv_cache_dtype="fp8",
+    vllm_enable_sleep_mode=False,
 
-    # 各マイクロステップで 1 プロンプト × 4 completion を生成
+    # 生成設定
     num_generations=NUM_GENERATIONS,
     generation_batch_size=TRAIN_BATCH_SIZE,
     per_device_train_batch_size=TRAIN_BATCH_SIZE,
     gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
-    
-    # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
     max_completion_length=MAX_COMPLETION_LEN,
     generation_kwargs={
         "use_cache": True,
+        "temperature": 0.8,
+        "top_p": 0.9,
     },
 )
+
 micro_batch_completions = TRAIN_BATCH_SIZE
 total_completions_per_update = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
 split_batches_flag = getattr(args.accelerator_config, "split_batches", None)
 logger.info(
     "Generation config | num_generations=%d | generation_batch_size=%s | per_device_train_batch_size=%d | "
-    "grad_accum=%d | split_batches=%s | completions_per_micro_step=%d | completions_per_update=%d",
+    "grad_accum=%d | split_batches=%s | completions_per_micro_step=%d | completions_per_update=%d | "
+    "vllm_base_url=%s",
     NUM_GENERATIONS,
     args.generation_batch_size,
     args.per_device_train_batch_size,
@@ -332,20 +348,23 @@ logger.info(
     split_batches_flag,
     micro_batch_completions,
     total_completions_per_update,
+    VLLM_SERVER_BASE_URL,
 )
 
-# 実行
+
+# ---------------------------
+# 学習実行
+# ---------------------------
 trainer = SequentialGRPOTrainer(
     model=model,
-    processing_class=tok,   # 現行API名（左パディング必須）
+    processing_class=tok,
     args=args,
     reward_funcs=reward_fn,
-    train_dataset=stream,   # 各マイクロステップで 4 completion（1 prompt × 4）を供給
+    train_dataset=stream,
 )
 logger.info("Starting training | total_steps=%d | output_dir=%s", TOTAL_STEPS, OUT)
 trainer.train()
 
-# 保存（LoRAアダプタ形式）
 trainer.save_model(OUT)
 tok.save_pretrained(OUT)
 logger.info("Training artifacts saved to %s", OUT)
