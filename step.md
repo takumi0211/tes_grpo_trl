@@ -15,7 +15,7 @@
 - TRL (GRPO): 0.23.1（vLLMコロケート対応の安定版）
 - vLLM: 0.10.2（colocate利用; GPT‑OSS用の 0.10.1+gptoss でも可）
 - PEFT: 0.17.1 以上（`target_modules="all-linear"`, `target_parameters` を使用）
-- 追加: `triton>=3.4`（MXFP4用 Triton; PyTorch 2.8 では同梱・互換、2.7 系は明示導入推奨）, `datasets`, `pandas`, `accelerate`, `huggingface_hub>=0.25`
+- 追加: `triton>=3.4`（MXFP4用 Triton; PyTorch 2.8 では同梱・互換、2.7 系は明示導入推奨）, `flash-attn==2.8.3`（FlashAttention 2。Ampere/Ada/Hopper GPU を対象に、`packaging` と `ninja` を先に入れて `uv pip install --no-build-isolation` で導入）, `datasets`, `pandas`, `accelerate`, `huggingface_hub>=0.25`
 
 注:
 - 本スクリプトは `Mxfp4Config(dequantize=True)` を用いて MXFP4 から BF16 にデクオンした上で LoRA 学習します。MXFP4 での後方伝播カーネルは現状不要です。
@@ -55,15 +55,19 @@ uv pip install "vllm==0.10.2" \
   --extra-index-url https://wheels.vllm.ai/0.10.2/ \
   --config-settings vllm:torch-backend=auto
 
-# NLP/学習系ライブラリ
-uv pip install \
+# NLP/学習系ライブラリ（FlashAttention 2 を含む）
+uv pip install --no-build-isolation \
   "transformers>=4.57.1" \
   "trl==0.23.1" \
   "peft>=0.17.1" \
   "accelerate>=1.10.0" \
   datasets pandas \
   "huggingface_hub>=0.25" \
+  packaging ninja \
+  "flash-attn==2.8.3" \
   "triton>=3.4"
+
+# FlashAttention 2 のビルド時間が長い場合は `MAX_JOBS=4 uv pip install --no-build-isolation ...` のように CPU スレッド数を制限すると安定します。
 
 # もし torch が未導入の場合（vLLM 同梱解決が失敗した環境向け）
 # CUDA 12.8 の公式ホイールからインストール
@@ -113,7 +117,7 @@ nvidia-smi dmon -s pucvmt -d 5
 - vRAM 不足: `GRPOConfig.vllm_gpu_memory_utilization` を下げる、`MAX_COMPLETION_LEN` を短くする、`NUM_GENERATIONS` を減らす。
 - CUDA/ドライバ不整合: `nvidia-smi` のドライバが 570 未満なら更新（DC GPU で互換パッケージ運用の例外はあるが、基本は 570+）。PyTorch を `cu128` ホイールで再インストール。
 - vLLM が起動できない: `pip freeze | grep vllm` で 0.10.2 であること、`torch` が 2.8.0 であることを確認。
-- ImportError: MXFP4 関連で `triton` が未導入だと失敗します。`uv pip install "triton>=3.4"` を追加実行し、初回実行で自動的に `kernels-community/triton_kernels` がキャッシュされることを確認してください。
+- ImportError: MXFP4 関連で `triton` や FlashAttention カーネルが未導入だと失敗します。`uv pip install --no-build-isolation packaging ninja "flash-attn==2.8.3" "triton>=3.4"` を追加実行し、初回実行で `kernels-community/triton_kernels` と FlashAttention の CUDA 拡張がビルドされることを確認してください。
 
 ---
 

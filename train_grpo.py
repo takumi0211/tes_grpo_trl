@@ -50,7 +50,7 @@ model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
     torch_dtype=torch.bfloat16, 
     quantization_config=quant_cfg,
-    attn_implementation="eager",  # 学習側はeagerが安定
+    attn_implementation="flash_attention_2",  # 学習側はeagerが安定
     use_cache=False,               # 勾配チェックポイントと相性良
     device_map="auto",
 )
