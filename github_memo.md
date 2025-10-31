@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "add flash attention"
+git commit -m "well done SequentialGRPOTrainer"
 git push origin main
