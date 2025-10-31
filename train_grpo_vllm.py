@@ -2,18 +2,7 @@
 from __future__ import annotations
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config, logging as hf_logging
-from transformers.training_args import OptimizerNames
-from transformers.utils import (
-    is_sagemaker_mp_enabled,
-    is_torch_xpu_available,
-    is_torch_mlu_available,
-    is_torch_musa_available,
-    is_torch_npu_available,
-    is_torch_mps_available,
-    is_torch_hpu_available,
-)
 from peft import LoraConfig, get_peft_model
-from accelerate.utils import DistributedType
 from trl import GRPOTrainer, GRPOConfig
 import torch
 from torch.utils.data import IterableDataset
@@ -34,7 +23,7 @@ NUM_GENERATIONS = 4
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 5000
+MAX_COMPLETION_LEN = 2600
 SEED = 42
 
 # vLLM server mode 接続設定（環境変数で上書き可能）
@@ -181,119 +170,6 @@ logger.info(
     stream.keys,
 )
 
-
-# ---------------------------
-# 逐次バックプロップ Trainer
-# ---------------------------
-class SequentialGRPOTrainer(GRPOTrainer):
-    """1 プロンプト内の複数 completion を順番に backprop する Trainer."""
-
-    @staticmethod
-    def _infer_batch_size(inputs: dict) -> int:
-        if "completion_ids" in inputs and isinstance(inputs["completion_ids"], torch.Tensor):
-            return inputs["completion_ids"].shape[0]
-        for value in inputs.values():
-            if isinstance(value, torch.Tensor) and value.dim() > 0:
-                return value.shape[0]
-            if isinstance(value, (list, tuple)) and len(value) > 0:
-                return len(value)
-        raise ValueError("Unable to infer batch size from inputs")
-
-    @staticmethod
-    def _select_micro_batch(inputs: dict, index: int) -> dict:
-        micro = {}
-        for key, value in inputs.items():
-            if isinstance(value, torch.Tensor):
-                if value.dim() == 0 or value.shape[0] == 0:
-                    micro[key] = value
-                else:
-                    micro[key] = value[index : index + 1]
-            elif isinstance(value, (list, tuple)):
-                if len(value) == 0:
-                    micro[key] = value
-                else:
-                    micro[key] = type(value)([value[index]])
-            else:
-                micro[key] = value
-        return micro
-
-    def training_step(self, model, inputs, num_items_in_batch=None):  # noqa: D401
-        if is_sagemaker_mp_enabled():
-            return super().training_step(model, inputs, num_items_in_batch=num_items_in_batch)
-
-        cp_context, inputs = self._prepare_context_parallel_inputs(model, inputs)
-
-        with cp_context():
-            model.train()
-            if hasattr(self.optimizer, "train") and callable(self.optimizer.train):
-                self.optimizer.train()
-
-            inputs = self._prepare_inputs(inputs)
-            batch_size = self._infer_batch_size(inputs)
-
-            if batch_size < 1:
-                raise ValueError("Mini-batch is empty; cannot run training step")
-
-            total_loss = None
-            for i in range(batch_size):
-                micro_inputs = self._select_micro_batch(inputs, i)
-                with self.compute_loss_context_manager():
-                    loss = self.compute_loss(model, micro_inputs, num_items_in_batch=num_items_in_batch)
-
-                if self.args.n_gpu > 1:
-                    loss = loss.mean()
-
-                if (
-                    (not self.model_accepts_loss_kwargs or num_items_in_batch is None)
-                    and self.compute_loss_func is None
-                ):
-                    loss = loss / self.current_gradient_accumulation_steps
-
-                if batch_size > 1 and self.loss_type != "dapo":
-                    loss = loss / batch_size
-
-                if self.use_apex:
-                    from apex import amp
-
-                    with amp.scale_loss(loss, self.optimizer) as scaled_loss:
-                        scaled_loss.backward()
-                else:
-                    kwargs = {}
-                    if self.args.optim in [OptimizerNames.LOMO, OptimizerNames.ADALOMO]:
-                        kwargs["learning_rate"] = self._get_learning_rate()
-                    if self.accelerator.distributed_type == DistributedType.DEEPSPEED:
-                        kwargs["scale_wrt_gas"] = False
-                    self.accelerator.backward(loss, **kwargs)
-
-                detached = loss.detach()
-                total_loss = detached if total_loss is None else total_loss + detached
-
-            del inputs
-            if (
-                self.args.torch_empty_cache_steps is not None
-                and self.state.global_step % self.args.torch_empty_cache_steps == 0
-            ):
-                if is_torch_xpu_available():
-                    torch.xpu.empty_cache()
-                elif is_torch_mlu_available():
-                    torch.mlu.empty_cache()
-                elif is_torch_musa_available():
-                    torch.musa.empty_cache()
-                elif is_torch_npu_available():
-                    torch.npu.empty_cache()
-                elif is_torch_mps_available():
-                    torch.mps.empty_cache()
-                elif is_torch_hpu_available():
-                    logger.warning(
-                        "`torch_empty_cache_steps` is set but HPU device/backend does not support empty_cache()."
-                    )
-                else:
-                    torch.cuda.empty_cache()
-
-            zero = torch.tensor(0.0, device=self.args.device)
-            return total_loss if total_loss is not None else zero
-
-
 # ---------------------------
 # GRPO Config（vLLM server mode）
 # ---------------------------
@@ -355,7 +231,7 @@ logger.info(
 # ---------------------------
 # 学習実行
 # ---------------------------
-trainer = SequentialGRPOTrainer(
+trainer = GRPOTrainer(
     model=model,
     processing_class=tok,
     args=args,
