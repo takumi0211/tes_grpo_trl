@@ -13,7 +13,9 @@ python -m venv ~/.venv
 source ~/.venv/bin/activate
 pip install --upgrade pip
 pip install torch --index-url https://download.pytorch.org/whl/cu122
-pip install transformers accelerate peft 'trl[vllm]>=0.23.1' datasets vllm==0.5.4.post1
+pip install transformers accelerate peft 'trl[vllm]>=0.23.1' datasets \
+  --extra-index-url https://wheels.vllm.ai/0.10.2/ \
+  'vllm==0.10.2'
 pip install flash-attn --no-build-isolation  # FA3 カーネル
 ```
 
@@ -73,6 +75,7 @@ CUDA_VISIBLE_DEVICES=1 python train_grpo_vllm.py
 - **CUDA OOM（ロード直後に発生）**: サーバーが GPU すべてを占有したまま学習プロセスが `AutoModelForCausalLM.from_pretrained` を呼ぶと MXFP4→BF16 のデクオン時に 2 GiB 程度確保できず失敗します。`pkill -f "vllm serve"` で既存プロセスを落とし、`CUDA_VISIBLE_DEVICES` を使ってサーバーと学習の GPU を分けてください。必要に応じて `export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` を追加すると断片化を抑えられます。
 - **404 Not Found が vLLM から返る**: TRL 0.23+ の server mode は `trl vllm-serve` が立てる拡張 API を利用します。素の `vllm serve` では `/get_world_size/` などのエンドポイントが無く 404 になります。サーバーを停止 (`pkill -f "vllm serve"`) し、`pip install 'trl[vllm]>=0.23.1'` で CLI を導入した上で `trl vllm-serve ...` を使って再起動してください。
 - **ValueError: Some specified arguments are not used**: `trl vllm-serve` は vLLM 本家の CLI とオプションが完全一致していません。未対応のオプションを渡すとこのエラーが出ます。`--max-num-seqs` など該当フラグを削除するか、`trl/scripts/vllm_serve.py --help` でサポートされている引数だけ指定してください。
+- **TypeError: default_weight_loader() got an unexpected keyword argument 'weight_name'**: vLLM 側が 0.5 系など古いバージョンのままだと、TRL が送る LoRA 更新 RPC のシグネチャに未対応でこの例外が発生します。同じ venv に `pip install --upgrade --extra-index-url https://wheels.vllm.ai/0.10.2/ 'vllm==0.10.2'` を適用し、サーバーを再起動してください。
 - **FlashAttention3 がロードできない**: `flash-attn` の再インストール (`pip install flash-attn --no-build-isolation`) と、環境変数 `TORCH_CUDA_ARCH_LIST="9.0"` を設定してから PyTorch を再ビルド。
 
 ## 5. 後片付け
