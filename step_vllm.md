@@ -26,17 +26,17 @@ export VLLM_USE_V1=1
 vllm serve openai/gpt-oss-20b \
   --host 0.0.0.0 --port 8000 \
   --tensor-parallel-size 2 \
-  --dtype float16 \
+  --dtype bfloat16 \
   --enforce-eager \
   --max-num-seqs 16 \
   --trust-remote-code \
   --attn-impl kernels-community/vllm-flash-attn3 \
-  --kv-cache-dtype fp16
+  --kv-cache-dtype bf16
 ```
 
 > **メモ**:  
 > - `--enforce-eager` は MXFP4 + FlashAttention3 の初期ウォームアップを安定させます。  
-> - `--kv-cache-dtype fp16` は学習側と dtype を揃える設定です。追加で FP8 を使いたい場合は `fp8` に変更しても構いません。  
+> - `--kv-cache-dtype bf16` は学習側と dtype を揃える設定です。追加で FP8 を使いたい場合は `fp8` に変更しても構いません。  
 > - 生成負荷に応じて `--max-num-seqs` や `--max-model-len` を調整してください。
 
 ## 2. 学習ノード設定
