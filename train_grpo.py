@@ -191,8 +191,8 @@ args = GRPOConfig(
     generation_kwargs={
         "use_cache": True,
         "do_sample": True,
-        "temperature": 0.8,
-        "top_p": 0.95,
+        "temperature": 1.0,
+        "top_p": 1.0,
         "eos_token_id": tok.eos_token_id,
     },
 )
