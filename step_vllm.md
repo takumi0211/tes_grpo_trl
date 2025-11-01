@@ -30,13 +30,13 @@ vllm serve openai/gpt-oss-20b \
   --enforce-eager \
   --max-num-seqs 16 \
   --trust-remote-code \
-  --attn-impl kernels-community/vllm-flash-attn3 \
   --kv-cache-dtype auto
 ```
 
 > **メモ**:  
 > - `--enforce-eager` は MXFP4 + FlashAttention3 の初期ウォームアップを安定させます。  
 > - `--kv-cache-dtype auto` でモデル dtype に追従します（bf16 モデルなら KV も bf16）。FP8 を使いたい場合は `fp8` 系に変更してください。  
+> - H100 環境では FlashAttention-3 が自動的に選ばれます。明示したい場合は `VLLM_ATTENTION_BACKEND=FLASH_ATTN` と `VLLM_FLASH_ATTN_VERSION=3` を追加でエクスポートしてください。
 > - 生成負荷に応じて `--max-num-seqs` や `--max-model-len` を調整してください。
 
 ## 2. 学習ノード設定
@@ -45,8 +45,9 @@ vllm serve openai/gpt-oss-20b \
 ```bash
 export VLLM_SERVER_HOST=localhost
 export VLLM_SERVER_PORT=8000
-# Hopper GPU の場合は FlashAttention3 を強制する
-export ATTN_IMPLEMENTATION=kernels-community/vllm-flash-attn3
+# FlashAttention3 を明示したい場合（任意）
+# export VLLM_ATTENTION_BACKEND=FLASH_ATTN
+# export VLLM_FLASH_ATTN_VERSION=3
 ```
 
 学習を開始:
