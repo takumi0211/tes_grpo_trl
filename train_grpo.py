@@ -16,7 +16,7 @@ NUM_GENERATIONS = 6           # プロンプトごとにサンプルされる完
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 26
+MAX_COMPLETION_LEN = 5000
 SEED = 42
 
 # --- ロギング設定 ---
@@ -52,7 +52,7 @@ model = AutoModelForCausalLM.from_pretrained(
     quantization_config=quant_cfg,
     attn_implementation="kernels-community/vllm-flash-attn3",
     use_cache=False,               # 勾配チェックポイントと相性良
-    device_map="balanced_low_0",
+    device_map="auto",
 )
 logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
 logger.info("HF device map: %s", getattr(model, "hf_device_map", "not available"))

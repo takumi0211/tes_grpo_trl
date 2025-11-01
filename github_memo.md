@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "次はGPUへのモデル配置を工夫"
+git commit -m "well done 2GPU"
 git push origin main
