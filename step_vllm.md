@@ -23,6 +23,7 @@ pip install flash-attn --no-build-isolation  # FA3 カーネル
 ```bash
 export CUDA_VISIBLE_DEVICES=0,1
 export VLLM_USE_V1=1
+export VLLM_TENSOR_PARALLEL_SIZE=2
 vllm serve openai/gpt-oss-20b \
   --host 0.0.0.0 --port 8000 \
   --tensor-parallel-size 2 \
@@ -34,6 +35,7 @@ vllm serve openai/gpt-oss-20b \
 ```
 
 > **メモ**:  
+> - `VLLM_TENSOR_PARALLEL_SIZE` は学習スクリプトと揃えて 2 に設定します。単機 (1 GPU) 検証をする際は、環境変数と `--tensor-parallel-size` をどちらも 1 に変更してください。  
 > - `--enforce-eager` は MXFP4 + FlashAttention3 の初期ウォームアップを安定させます。  
 > - `--kv-cache-dtype auto` でモデル dtype に追従します（bf16 モデルなら KV も bf16）。FP8 を使いたい場合は `fp8` 系に変更してください。  
 > - H100 環境では FlashAttention-3 が自動的に選ばれます。明示したい場合は `VLLM_ATTENTION_BACKEND=FLASH_ATTN` と `VLLM_FLASH_ATTN_VERSION=3` を追加でエクスポートしてください。
@@ -45,6 +47,8 @@ vllm serve openai/gpt-oss-20b \
 ```bash
 export VLLM_SERVER_HOST=localhost
 export VLLM_SERVER_PORT=8000
+# TP サイズはサーバーと合わせる（デフォルト 2）
+export VLLM_TENSOR_PARALLEL_SIZE=${VLLM_TENSOR_PARALLEL_SIZE:-2}
 # FlashAttention3 を明示したい場合（任意）
 # export VLLM_ATTENTION_BACKEND=FLASH_ATTN
 # export VLLM_FLASH_ATTN_VERSION=3

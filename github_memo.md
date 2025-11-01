@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change to FP16 in step_vllm.md"
+git commit -m "good preparation for vllm"
 git push origin main

@@ -193,7 +193,7 @@ args = GRPOConfig(
     vllm_server_base_url=VLLM_SERVER_BASE_URL,
     vllm_server_timeout=60,
     vllm_gpu_memory_utilization=0.8,
-    vllm_kv_cache_dtype="fp8",
+    vllm_kv_cache_dtype="auto",
     vllm_enable_sleep_mode=False,
 
     # 生成設定
