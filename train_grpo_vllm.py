@@ -36,7 +36,7 @@ VLLM_SERVER_BASE_URL = os.getenv(
 VLLM_TP_SIZE = int(os.getenv("VLLM_TENSOR_PARALLEL_SIZE", "2"))
 
 # 学習側は eager Attention を固定（生成側の vLLM で FlashAttention-3 を利用）
-ATTENTION_IMPL = "eager"
+ATTENTION_IMPL = "kernels-community/vllm-flash-attn3"
 
 # ---------------------------
 # ロギング
@@ -69,7 +69,7 @@ if tok.pad_token is None:
 quant_cfg = Mxfp4Config(dequantize=True)
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
-    torch_dtype=torch.float16,
+    torch_dtype=torch.bfloat16,
     quantization_config=quant_cfg,
     attn_implementation=ATTENTION_IMPL,
     use_cache=False,
@@ -177,8 +177,8 @@ args = GRPOConfig(
     output_dir=OUT,
     max_steps=TOTAL_STEPS,
     learning_rate=5e-5,
-    bf16=False,
-    fp16=True,
+    bf16=True,
+    fp16=False,
     gradient_checkpointing=True,
     seed=SEED,
     accelerator_config={"split_batches": True},
