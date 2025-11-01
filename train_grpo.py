@@ -12,7 +12,7 @@ OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
-NUM_GENERATIONS = 6           # プロンプトごとにサンプルされる完了数
+NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
