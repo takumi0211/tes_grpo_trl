@@ -16,7 +16,7 @@ NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 2600
+MAX_COMPLETION_LEN = 26
 SEED = 42
 
 # --- ロギング設定 ---
@@ -50,7 +50,7 @@ model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID,
     torch_dtype=torch.float16,
     quantization_config=quant_cfg,
-    attn_implementation="eager",  # 学習側はeagerが安定
+    attn_implementation="kernels-community/vllm-flash-attn3",  # 学習側はeagerが安定
     use_cache=False,               # 勾配チェックポイントと相性良
     device_map="auto",
 )

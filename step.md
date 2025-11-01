@@ -64,7 +64,7 @@ uv pip install --no-build-isolation \
   datasets pandas \
   "huggingface_hub>=0.25" \
   packaging ninja \
-  "flash-attn==2.8.3" \
+  "kernels>=0.10" \
   "triton>=3.4"
 
 # FlashAttention 2 のビルド時間が長い場合は `MAX_JOBS=4 uv pip install --no-build-isolation ...` のように CPU スレッド数を制限すると安定します。
