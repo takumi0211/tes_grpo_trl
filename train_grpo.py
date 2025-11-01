@@ -16,7 +16,7 @@ NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 5000
+MAX_COMPLETION_LEN = 3200
 SEED = 42
 
 # --- ロギング設定 ---
@@ -156,6 +156,7 @@ logger.info(
     len(base),
     stream.keys,
 )
+
 
 # ----------------- TRL/GRPO + vLLM (colocate) -----------------
 # colocate: 学習プロセス内でvLLMを起動（省メモリのため sleep を有効化）。

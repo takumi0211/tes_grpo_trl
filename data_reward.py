@@ -7,6 +7,8 @@
 import os
 import random
 import re
+import csv
+import atexit
 from collections.abc import Iterable as IterableSequence
 from glob import glob
 from datasets import load_dataset, Dataset
@@ -20,6 +22,48 @@ ACTION_RE = re.compile(r"\[(\d)\]")
 
 # 無効なアクションに対するペナルティ値
 PENALTY = -0.5
+
+
+def _is_main_process() -> bool:
+    rank = os.environ.get("RANK")
+    if rank not in (None, "", "0"):
+        return False
+    local_rank = os.environ.get("LOCAL_RANK")
+    if local_rank not in (None, "", "0"):
+        return False
+    return True
+
+
+CSV_LOG_ENABLED = os.getenv("GRPO_LOG_COMPLETIONS", "1") != "0" and _is_main_process()
+CSV_PATH = os.getenv(
+    "GRPO_COMPLETION_LOG_PATH",
+    os.path.join("runs", "micro_step_completions.csv"),
+)
+_CSV_FILE = None
+_CSV_WRITER = None
+_MICRO_STEP_COUNTER = 0
+
+
+def _init_csv_logger() -> None:
+    global _CSV_FILE, _CSV_WRITER
+    if not CSV_LOG_ENABLED or _CSV_WRITER is not None:
+        return
+    os.makedirs(os.path.dirname(CSV_PATH) or ".", exist_ok=True)
+    _CSV_FILE = open(CSV_PATH, "w", newline="", encoding="utf-8")
+    _CSV_WRITER = csv.writer(_CSV_FILE)
+    _CSV_WRITER.writerow(["step", "prompt", "completion", "action", "reward"])
+
+
+def _close_csv_logger() -> None:
+    global _CSV_FILE, _CSV_WRITER
+    if _CSV_FILE is not None:
+        _CSV_FILE.flush()
+        _CSV_FILE.close()
+    _CSV_FILE = None
+    _CSV_WRITER = None
+
+
+atexit.register(_close_csv_logger)
 
 
 # プロンプトデータセットを読み込む関数
@@ -95,8 +139,9 @@ def reward_fn(
     reward_action_3,
     **kwargs,
 ):
+    global _MICRO_STEP_COUNTER
+
     size = len(completions)
-    # 各アクションの報酬をsizeまで拡張
     rewards_0 = _expand(reward_action_0, size)
     rewards_1 = _expand(reward_action_1, size)
     rewards_2 = _expand(reward_action_2, size)
@@ -121,30 +166,65 @@ def reward_fn(
     max_completion_len = max((len(seq) for seq in token_sequences), default=0)
 
     rewards = []
-    for idx, (completion, r0, r1, r2, r3) in enumerate(zip(
-        completions, rewards_0, rewards_1, rewards_2, rewards_3
-    )):
-        # トランケーション判定: 生成トークン数がバッチ内最大で、しきい値以上、かつマスクが全1なら打ち切りとみなす
+    action_tokens = []
+    for idx, (completion, r0, r1, r2, r3) in enumerate(
+        zip(completions, rewards_0, rewards_1, rewards_2, rewards_3)
+    ):
         is_truncated = False
         if token_sequences and idx < len(token_sequences):
             tokens_seq = token_sequences[idx]
             mask_seq = mask_sequences[idx] if idx < len(mask_sequences) else []
             seq_len = len(tokens_seq)
             mask_all_one = bool(mask_seq) and all(int(v) == 1 for v in mask_seq)
-            if seq_len >= max_completion_len and seq_len >= TRUNCATION_TOKEN_THRESHOLD and mask_all_one:
+            if (
+                seq_len >= max_completion_len
+                and seq_len >= TRUNCATION_TOKEN_THRESHOLD
+                and mask_all_one
+            ):
                 is_truncated = True
         if is_truncated:
             rewards.append(PENALTY)
+            action_tokens.append("NaN")
             continue
 
-        # completionから最後に出現したアクションを抽出
         matches = list(ACTION_RE.finditer(completion))
         if not matches:
-            # マッチしない場合ペナルティを適用
             rewards.append(PENALTY)
+            action_tokens.append("NaN")
             continue
-        action = int(matches[-1].group(1))
-        # アクション0-3に対応する報酬を選択、無効ならペナルティ
+        action = matches[-1].group(1)
         reward_map = (r0, r1, r2, r3)
-        rewards.append(float(reward_map[action]) if 0 <= action < 4 else PENALTY)
+        idx_int = int(action)
+        reward_val = float(reward_map[idx_int]) if 0 <= idx_int < 4 else PENALTY
+        rewards.append(reward_val)
+        action_tokens.append(action if 0 <= idx_int < 4 else "NaN")
+
+    if CSV_LOG_ENABLED and size:
+        _init_csv_logger()
+        if _CSV_WRITER is not None:
+            prompts = kwargs.get("prompt") or kwargs.get("prompts") or []
+            if isinstance(prompts, str):
+                prompts = [prompts]
+            trainer_state = kwargs.get("trainer_state")
+            global_step = getattr(trainer_state, "global_step", -1)
+            step_value = global_step if (global_step is not None and global_step >= 0) else _MICRO_STEP_COUNTER
+            for idx, (completion, reward_val, action_token) in enumerate(
+                zip(completions, rewards, action_tokens)
+            ):
+                prompt_text = ""
+                if prompts:
+                    prompt_text = prompts[idx % len(prompts)]
+                _CSV_WRITER.writerow(
+                    [
+                        step_value,
+                        prompt_text,
+                        completion,
+                        action_token,
+                        float(reward_val),
+                    ]
+                )
+            if _CSV_FILE is not None:
+                _CSV_FILE.flush()
+        _MICRO_STEP_COUNTER += 1
+
     return rewards
