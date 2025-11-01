@@ -55,6 +55,7 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="balanced_low_0",
 )
 logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
+logger.info("HF device map: %s", getattr(model, "hf_device_map", "not available"))
 
 # --- LoRA r=4 ---
 # LoRA: MoE MLP を確実に含めるために全層を自動列挙
