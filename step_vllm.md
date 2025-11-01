@@ -51,7 +51,7 @@ export VLLM_SERVER_PORT=8000
 # TP サイズはサーバーと合わせる（単一ノード例では 1）
 export VLLM_TENSOR_PARALLEL_SIZE=${VLLM_TENSOR_PARALLEL_SIZE:-1}
 # 学習プロセスを GPU1 にピン留め（サーバー側で GPU0 を使用している想定）
-export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-1}
+export CUDA_VISIBLE_DEVICES=1
 # FlashAttention3 を明示したい場合（任意）
 # export VLLM_ATTENTION_BACKEND=FLASH_ATTN
 # export VLLM_FLASH_ATTN_VERSION=3
@@ -59,7 +59,7 @@ export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-1}
 
 学習を開始:
 ```bash
-python train_grpo_vllm.py
+CUDA_VISIBLE_DEVICES=1 python train_grpo_vllm.py
 ```
 
 ## 3. 動作確認
