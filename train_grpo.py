@@ -52,7 +52,7 @@ model = AutoModelForCausalLM.from_pretrained(
     quantization_config=quant_cfg,
     attn_implementation="kernels-community/vllm-flash-attn3",
     use_cache=False,               # 勾配チェックポイントと相性良
-    device_map="auto",
+    device_map="balanced_low_0",
 )
 logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
 
