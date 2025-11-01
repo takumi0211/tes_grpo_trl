@@ -188,6 +188,7 @@ args = GRPOConfig(
     # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
     max_completion_length=MAX_COMPLETION_LEN,
+    # 生成エンジンの設定
     generation_kwargs={
         "use_cache": True,
         "do_sample": True,
