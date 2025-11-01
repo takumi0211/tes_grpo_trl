@@ -10,6 +10,7 @@ from data_reward import load_prompt_dataset, reward_fn
 import os
 import random
 import logging
+import inspect
 
 # ---------------------------
 # ハイパーパラメータ
@@ -173,7 +174,7 @@ logger.info(
 # ---------------------------
 # GRPO Config（vLLM server mode）
 # ---------------------------
-args = GRPOConfig(
+grpo_kwargs = dict(
     output_dir=OUT,
     max_steps=TOTAL_STEPS,
     learning_rate=5e-5,
@@ -183,7 +184,6 @@ args = GRPOConfig(
     seed=SEED,
     accelerator_config={"split_batches": True},
     logging_steps=1,
-
     # vLLM server mode 設定
     use_vllm=True,
     vllm_mode="server",
@@ -195,7 +195,6 @@ args = GRPOConfig(
     vllm_gpu_memory_utilization=0.8,
     vllm_kv_cache_dtype="auto",
     vllm_enable_sleep_mode=False,
-
     # 生成設定
     num_generations=NUM_GENERATIONS,
     generation_batch_size=TRAIN_BATCH_SIZE,
@@ -211,6 +210,15 @@ args = GRPOConfig(
         "eos_token_id": tok.eos_token_id,
     },
 )
+
+grpo_signature = inspect.signature(GRPOConfig.__init__)
+allowed_keys = set(grpo_signature.parameters.keys()) - {"self"}
+unsupported_kwargs = [key for key in grpo_kwargs.keys() if key not in allowed_keys]
+if unsupported_kwargs:
+    logger.warning("Skipping unsupported GRPOConfig args for this TRL version: %s", unsupported_kwargs)
+
+filtered_kwargs = {key: value for key, value in grpo_kwargs.items() if key in allowed_keys}
+args = GRPOConfig(**filtered_kwargs)
 
 micro_batch_completions = TRAIN_BATCH_SIZE
 total_completions_per_update = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS

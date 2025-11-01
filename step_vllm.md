@@ -13,7 +13,7 @@ python -m venv ~/.venv
 source ~/.venv/bin/activate
 pip install --upgrade pip
 pip install torch --index-url https://download.pytorch.org/whl/cu122
-pip install transformers accelerate peft trl datasets vllm==0.5.4.post1
+pip install transformers accelerate peft 'trl[vllm]>=0.23.1' datasets vllm==0.5.4.post1
 pip install flash-attn --no-build-isolation  # FA3 カーネル
 ```
 
@@ -22,10 +22,11 @@ pip install flash-attn --no-build-isolation  # FA3 カーネル
 
 ```bash
 # 単一ノード (H100×2) で学習プロセスと GPU を分離する例
-export CUDA_VISIBLE_DEVICES=0          # vLLM は GPU0 専用にする
+export CUDA_VISIBLE_DEVICES=0          # vLLM サーバーは GPU0 専用にする
 export VLLM_USE_V1=1
 export VLLM_TENSOR_PARALLEL_SIZE=1     # TP=1 に固定（GPU0 のみを使用）
-vllm serve openai/gpt-oss-20b \
+trl vllm-serve \
+  --model openai/gpt-oss-20b \
   --host 0.0.0.0 --port 8000 \
   --tensor-parallel-size 1 \
   --dtype bfloat16 \
@@ -71,10 +72,11 @@ python train_grpo_vllm.py
 - **HTTP 503 / Connection refused**: vLLM サーバー側のウォームアップ中です。`--enforce-eager` を付ける／学習側で再試行リトライを追加。
 - **推論が非常に遅い**: `--max-num-seqs` や `--tensor-parallel-size` の設定を確認。TP=2 に対して GPU が 1 台しか見えていない場合、vLLM サーバーが起動に失敗します。
 - **CUDA OOM（ロード直後に発生）**: サーバーが GPU すべてを占有したまま学習プロセスが `AutoModelForCausalLM.from_pretrained` を呼ぶと MXFP4→BF16 のデクオン時に 2 GiB 程度確保できず失敗します。`pkill -f "vllm serve"` で既存プロセスを落とし、`CUDA_VISIBLE_DEVICES` を使ってサーバーと学習の GPU を分けてください。必要に応じて `export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` を追加すると断片化を抑えられます。
+- **404 Not Found が vLLM から返る**: TRL 0.23+ の server mode は `trl vllm-serve` が立てる拡張 API を利用します。素の `vllm serve` では `/get_world_size/` などのエンドポイントが無く 404 になります。サーバーを停止 (`pkill -f "vllm serve"`) し、`pip install 'trl[vllm]>=0.23.1'` で CLI を導入した上で `trl vllm-serve ...` を使って再起動してください。
 - **FlashAttention3 がロードできない**: `flash-attn` の再インストール (`pip install flash-attn --no-build-isolation`) と、環境変数 `TORCH_CUDA_ARCH_LIST="9.0"` を設定してから PyTorch を再ビルド。
 
 ## 5. 後片付け
 学習終了後はサーバープロセスを明示的に停止してください。
 ```bash
-pkill -f "vllm serve"
+pkill -f "trl vllm-serve"
 ```
