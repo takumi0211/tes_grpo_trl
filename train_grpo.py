@@ -188,6 +188,10 @@ args = GRPOConfig(
     max_completion_length=MAX_COMPLETION_LEN,
     generation_kwargs={
         "use_cache": True,
+        "do_sample": True,
+        "temperature": 0.8,
+        "top_p": 0.95,
+        "eos_token_id": tok.eos_token_id,
     },
 )
 micro_batch_completions = TRAIN_BATCH_SIZE

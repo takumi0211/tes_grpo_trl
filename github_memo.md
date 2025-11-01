@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "add flash attention 3"
+git commit -m "do sample"
 git push origin main
