@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "revert Num gene"
+git commit -m "challenge training flow"
 git push origin main

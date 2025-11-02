@@ -11,9 +11,9 @@ MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
-PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
 NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
+PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
 MAX_COMPLETION_LEN = 3200
@@ -119,8 +119,10 @@ class StepStream(IterableDataset):
 
     def __init__(self, base_ds, k, num_generations):
         self.base = base_ds
-        self.k = k
         self.n = len(base_ds)
+        if self.n == 0:
+            raise ValueError("StepStream requires a non-empty dataset.")
+        self.k = min(k, self.n)
         self.num_generations = num_generations
         # データセットに実際に存在するキーとの積集合を使う
         dense_keys = [k for k in self.KEEP_KEYS if k in base_ds.features and k != "prompt"]
@@ -181,9 +183,9 @@ args = GRPOConfig(
 
     # 各マイクロステップで 1 プロンプト × 4 completion を生成
     num_generations=NUM_GENERATIONS,
-    generation_batch_size=TRAIN_BATCH_SIZE,
     per_device_train_batch_size=TRAIN_BATCH_SIZE,
     gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
+    steps_per_generation=GRADIENT_ACCUMULATION_STEPS,
     
     # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
@@ -201,15 +203,24 @@ micro_batch_completions = TRAIN_BATCH_SIZE
 total_completions_per_update = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
 split_batches_flag = getattr(args.accelerator_config, "split_batches", None)
 logger.info(
-    "Generation config | num_generations=%d | generation_batch_size=%s | per_device_train_batch_size=%d | "
-    "grad_accum=%d | split_batches=%s | completions_per_micro_step=%d | completions_per_update=%d",
+    "Generation config | num_generations=%d | generation_batch_size=%s | steps_per_generation=%s | "
+    "per_device_train_batch_size=%d | grad_accum=%d | split_batches=%s | completions_per_micro_step=%d | "
+    "completions_per_update=%d",
     NUM_GENERATIONS,
     args.generation_batch_size,
+    args.steps_per_generation,
     args.per_device_train_batch_size,
     GRADIENT_ACCUMULATION_STEPS,
     split_batches_flag,
     micro_batch_completions,
     total_completions_per_update,
+)
+logger.info(
+    "Buffered generation enabled: %d prompts × %d completions → %d sequences generated before each set of %d micro updates",
+    GRADIENT_ACCUMULATION_STEPS,
+    NUM_GENERATIONS,
+    NUM_GENERATIONS * GRADIENT_ACCUMULATION_STEPS,
+    GRADIENT_ACCUMULATION_STEPS,
 )
 
 # 実行
