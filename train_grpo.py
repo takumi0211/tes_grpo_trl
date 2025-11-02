@@ -16,7 +16,7 @@ NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 3200
+MAX_COMPLETION_LEN = 10
 SEED = 42
 
 # --- ロギング設定 ---
@@ -43,18 +43,43 @@ tok.padding_side = "left"
 if tok.pad_token is None:
     tok.pad_token = tok.eos_token
 
-# --- MXFP4 -> BF16 にデクオンして学習（公式ルート） ---
+# --- MXFP4 -> FP16 にデクオンして学習（公式ルート） ---
 # 参考: OpenAI/Transformersのcookbook・ブログで Mxfp4Config(dequantize=True) を明記。:contentReference[oaicite:5]{index=5}
 quant_cfg = Mxfp4Config(dequantize=True)
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
-    torch_dtype=torch.bfloat16,
-    quantization_config=quant_cfg,
-    attn_implementation="kernels-community/vllm-flash-attn3",
-    use_cache=False,               # 勾配チェックポイントと相性良
-    device_map="auto",
+attn_impl = os.environ.get("ATTN_IMPL", "flash_attention_3")  # デフォルトは FA3
+try:
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_ID,
+        torch_dtype=torch.float16,
+        quantization_config=quant_cfg,
+        attn_implementation=attn_impl,
+        use_cache=False,               # 勾配チェックポイントと相性良
+        device_map="auto",
+    )
+except ValueError as err:
+    if attn_impl == "flash_attention_3":
+        fallback_impl = "flash_attention_2"
+        logger.warning(
+            "flash_attention_3 unavailable (%s); retrying with %s",
+            err,
+            fallback_impl,
+        )
+        attn_impl = fallback_impl
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_ID,
+            torch_dtype=torch.float16,
+            quantization_config=quant_cfg,
+            attn_implementation=attn_impl,
+            use_cache=False,
+            device_map="auto",
+        )
+    else:
+        raise
+logger.info(
+    "Loaded policy model dtype=%s | attn_impl=%s",
+    next(model.parameters()).dtype,
+    attn_impl,
 )
-logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
 logger.info("HF device map: %s", getattr(model, "hf_device_map", "not available"))
 
 # --- LoRA r=4 ---
@@ -165,8 +190,8 @@ args = GRPOConfig(
     output_dir=OUT,
     max_steps=TOTAL_STEPS,
     learning_rate=5e-5,
-    bf16=True,
-    fp16=False,
+    bf16=False,
+    fp16=True,
     gradient_checkpointing=True,
     seed=SEED,
     accelerator_config={"split_batches": True},
