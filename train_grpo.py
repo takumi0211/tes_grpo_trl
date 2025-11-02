@@ -16,7 +16,7 @@ GRADIENT_ACCUMULATION_STEPS = 4
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 3
+MAX_COMPLETION_LEN = 3200
 SEED = 42
 
 # --- ロギング設定 ---

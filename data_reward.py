@@ -21,7 +21,7 @@ TRUNCATION_TOKEN_THRESHOLD = int(os.getenv("GRPO_TRUNCATION_THRESHOLD", 128))
 ACTION_RE = re.compile(r"\[(\d)\]")
 
 # 無効なアクションに対するペナルティ値
-PENALTY = -0.5
+PENALTY = -0
 
 
 def _is_main_process() -> bool:
