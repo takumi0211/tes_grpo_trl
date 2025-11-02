@@ -43,12 +43,38 @@ ARM 向け Python を自前でビルドしている場合は `uv venv --system-s
 
 ## 2. PyTorch + CUDA (GH200 対応ビルド)
 
-PyTorch 公式の aarch64 + CUDA ホイール (CUDA 12.8) を使用します。`torch` を CPU 版からアップグレードし、`libtorch_cuda.so` が提供されることを確認します。
+2025-11-02 時点では、`torch==2.8.0+cu128` の安定版ホイールは x86_64 向けのみ提供されており、aarch64 (GH200) では入手できません。そのため、以下いずれかの方法で CUDA 対応の PyTorch を確保します。
+
+### Option A: Nightly/cu128 ホイールを利用（推奨）
+
+PyTorch nightly では aarch64 + CUDA 12.8 ホイールが配布されています。
 
 ```
-uv pip install --index-url https://download.pytorch.org/whl/cu128 \
-  torch==2.8.0 torchvision==0.19.0 torchaudio==2.8.0
+uv pip install --pre --index-url https://download.pytorch.org/whl/nightly/cu128 \
+  torch torchvision torchaudio
 ```
+
+> nightly 版なのでバージョンは `2.9.0.dev*+cu128` のような表記になります。安定版が必要な場合は Option B を検討してください。
+
+### Option B: ソースからビルド
+
+時間はかかりますが、安定版 2.8 系を使いたい場合はソースビルドします。
+
+```
+git clone --recursive https://github.com/pytorch/pytorch.git --branch v2.8.0
+cd pytorch
+pip install -r requirements.txt
+USE_CUDA=1 USE_MKLDNN=0 python setup.py bdist_wheel
+pip install dist/torch-2.8.0*.whl
+```
+
+> Hopper 対応のため `CUDA_VERSION=128`、`TORCH_CUDA_ARCH_LIST="90"` 等の環境変数を設定すると最適化されます。必要に応じて `USE_NCCL=1` も追加。
+
+### Option C: NVIDIA NGC コンテナを使う
+
+コンテナ運用が可能なら、`nvcr.io/nvidia/pytorch:24.10-py3` (CUDA 12.8 + Hopper 対応) をベースに環境を用意するのが最速です。コンテナ内でこのリポジトリをマウントし、本手順の残りを実行します。
+
+---
 
 インストール確認:
 ```
@@ -167,4 +193,3 @@ python train_grpo.py
 * PyTorch CUDA 12.8 Release Notes
 * vLLM Installation Guide (CUDA 12.8)
 * FlashAttention 3 Hopper Wheel 配布 (Hugging Face Datasets)
-
