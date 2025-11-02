@@ -95,6 +95,8 @@ if trainable_lora_params:
     )
 else:
     logger.warning("No LoRA parameters detected as trainable.")
+    
+model.to(dtype=torch.float16)
 
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
@@ -165,8 +167,8 @@ args = GRPOConfig(
     output_dir=OUT,
     max_steps=TOTAL_STEPS,
     learning_rate=5e-5,
-    bf16=True,
-    fp16=False,
+    bf16=False,
+    fp16=True,
     gradient_checkpointing=True,
     seed=SEED,
     accelerator_config={"split_batches": True},
