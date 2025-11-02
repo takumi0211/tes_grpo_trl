@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change Num gene"
+git commit -m "revert Num gene"
 git push origin main
