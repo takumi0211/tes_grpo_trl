@@ -12,7 +12,7 @@ OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
-NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完了数
+NUM_GENERATIONS = 8           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
@@ -96,8 +96,6 @@ if trainable_lora_params:
 else:
     logger.warning("No LoRA parameters detected as trainable.")
     
-model.to(dtype=torch.float16)
-
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
 random.seed(SEED)
@@ -167,8 +165,8 @@ args = GRPOConfig(
     output_dir=OUT,
     max_steps=TOTAL_STEPS,
     learning_rate=5e-5,
-    bf16=False,
-    fp16=True,
+    bf16=True,
+    fp16=False,
     gradient_checkpointing=True,
     seed=SEED,
     accelerator_config={"split_batches": True},
