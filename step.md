@@ -65,7 +65,11 @@ uv pip install --no-build-isolation \
   "huggingface_hub>=0.25" \
   packaging ninja \
   "kernels>=0.10" \
-  "triton>=3.4"
+  "triton>=3.4" \
+  "liger-kernel"
+
+**Liger対応:** 上記コマンドで `liger-kernel` を導入しています。ビルドが失敗する環境では代わりに  
+`uv pip install "trl[liger] @ git+https://github.com/huggingface/trl.git"` を実行し、CUDA / PyTorch に適合した Liger カーネルを用意してください。
 
 # FlashAttention 2 のビルド時間が長い場合は `MAX_JOBS=4 uv pip install --no-build-isolation ...` のように CPU スレッド数を制限すると安定します。
 
@@ -97,6 +101,7 @@ python train_grpo.py
 
 学習は以下の構成で行われます:
 - `openai/gpt-oss-20b` を MXFP4 ロード → BF16 にデクオンして LoRA 学習
+- GRPO の損失計算は `GRPOConfig(use_liger_loss=True)` で Liger のチャンク化ロスを使用（B×T×V 常駐を回避）
 - TRL の GRPOTrainer が vLLM をコロケート起動（`vllm_enable_sleep_mode=True` で VRAM 回収）
 - 1 step あたり 12 プロンプト × 各 8 生成（設定値は `train_grpo.py` を参照）
 

@@ -11,7 +11,7 @@ MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
-NUM_GENERATIONS = 6           # プロンプトごとにサンプルされる完了数
+NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
@@ -162,7 +162,6 @@ logger.info(
     stream.keys,
 )
 
-
 # ----------------- TRL/GRPO + vLLM (colocate) -----------------
 # colocate: 学習プロセス内でvLLMを起動（省メモリのため sleep を有効化）。
 # ※ vLLM 0.10.2 を使用（TRLのサポートバージョン）
@@ -176,6 +175,7 @@ args = GRPOConfig(
     seed=SEED,
     accelerator_config={"split_batches": True},
     logging_steps=1,
+    use_liger_loss=True,
 
     # 生成エンジン（vLLM）
     use_vllm=False,
