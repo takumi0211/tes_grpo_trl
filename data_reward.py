@@ -10,6 +10,7 @@ import re
 import csv
 import atexit
 import logging
+import math
 from collections.abc import Iterable as IterableSequence
 from glob import glob
 from datasets import load_dataset, Dataset
@@ -49,6 +50,14 @@ _GENERATION_TOTAL = 0
 _GENERATION_LOGGER = logging.getLogger("train_grpo")
 
 
+def _steps_per_generation() -> int:
+    raw = os.getenv("GRPO_STEPS_PER_GENERATION") or os.getenv("GRADIENT_ACCUMULATION_STEPS")
+    try:
+        return max(1, int(raw)) if raw is not None else 1
+    except ValueError:
+        return 1
+
+
 def _init_csv_logger() -> None:
     global _CSV_FILE, _CSV_WRITER
     if not CSV_LOG_ENABLED or _CSV_WRITER is not None:
@@ -56,7 +65,7 @@ def _init_csv_logger() -> None:
     os.makedirs(os.path.dirname(CSV_PATH) or ".", exist_ok=True)
     _CSV_FILE = open(CSV_PATH, "w", newline="", encoding="utf-8")
     _CSV_WRITER = csv.writer(_CSV_FILE)
-    _CSV_WRITER.writerow(["step", "prompt", "completion", "action", "reward"])
+    _CSV_WRITER.writerow(["step", "micro_step", "prompt", "completion", "action", "reward"])
 
 
 def _close_csv_logger() -> None:
@@ -198,6 +207,8 @@ def reward_fn(
 
     rewards = []
     action_tokens = []
+    steps_per_generation = _steps_per_generation()
+    completions_per_micro = max(1, math.ceil(size / steps_per_generation))
     for idx, (completion, r0, r1, r2, r3) in enumerate(
         zip(completions, rewards_0, rewards_1, rewards_2, rewards_3)
     ):
@@ -244,9 +255,14 @@ def reward_fn(
                 prompt_text = ""
                 if prompts:
                     prompt_text = prompts[idx % len(prompts)]
+                micro_step_value = min(
+                    (idx // completions_per_micro) + 1,
+                    steps_per_generation,
+                )
                 _CSV_WRITER.writerow(
                     [
                         step_value,
+                        micro_step_value,
                         prompt_text,
                         completion,
                         action_token,

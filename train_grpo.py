@@ -19,6 +19,9 @@ MAX_PROMPT_LEN = 1000
 MAX_COMPLETION_LEN = 32
 SEED = 42
 
+# Reward logger uses this to reconstruct micro-step indices per optimizer step
+os.environ.setdefault("GRPO_STEPS_PER_GENERATION", str(GRADIENT_ACCUMULATION_STEPS))
+
 # --- ロギング設定 ---
 os.makedirs(OUT, exist_ok=True)
 logger = logging.getLogger("train_grpo")

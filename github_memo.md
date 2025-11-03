@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "add log hoow many generate"
+git commit -m "change logging column"
 git push origin main
