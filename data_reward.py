@@ -87,13 +87,12 @@ def _record_generation_count(batch_size: int, trainer_state=None) -> None:
         return
     global_step = getattr(trainer_state, "global_step", None)
     step_repr = global_step if isinstance(global_step, int) and global_step >= 0 else "N/A"
-    _GENERATION_LOGGER.info(
-        "Generated completions (pre-reward) | micro_step=%d | global_step=%s | batch=%d | cumulative=%d",
-        micro_step_idx,
-        step_repr,
-        batch_size,
-        _GENERATION_TOTAL,
+    message = (
+        "Generated completions (pre-reward) | micro_step="
+        f"{micro_step_idx} | global_step={step_repr} | batch={batch_size} | cumulative={_GENERATION_TOTAL}"
     )
+    _GENERATION_LOGGER.info(message)
+    print(message)
 
 
 # プロンプトデータセットを読み込む関数
