@@ -11,12 +11,12 @@ MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
-NUM_GENERATIONS = 4           # プロンプトごとにサンプルされる完了数
+NUM_GENERATIONS = 16           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
-MAX_COMPLETION_LEN = 32
+MAX_COMPLETION_LEN = 4500
 SEED = 42
 
 # Reward logger uses this to reconstruct micro-step indices per optimizer step
@@ -176,7 +176,10 @@ args = GRPOConfig(
     accelerator_config={"split_batches": True},
     logging_steps=1,
     use_liger_loss=True,
-    loss_type="grpo",  # Ligerカーネル対応の基本GRPOロスを使用（長さバイアスが気になる場合はbnpoを検討）
+    loss_type="dr_grpo",
+    mask_truncated_completions=True,
+    scale_rewards=False,                  # Dr.GRPOの推奨
+    beta=0.05,                            # 必要なら少しだけKLを入れて安定化
 
     # 生成エンジン（vLLM）
     use_vllm=False,

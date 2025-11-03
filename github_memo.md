@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "well done use_liger_loss=True"
+git commit -m "change loss type"
 git push origin main

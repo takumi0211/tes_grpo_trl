@@ -186,15 +186,17 @@ def reward_fn(
             tokens_seq = token_sequences[idx]
             mask_seq = mask_sequences[idx] if idx < len(mask_sequences) else []
             seq_len = len(tokens_seq)
-            mask_all_one = bool(mask_seq) and all(int(v) == 1 for v in mask_seq)
+            mask_vals = [int(v) for v in mask_seq] if mask_seq else []
+            mask_all_one = bool(mask_vals) and all(v == 1 for v in mask_vals)
+            mask_all_zero = bool(mask_vals) and all(v == 0 for v in mask_vals)
             if (
                 seq_len >= max_completion_len
                 and seq_len >= TRUNCATION_TOKEN_THRESHOLD
-                and mask_all_one
+                and (mask_all_one or mask_all_zero)
             ):
                 is_truncated = True
         if is_truncated:
-            rewards.append(PENALTY)
+            rewards.append(math.nan)
             action_tokens.append("NaN")
             continue
 
