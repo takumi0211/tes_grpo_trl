@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change logging column"
+git commit -m "delete log csv"
 git push origin main
