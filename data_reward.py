@@ -9,6 +9,7 @@ import random
 import re
 import csv
 import atexit
+import logging
 from collections.abc import Iterable as IterableSequence
 from glob import glob
 from datasets import load_dataset, Dataset
@@ -42,6 +43,10 @@ CSV_PATH = os.getenv(
 _CSV_FILE = None
 _CSV_WRITER = None
 _MICRO_STEP_COUNTER = 0
+GENERATION_LOG_ENABLED = os.getenv("GRPO_LOG_GENERATIONS", "1") != "0"
+GENERATION_LOG_INTERVAL = max(1, int(os.getenv("GRPO_GENERATION_LOG_INTERVAL", "1")))
+_GENERATION_TOTAL = 0
+_GENERATION_LOGGER = logging.getLogger("train_grpo")
 
 
 def _init_csv_logger() -> None:
@@ -64,6 +69,31 @@ def _close_csv_logger() -> None:
 
 
 atexit.register(_close_csv_logger)
+
+
+def _record_generation_count(batch_size: int, trainer_state=None) -> None:
+    """Log the number of generated completions before reward scoring."""
+    if (
+        not GENERATION_LOG_ENABLED
+        or not _is_main_process()
+        or batch_size <= 0
+        or _GENERATION_LOGGER is None
+    ):
+        return
+    global _GENERATION_TOTAL
+    micro_step_idx = _MICRO_STEP_COUNTER + 1
+    _GENERATION_TOTAL += batch_size
+    if micro_step_idx % GENERATION_LOG_INTERVAL != 0:
+        return
+    global_step = getattr(trainer_state, "global_step", None)
+    step_repr = global_step if isinstance(global_step, int) and global_step >= 0 else "N/A"
+    _GENERATION_LOGGER.info(
+        "Generated completions (pre-reward) | micro_step=%d | global_step=%s | batch=%d | cumulative=%d",
+        micro_step_idx,
+        step_repr,
+        batch_size,
+        _GENERATION_TOTAL,
+    )
 
 
 # プロンプトデータセットを読み込む関数
@@ -142,6 +172,8 @@ def reward_fn(
     global _MICRO_STEP_COUNTER
 
     size = len(completions)
+    trainer_state = kwargs.get("trainer_state")
+    _record_generation_count(size, trainer_state)
     rewards_0 = _expand(reward_action_0, size)
     rewards_1 = _expand(reward_action_1, size)
     rewards_2 = _expand(reward_action_2, size)
@@ -205,7 +237,6 @@ def reward_fn(
             prompts = kwargs.get("prompt") or kwargs.get("prompts") or []
             if isinstance(prompts, str):
                 prompts = [prompts]
-            trainer_state = kwargs.get("trainer_state")
             global_step = getattr(trainer_state, "global_step", -1)
             step_value = global_step if (global_step is not None and global_step >= 0) else _MICRO_STEP_COUNTER
             for idx, (completion, reward_val, action_token) in enumerate(
