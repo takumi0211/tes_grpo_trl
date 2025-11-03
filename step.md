@@ -78,6 +78,10 @@ uv pip install --no-build-isolation \
 # uv pip install --index-url https://download.pytorch.org/whl/cu128 "torch==2.8.0" "torchvision==0.19.0" "torchaudio==2.8.0"
 ```
 
+```
+pip install liger-kernel
+```
+
 ---
 
 ## 3. リポジトリの取得（1分）
@@ -101,7 +105,7 @@ python train_grpo.py
 
 学習は以下の構成で行われます:
 - `openai/gpt-oss-20b` を MXFP4 ロード → BF16 にデクオンして LoRA 学習
-- GRPO の損失計算は `GRPOConfig(use_liger_loss=True)` で Liger のチャンク化ロスを使用（B×T×V 常駐を回避）
+- GRPO の損失計算は `GRPOConfig(use_liger_loss=True, loss_type="bnpo")` で Liger のチャンク化ロスを使用（B×T×V 常駐を回避。Liger は現状 `loss_type="dapo"` に未対応のため `bnpo` に切替済み）
 - TRL の GRPOTrainer が vLLM をコロケート起動（`vllm_enable_sleep_mode=True` で VRAM 回収）
 - 1 step あたり 12 プロンプト × 各 8 生成（設定値は `train_grpo.py` を参照）
 

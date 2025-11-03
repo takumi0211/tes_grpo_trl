@@ -176,6 +176,7 @@ args = GRPOConfig(
     accelerator_config={"split_batches": True},
     logging_steps=1,
     use_liger_loss=True,
+    loss_type="grpo",  # Ligerカーネル対応の基本GRPOロスを使用（長さバイアスが気になる場合はbnpoを検討）
 
     # 生成エンジン（vLLM）
     use_vllm=False,
