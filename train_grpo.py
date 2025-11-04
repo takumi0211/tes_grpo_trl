@@ -11,7 +11,7 @@ MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 10
-NUM_GENERATIONS = 12           # プロンプトごとにサンプルされる完了数
+NUM_GENERATIONS = 16           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
@@ -191,7 +191,6 @@ args = GRPOConfig(
     loss_type="dr_grpo",
     mask_truncated_completions=True,
     scale_rewards=False,                  # Dr.GRPOの推奨
-    beta=0.05,                            # 必要なら少しだけKLを入れて安定化
 
     # 生成エンジン（vLLM）
     use_vllm=False,

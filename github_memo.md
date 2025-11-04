@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "delete log"
+git commit -m "delete β正則化"
 git push origin main
