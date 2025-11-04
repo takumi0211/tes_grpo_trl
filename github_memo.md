@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "before add run train model"
+git commit -m "add run train model"
 git push origin main
