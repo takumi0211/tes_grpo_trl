@@ -59,14 +59,16 @@ if not torch.cuda.is_available():
     raise RuntimeError("A CUDA-capable GPU (H100) is required for MXFP4 inference.")
 
 # モデルの読み込み
-model = AutoModelForCausalLM.from_pretrained(
-    base_model_name,
+model_kwargs = dict(
     quantization_config=quant_config,
-    attn_implementation="kernels-community/vllm-flash-attn3",
     device_map="auto",
     torch_dtype=torch.bfloat16,
     low_cpu_mem_usage=True,
 )
+if torch.cuda.is_available():
+    model_kwargs["attn_implementation"] = "kernels-community/vllm-flash-attn3"
+
+model = AutoModelForCausalLM.from_pretrained(base_model_name, **model_kwargs)
 model = PeftModel.from_pretrained(model, adapter_path, device_map="auto", torch_dtype=torch.bfloat16)
 model.eval()
 

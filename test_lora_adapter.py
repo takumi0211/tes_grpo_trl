@@ -56,19 +56,22 @@ if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
 # デバイス設定
-dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-device_map = "auto" if torch.cuda.is_available() else None
-target_device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
+has_cuda = torch.cuda.is_available()
+dtype = torch.bfloat16 if has_cuda else torch.float32
+device_map = "auto" if has_cuda else None
+target_device = torch.device("cuda:0") if has_cuda else torch.device("cpu")
 
 # モデルの読み込み
-base_model = AutoModelForCausalLM.from_pretrained(
-    base_model_name,
+model_kwargs = dict(
     torch_dtype=dtype,
     quantization_config=quant_config,
-    attn_implementation="kernels-community/vllm-flash-attn3",
     device_map=device_map,
     low_cpu_mem_usage=True,
 )
+if has_cuda:
+    model_kwargs["attn_implementation"] = "kernels-community/vllm-flash-attn3"
+
+base_model = AutoModelForCausalLM.from_pretrained(base_model_name, **model_kwargs)
 model = PeftModel.from_pretrained(base_model, adapter_path, device_map=device_map, torch_dtype=dtype)
 model.eval()
 
