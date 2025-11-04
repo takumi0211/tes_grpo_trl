@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "delete β正則化"
+git commit -m "change reward parameter"
 git push origin main

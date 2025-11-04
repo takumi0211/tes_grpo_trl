@@ -15,7 +15,8 @@ from glob import glob
 from datasets import load_dataset, Dataset
 from typing import Optional, Sequence, Union
 
-TRUNCATION_TOKEN_THRESHOLD = int(os.getenv("GRPO_TRUNCATION_THRESHOLD", 128))
+TRUNCATION_TOKEN_THRESHOLD = 4000
+print(f"TRUNCATION_TOKEN_THRESHOLD: {TRUNCATION_TOKEN_THRESHOLD}")
 
 # アクションを抽出するための正規表現パターン
 # 形式: [0], [1], [2], [3] を文中から検出
