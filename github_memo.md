@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "add ollama step"
+git commit -m "add Model file"
 git push origin main
