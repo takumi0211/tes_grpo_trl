@@ -3,8 +3,10 @@
 Merge the trained LoRA adapter into the GPT-OSS base model and store a
 quantization hint (MXFP4) alongside the merged weights.
 
-Adjust the constants below if paths differ, then run:
-    python export_quantized_model.py
+Export procedure (update constants below if paths differ):
+  1. export HF_TOKEN=<your token>
+  2. export HF_REPO_ID=<your repo id> ex) takumi0211/tes_grpo_trl
+  3. Run `python export_quantized_model.py`
 """
 import json
 import os
