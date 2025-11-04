@@ -1,2 +1,0 @@
-step,micro_step,prompt,completion,action,reward,target_action
-0,1,,some text [3],3,0.4,3
