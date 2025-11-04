@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change penalty"
+git commit -m "delete log"
 git push origin main
