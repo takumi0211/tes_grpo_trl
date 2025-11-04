@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "well done adding run train model and output model"
+git commit -m "add run model from HGF"
 git push origin main
