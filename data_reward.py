@@ -21,8 +21,8 @@ TRUNCATION_TOKEN_THRESHOLD = int(os.getenv("GRPO_TRUNCATION_THRESHOLD", 128))
 # 形式: [0], [1], [2], [3] を文中から検出
 ACTION_RE = re.compile(r"\[(\d)\]")
 
-# 無効なアクションに対するペナルティ値
-PENALTY = -0
+# 無効なアクションや判定不能な completion を学習から除外するための値
+PENALTY = math.nan
 
 
 def _is_main_process() -> bool:
@@ -60,7 +60,7 @@ def _init_csv_logger() -> None:
     os.makedirs(os.path.dirname(CSV_PATH) or ".", exist_ok=True)
     _CSV_FILE = open(CSV_PATH, "w", newline="", encoding="utf-8")
     _CSV_WRITER = csv.writer(_CSV_FILE)
-    _CSV_WRITER.writerow(["step", "micro_step", "prompt", "completion", "action", "reward"])
+    _CSV_WRITER.writerow(["step", "micro_step", "prompt", "completion", "action", "reward", "target_action"])
 
 
 def _close_csv_logger() -> None:
@@ -120,6 +120,22 @@ def _expand(values, size):
     return expanded[:size]
 
 
+def _argmax_action(values) -> str:
+    best_idx = None
+    best_val = float("-inf")
+    for idx, val in enumerate(values):
+        try:
+            val_float = float(val)
+        except (TypeError, ValueError):
+            continue
+        if math.isnan(val_float):
+            continue
+        if best_idx is None or val_float > best_val:
+            best_idx = idx
+            best_val = val_float
+    return str(best_idx) if best_idx is not None else "NaN"
+
+
 # 報酬計算のメイン関数
 # completions: 完了したアクションのリスト (例: "[0]", "[1]" など)
 # reward_action_0 ~ reward_action_3: 各アクション(0-3)に対する報酬値 (スカラまたはリスト)
@@ -172,45 +188,47 @@ def reward_fn(
         mask_sequences = []
     if token_sequences and not mask_sequences:
         mask_sequences = [[] for _ in token_sequences]
-    max_completion_len = max((len(seq) for seq in token_sequences), default=0)
-
     rewards = []
     action_tokens = []
+    target_actions = []
     steps_per_generation = _steps_per_generation()
     completions_per_micro = max(1, math.ceil(size / steps_per_generation))
     for idx, (completion, r0, r1, r2, r3) in enumerate(
         zip(completions, rewards_0, rewards_1, rewards_2, rewards_3)
     ):
+        reward_map = (r0, r1, r2, r3)
+        target_action = _argmax_action(reward_map)
         is_truncated = False
         if token_sequences and idx < len(token_sequences):
             tokens_seq = token_sequences[idx]
             mask_seq = mask_sequences[idx] if idx < len(mask_sequences) else []
             seq_len = len(tokens_seq)
             mask_vals = [int(v) for v in mask_seq] if mask_seq else []
-            mask_all_one = bool(mask_vals) and all(v == 1 for v in mask_vals)
             mask_all_zero = bool(mask_vals) and all(v == 0 for v in mask_vals)
-            if (
-                seq_len >= max_completion_len
+            threshold_hit = (
+                TRUNCATION_TOKEN_THRESHOLD > 0
                 and seq_len >= TRUNCATION_TOKEN_THRESHOLD
-                and (mask_all_one or mask_all_zero)
-            ):
+            )
+            if mask_all_zero or threshold_hit:
                 is_truncated = True
         if is_truncated:
             rewards.append(math.nan)
             action_tokens.append("NaN")
+            target_actions.append(target_action)
             continue
 
         matches = list(ACTION_RE.finditer(completion))
         if not matches:
             rewards.append(PENALTY)
             action_tokens.append("NaN")
+            target_actions.append(target_action)
             continue
         action = matches[-1].group(1)
-        reward_map = (r0, r1, r2, r3)
         idx_int = int(action)
         reward_val = float(reward_map[idx_int]) if 0 <= idx_int < 4 else PENALTY
         rewards.append(reward_val)
         action_tokens.append(action if 0 <= idx_int < 4 else "NaN")
+        target_actions.append(target_action)
 
     if CSV_LOG_ENABLED and size:
         _init_csv_logger()
@@ -220,8 +238,8 @@ def reward_fn(
                 prompts = [prompts]
             global_step = getattr(trainer_state, "global_step", -1)
             step_value = global_step if (global_step is not None and global_step >= 0) else _MICRO_STEP_COUNTER
-            for idx, (completion, reward_val, action_token) in enumerate(
-                zip(completions, rewards, action_tokens)
+            for idx, (completion, reward_val, action_token, target_action) in enumerate(
+                zip(completions, rewards, action_tokens, target_actions)
             ):
                 prompt_text = ""
                 if prompts:
@@ -230,6 +248,9 @@ def reward_fn(
                     (idx // completions_per_micro) + 1,
                     steps_per_generation,
                 )
+                reward_csv = reward_val
+                if isinstance(reward_val, float) and math.isnan(reward_val):
+                    reward_csv = "NaN"
                 _CSV_WRITER.writerow(
                     [
                         step_value,
@@ -237,7 +258,8 @@ def reward_fn(
                         prompt_text,
                         completion,
                         action_token,
-                        float(reward_val),
+                        reward_csv,
+                        target_action,
                     ]
                 )
             if _CSV_FILE is not None:
