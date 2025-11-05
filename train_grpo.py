@@ -73,25 +73,28 @@ logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
 logger.info("HF device map: %s", getattr(model, "hf_device_map", "not available"))
 
 # --- LoRA r=4 ---
-# LoRA: MoE MLP を確実に含めるために全層を自動列挙
+# LoRA: MoE MLP parameter 名を列挙して target_parameters に流し込む
 expert_params = []
-for name, module in model.named_modules():
-    if "mlp.experts" in name and (name.endswith("gate_up_proj") or name.endswith("down_proj")):
+for name, _ in model.named_parameters():
+    if "mlp.experts" not in name:
+        continue
+    if name.endswith("gate_up_proj") or name.endswith("down_proj") or name.endswith("gate_up_proj.weight") or name.endswith("down_proj.weight"):
         expert_params.append(name)
+expert_params = sorted(set(expert_params))
 
 lora = LoraConfig(
     r=4, lora_alpha=8,
     target_modules="all-linear",
-    target_parameters=expert_params,      # ← 固定列挙から自動列挙に
+    target_parameters=expert_params or None,      # ← 固定列挙から自動列挙に
     task_type="CAUSAL_LM",            
 )
 model = get_peft_model(model, lora)
 
 # --- 学習対象のLoRAレイヤーを確認 ---
 logger.info(
-    "LoRA target parameters enumerated (%d): %s",
+    "LoRA MoE parameters enumerated (%d): %s",
     len(expert_params),
-    expert_params if expert_params else "all linear layers",
+    expert_params if expert_params else "none (using target_modules='all-linear' only)",
 )
 trainable_lora_params = [
     f"{name} shape={tuple(param.shape)}"
