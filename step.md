@@ -78,10 +78,6 @@ uv pip install --no-build-isolation \
 # uv pip install --index-url https://download.pytorch.org/whl/cu128 "torch==2.8.0" "torchvision==0.19.0" "torchaudio==2.8.0"
 ```
 
-```
-pip install liger-kernel
-```
-
 ---
 
 ## 3. リポジトリの取得（1分）

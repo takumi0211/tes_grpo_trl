@@ -34,7 +34,7 @@ if not logger.handlers:
     _file_handler.setFormatter(_formatter)
     logger.addHandler(_stream_handler)
     logger.addHandler(_file_handler)
-    logger.propagate = False
+logger.propagate = False
 
 hf_logging.set_verbosity_info()
 hf_logging.enable_default_handler()
@@ -73,19 +73,19 @@ logger.info("Loaded policy model dtype=%s", next(model.parameters()).dtype)
 logger.info("HF device map: %s", getattr(model, "hf_device_map", "not available"))
 
 # --- LoRA r=4 ---
-# LoRA: MoE MLP parameter 名を列挙して target_parameters に流し込む
+# LoRA: MoE MLP を中・上位の3層（7, 15, 23番）に限定して適用
+TARGET_MOE_LAYERS = [7, 15, 23]
 expert_params = []
-for name, _ in model.named_parameters():
-    if "mlp.experts" not in name:
-        continue
-    if name.endswith("gate_up_proj") or name.endswith("down_proj") or name.endswith("gate_up_proj_bias") or name.endswith("down_proj_bias") or name.endswith("gate_up_proj.weight") or name.endswith("down_proj.weight"):
-        expert_params.append(name)
-expert_params = sorted(set(expert_params))
+for layer_idx in TARGET_MOE_LAYERS:
+    expert_params.append(f"model.layers.{layer_idx}.mlp.experts.gate_up_proj")
+    expert_params.append(f"model.layers.{layer_idx}.mlp.experts.down_proj")
 
 lora = LoraConfig(
-    r=4, lora_alpha=8,
+    r=1, lora_alpha=2,
     target_modules="all-linear",
     target_parameters=expert_params or None,      # ← 固定列挙から自動列挙に
+    rank_pattern={name: 4 for name in expert_params},
+    alpha_pattern={name: 8 for name in expert_params},
     task_type="CAUSAL_LM",            
 )
 model = get_peft_model(model, lora)
@@ -125,7 +125,8 @@ if moe_trainable:
     logger.info("MoE LoRA trainables (sample): %s", moe_trainable[:20])
 else:
     logger.warning("MoE expert parameters did not register LoRA adapters. Check target_parameters list.")
-    
+
+# ----------------- MoE router activity tracker ----------------
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
 random.seed(SEED)
