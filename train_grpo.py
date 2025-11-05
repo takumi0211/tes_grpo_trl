@@ -78,7 +78,7 @@ expert_params = []
 for name, _ in model.named_parameters():
     if "mlp.experts" not in name:
         continue
-    if name.endswith("gate_up_proj") or name.endswith("down_proj") or name.endswith("gate_up_proj.weight") or name.endswith("down_proj.weight"):
+    if name.endswith("gate_up_proj") or name.endswith("down_proj") or name.endswith("gate_up_proj_bias") or name.endswith("down_proj_bias") or name.endswith("gate_up_proj.weight") or name.endswith("down_proj.weight"):
         expert_params.append(name)
 expert_params = sorted(set(expert_params))
 
@@ -91,10 +91,14 @@ lora = LoraConfig(
 model = get_peft_model(model, lora)
 
 # --- 学習対象のLoRAレイヤーを確認 ---
+base_lora_model = getattr(model, "base_model", None)
+targeted_param_names = []
+if base_lora_model is not None and hasattr(base_lora_model, "targeted_parameter_names"):
+    targeted_param_names = sorted(base_lora_model.targeted_parameter_names)
 logger.info(
     "LoRA MoE parameters enumerated (%d): %s",
-    len(expert_params),
-    expert_params if expert_params else "none (using target_modules='all-linear' only)",
+    len(targeted_param_names),
+    targeted_param_names if targeted_param_names else expert_params if expert_params else "none (using target_modules='all-linear' only)",
 )
 trainable_lora_params = [
     f"{name} shape={tuple(param.shape)}"
@@ -113,6 +117,14 @@ if trainable_lora_params:
     )
 else:
     logger.warning("No LoRA parameters detected as trainable.")
+
+moe_trainable = [
+    entry for entry in trainable_lora_params if "mlp.experts" in entry
+]
+if moe_trainable:
+    logger.info("MoE LoRA trainables (sample): %s", moe_trainable[:20])
+else:
+    logger.warning("MoE expert parameters did not register LoRA adapters. Check target_parameters list.")
     
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
