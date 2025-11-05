@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change LoRA adapter 3層だけに"
+git commit -m "change to rank1"
 git push origin main
