@@ -74,27 +74,18 @@ logger.info("HF device map: %s", getattr(model, "hf_device_map", "not available"
 
 # --- LoRA r=4 ---
 # LoRA: MoE MLP を中・上位の3層（7, 15, 23番）に限定して適用
-TARGET_MOE_LAYERS = [7, 15, 23]
-expert_params = []
-for layer_idx in TARGET_MOE_LAYERS:
-    expert_params.append(f"model.layers.{layer_idx}.mlp.experts.gate_up_proj")
-    expert_params.append(f"model.layers.{layer_idx}.mlp.experts.down_proj")
-
-# lora = LoraConfig(
-#     r=1, lora_alpha=2,
-#     target_modules="all-linear",
-#     target_parameters=expert_params or None,      # ← 固定列挙から自動列挙に
-#     rank_pattern={name: 4 for name in expert_params},
-#     alpha_pattern={name: 8 for name in expert_params},
-#     task_type="CAUSAL_LM",            
-# )
+# TARGET_MOE_LAYERS = [7, 15, 23]
+# expert_params = []
+# for layer_idx in TARGET_MOE_LAYERS:
+#     expert_params.append(f"model.layers.{layer_idx}.mlp.experts.gate_up_proj")
+#     expert_params.append(f"model.layers.{layer_idx}.mlp.experts.down_proj")
 
 lora = LoraConfig(
-    r=1, lora_alpha=2,
+    r=4, lora_alpha=8,
     target_modules="all-linear",
-    target_parameters=expert_params or None,      # ← 固定列挙から自動列挙に
     task_type="CAUSAL_LM",            
 )
+
 model = get_peft_model(model, lora)
 
 # --- 学習対象のLoRAレイヤーを確認 ---
