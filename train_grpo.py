@@ -93,11 +93,7 @@ base_lora_model = getattr(model, "base_model", None)
 targeted_param_names = []
 if base_lora_model is not None and hasattr(base_lora_model, "targeted_parameter_names"):
     targeted_param_names = sorted(base_lora_model.targeted_parameter_names)
-logger.info(
-    "LoRA MoE parameters enumerated (%d): %s",
-    len(targeted_param_names),
-    targeted_param_names if targeted_param_names else expert_params if expert_params else "none (using target_modules='all-linear' only)",
-)
+
 trainable_lora_params = [
     f"{name} shape={tuple(param.shape)}"
     for name, param in model.named_parameters()
