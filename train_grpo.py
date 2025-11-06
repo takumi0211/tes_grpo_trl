@@ -10,7 +10,8 @@ import os, random, logging
 MODEL_ID = "openai/gpt-oss-20b"
 OUT = "runs/grpo_gptoss20b_lora4_tes"
 
-TOTAL_STEPS = 10
+TOTAL_STEPS = 200
+SAVE_STEPS = 20
 NUM_GENERATIONS = 16           # プロンプトごとにサンプルされる完了数
 GRADIENT_ACCUMULATION_STEPS = 4
 PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルされる異なるプロンプト数
@@ -197,6 +198,7 @@ args = GRPOConfig(
     seed=SEED,
     accelerator_config={"split_batches": True},
     logging_steps=1,
+    save_steps=SAVE_STEPS,
     use_liger_loss=True,
     loss_type="dr_grpo",
     mask_truncated_completions=True,

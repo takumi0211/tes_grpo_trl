@@ -60,7 +60,11 @@ def convert_file(path: Path, out_path: Path, tok: AutoTokenizer, overwrite: bool
     if "prompt" not in df.columns:
         raise ValueError(f"{path} does not have a 'prompt' column")
     df = df.copy()
-    df["prompt"] = [render_harmony_prompt(p, tok) for p in df["prompt"]]
+    # Convert prompts, handling NaN values
+    df["prompt"] = [
+        render_harmony_prompt(p, tok) if pd.notna(p) else p 
+        for p in df["prompt"]
+    ]
     df.to_csv(out_path, index=False)
     return len(df)
 

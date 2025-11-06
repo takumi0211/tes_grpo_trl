@@ -1,5 +1,5 @@
 timestep,timestamp,prompt,optimal_action,q_action_0,q_action_1,q_action_2,q_action_3,reward_action_0,reward_action_1,reward_action_2,reward_action_3
-8,2025-05-05T08:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+8,2025-06-02T08:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -14,28 +14,28 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 08:00:00
+- Current time [h]: 2025-06-02 08:00:00
 - Current TES energy [kWh]: 150
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
 
 - Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: load=45.8 kW, co2=0.249 kg-CO2/kWh  ←Now!!!
-  - 09:00: load=40.2 kW, co2=0.236 kg-CO2/kWh
-  - 10:00: load=38.7 kW, co2=0.216 kg-CO2/kWh
-  - 11:00: load=42.7 kW, co2=0.201 kg-CO2/kWh
-  - 12:00: load=42.9 kW, co2=0.200 kg-CO2/kWh
-  - 13:00: load=44.2 kW, co2=0.206 kg-CO2/kWh
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 08:00: load=36.6 kW, co2=0.267 kg-CO2/kWh  ←Now!!!
+  - 09:00: load=31.2 kW, co2=0.241 kg-CO2/kWh
+  - 10:00: load=30.8 kW, co2=0.229 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.221 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.225 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.244 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -61,8 +61,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-10.145355651430998,-10.191753097586895,-10.237022318097663,-10.283419764253562,0.6178735197969921,0.2442848232380685,0.09878546145451451,0.03905619551042493
-9,2025-05-05T09:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-9.24706051182008,-9.299838289597858,-9.352616067375637,-9.40479972632965,0.6614850458506634,0.2301961614544547,0.08010804338020809,0.028210749314673874
+9,2025-06-02T09:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -77,28 +77,28 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 09:00:00
-- Current TES energy [kWh]: 104
+- Current time [h]: 2025-06-02 09:00:00
+- Current TES energy [kWh]: 113
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
 
 - Remaining business hours today (08:00-17:00, close at 18:00):
   - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: load=40.2 kW, co2=0.236 kg-CO2/kWh  ←Now!!!
-  - 10:00: load=38.7 kW, co2=0.216 kg-CO2/kWh
-  - 11:00: load=42.7 kW, co2=0.201 kg-CO2/kWh
-  - 12:00: load=42.9 kW, co2=0.200 kg-CO2/kWh
-  - 13:00: load=44.2 kW, co2=0.206 kg-CO2/kWh
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 09:00: load=31.2 kW, co2=0.241 kg-CO2/kWh  ←Now!!!
+  - 10:00: load=30.8 kW, co2=0.229 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.221 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.225 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.244 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -124,8 +124,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-10.145355651430998,-10.173133429208775,-10.200911206986554,-10.22868898476433,0.478052145239114,0.2742840536218132,0.15737141401924226,0.09029238711983073
-10,2025-05-05T10:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-9.24706051182008,-9.263727178486748,-9.280393845153412,-9.296466392996315,0.3842864905725795,0.2753533027257699,0.19729926287292657,0.14306094382872406
+10,2025-06-02T10:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -140,8 +140,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 10:00:00
-- Current TES energy [kWh]: 64
+- Current time [h]: 2025-06-02 10:00:00
+- Current TES energy [kWh]: 82
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -149,19 +149,19 @@ Forecast features (raw values aligned with the RL look-ahead):
 - Remaining business hours today (08:00-17:00, close at 18:00):
   - 08:00: past hour -> omitted (state uses zero)
   - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: load=38.7 kW, co2=0.216 kg-CO2/kWh  ←Now!!!
-  - 11:00: load=42.7 kW, co2=0.201 kg-CO2/kWh
-  - 12:00: load=42.9 kW, co2=0.200 kg-CO2/kWh
-  - 13:00: load=44.2 kW, co2=0.206 kg-CO2/kWh
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 10:00: load=30.8 kW, co2=0.229 kg-CO2/kWh  ←Now!!!
+  - 11:00: load=31.6 kW, co2=0.221 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.225 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.244 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -187,8 +187,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-10.193966762542107,-10.153688984764331,-10.149522318097665,-10.145355651430998,0.12027647254279665,0.2691714631975422,0.2925635533649658,0.31798851089469543
-11,2025-05-05T11:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-9.37979972632965,-9.288727178486749,-9.267893845153417,-9.24706051182008,0.03249031355258735,0.2008167814399913,0.3046183324273033,0.4620745725801181
+11,2025-06-02T11:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -203,8 +203,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 11:00:00
-- Current TES energy [kWh]: 125
+- Current time [h]: 2025-06-02 11:00:00
+- Current TES energy [kWh]: 151
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -213,18 +213,18 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 08:00: past hour -> omitted (state uses zero)
   - 09:00: past hour -> omitted (state uses zero)
   - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: load=42.7 kW, co2=0.201 kg-CO2/kWh  ←Now!!!
-  - 12:00: load=42.9 kW, co2=0.200 kg-CO2/kWh
-  - 13:00: load=44.2 kW, co2=0.206 kg-CO2/kWh
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.221 kg-CO2/kWh  ←Now!!!
+  - 12:00: load=28.9 kW, co2=0.225 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.244 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -250,8 +250,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-9.356466762542109,-9.295355651431,-9.270355651430998,-9.245355651430998,0.05203051730170032,0.1766292035208238,0.29121232487161247,0.4801279543058634
-12,2025-05-05T12:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-8.45956051182008,-8.356782734042302,-8.324838289597858,-8.292893845153413,0.019364797142650294,0.15126184274768337,0.28654663044829665,0.5428267296613697
+12,2025-06-02T12:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -266,8 +266,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 12:00:00
-- Current TES energy [kWh]: 183
+- Current time [h]: 2025-06-02 12:00:00
+- Current TES energy [kWh]: 220
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -277,17 +277,17 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 09:00: past hour -> omitted (state uses zero)
   - 10:00: past hour -> omitted (state uses zero)
   - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: load=42.9 kW, co2=0.200 kg-CO2/kWh  ←Now!!!
-  - 13:00: load=44.2 kW, co2=0.206 kg-CO2/kWh
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.225 kg-CO2/kWh  ←Now!!!
+  - 13:00: load=31.4 kW, co2=0.244 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -313,8 +313,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-8.523133429208775,-8.461197542031341,-8.434244540319888,-8.408419764253562,0.04929725421259876,0.17013396013954227,0.29167674803701477,0.48889203761084415
-13,2025-05-05T13:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-7.52206051182008,-7.424838289597858,-7.398449400708969,-7.37206051182008,0.025047569922195447,0.17507619132535787,0.29678234824406513,0.5030938905083815
+13,2025-06-02T13:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -329,8 +329,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 13:00:00
-- Current TES energy [kWh]: 240
+- Current time [h]: 2025-06-02 13:00:00
+- Current TES energy [kWh]: 291
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -341,16 +341,16 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 10:00: past hour -> omitted (state uses zero)
   - 11:00: past hour -> omitted (state uses zero)
   - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: load=44.2 kW, co2=0.206 kg-CO2/kWh  ←Now!!!
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.244 kg-CO2/kWh  ←Now!!!
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -376,8 +376,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-7.664235983052878,-7.610633429208776,-7.592013760830656,-7.574522318097665,0.07054194250119718,0.20607878330296908,0.29906229807612406,0.4243169761197098
-14,2025-05-05T14:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-6.504799726329649,-6.43456051182008,-6.728890488926613,-7.067779377815501,0.19661919403182765,0.8011539477179627,0.0022243251825497246,2.5330676600186173e-06
+14,2025-06-02T14:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -392,8 +392,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 14:00:00
-- Current TES energy [kWh]: 295
+- Current time [h]: 2025-06-02 14:00:00
+- Current TES energy [kWh]: 293
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -405,15 +405,15 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 11:00: past hour -> omitted (state uses zero)
   - 12:00: past hour -> omitted (state uses zero)
   - 13:00: past hour -> omitted (state uses zero)
-  - 14:00: load=41.5 kW, co2=0.219 kg-CO2/kWh  ←Now!!!
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.295 kg-CO2/kWh  ←Now!!!
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -439,8 +439,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-6.751735983052878,-6.716188984764331,-6.968646920795983,-7.272813587462649,0.3279770748492195,0.6677298515954116,0.004283305211859643,9.768343509162975e-06
-15,2025-05-05T15:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-6.171466392996316,-6.095671622931191,-6.460834933371057,-6.870557155593279,0.17996735214191342,0.819480709663061,0.000551785800798374,1.5239422723124628e-07
+15,2025-06-02T15:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -455,8 +455,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 15:00:00
-- Current TES energy [kWh]: 287
+- Current time [h]: 2025-06-02 15:00:00
+- Current TES energy [kWh]: 293
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -469,14 +469,14 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 12:00: past hour -> omitted (state uses zero)
   - 13:00: past hour -> omitted (state uses zero)
   - 14:00: past hour -> omitted (state uses zero)
-  - 15:00: load=48.1 kW, co2=0.245 kg-CO2/kWh  ←Now!!!
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.350 kg-CO2/kWh  ←Now!!!
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -502,8 +502,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-6.459244540319887,-6.412022318097665,-6.418954926841637,-6.759232704619414,0.1720479526703858,0.4424014275337707,0.3851240545966622,0.00042656519918126556
-16,2025-05-05T16:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-5.727021948551871,-5.6853552818852044,-6.121221788519866,-6.607332899630976,0.30290614475494326,0.6969797362844132,0.00011411212114404126,6.839499391809228e-09
+16,2025-06-02T16:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -518,8 +518,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 16:00:00
-- Current TES energy [kWh]: 273
+- Current time [h]: 2025-06-02 16:00:00
+- Current TES energy [kWh]: 292
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -533,13 +533,13 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 13:00: past hour -> omitted (state uses zero)
   - 14:00: past hour -> omitted (state uses zero)
   - 15:00: past hour -> omitted (state uses zero)
-  - 16:00: load=43.5 kW, co2=0.279 kg-CO2/kWh  ←Now!!!
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.380 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -565,8 +565,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",2,-6.251735983052878,-6.161458205275101,-6.071180427497323,-6.407535809684871,0.0226578401001224,0.13783557494631468,0.8385020653702336,0.0010045195833292657
-17,2025-05-05T17:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-5.229205607505885,-5.199244170774094,-5.683057155593279,-6.210834933371057,0.3545058063983403,0.6454536865898506,4.050595669527514e-05,1.0551139447725609e-09
+17,2025-06-02T17:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -581,7 +581,7 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-05 17:00:00
+- Current time [h]: 2025-06-02 17:00:00
 - Current TES energy [kWh]: 296
 
 Forecast data:
@@ -597,12 +597,12 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 14:00: past hour -> omitted (state uses zero)
   - 15:00: past hour -> omitted (state uses zero)
   - 16:00: past hour -> omitted (state uses zero)
-  - 17:00: load=43.4 kW, co2=0.344 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=32.3 kW, co2=0.404 kg-CO2/kWh  ←Now!!!
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=33.3 kW (average cooling demand for next day)
-  - co2_low5_avg=0.375 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.372 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.405 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.402 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -628,8 +628,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-5.335633429208777,-5.2961804274973225,-5.4930597478058285,-5.970837525583607,0.3082381602644277,0.6785327633424708,0.013228139750892239,9.366422092999488e-07
-32,2025-05-06T08:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-4.671466392996316,-4.674244170774093,-5.201490508930614,-5.762601620041726,0.513878741141995,0.486108461053165,1.2797633688438182e-05,1.711514131075937e-10
+32,2025-06-03T08:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -644,28 +644,28 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-06 08:00:00
-- Current TES energy [kWh]: 286
+- Current time [h]: 2025-06-03 08:00:00
+- Current TES energy [kWh]: 263
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
 
 - Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: load=32.3 kW, co2=0.376 kg-CO2/kWh  ←Now!!!
-  - 09:00: load=32.7 kW, co2=0.373 kg-CO2/kWh
-  - 10:00: load=37.6 kW, co2=0.372 kg-CO2/kWh
-  - 11:00: load=46.5 kW, co2=0.378 kg-CO2/kWh
-  - 12:00: load=37.4 kW, co2=0.377 kg-CO2/kWh
-  - 13:00: load=36.7 kW, co2=0.381 kg-CO2/kWh
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
+  - 08:00: load=36.6 kW, co2=0.406 kg-CO2/kWh  ←Now!!!
+  - 09:00: load=31.2 kW, co2=0.402 kg-CO2/kWh
+  - 10:00: load=30.8 kW, co2=0.404 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.405 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.411 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.412 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -691,8 +691,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-4.818402649719545,-4.8245223180976655,-5.210982999122759,-5.733205221344981,0.5304506844439305,0.46934289731783313,0.00020641222967024772,6.008566005530802e-09
-33,2025-05-06T09:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-4.671466392996316,-4.676427829728107,-4.682577504107427,-5.180519203558428,0.3695067044110951,0.33460145938944186,0.2958778388504913,1.3997348971601079e-05
+33,2025-06-03T09:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -707,91 +707,28 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-06 09:00:00
-- Current TES energy [kWh]: 253
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: load=32.7 kW, co2=0.373 kg-CO2/kWh  ←Now!!!
-  - 10:00: load=37.6 kW, co2=0.372 kg-CO2/kWh
-  - 11:00: load=46.5 kW, co2=0.378 kg-CO2/kWh
-  - 12:00: load=37.4 kW, co2=0.377 kg-CO2/kWh
-  - 13:00: load=36.7 kW, co2=0.381 kg-CO2/kWh
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-4.818402649719545,-4.820355651430999,-4.821744540319887,-5.20967968290396,0.34513234204310805,0.33191134806926675,0.32281846313789353,0.00013784674973170083
-34,2025-05-06T10:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-06 10:00:00
-- Current TES energy [kWh]: 221
+- Current time [h]: 2025-06-03 09:00:00
+- Current TES energy [kWh]: 227
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
 
 - Remaining business hours today (08:00-17:00, close at 18:00):
   - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: load=37.6 kW, co2=0.372 kg-CO2/kWh  ←Now!!!
-  - 11:00: load=46.5 kW, co2=0.378 kg-CO2/kWh
-  - 12:00: load=37.4 kW, co2=0.377 kg-CO2/kWh
-  - 13:00: load=36.7 kW, co2=0.381 kg-CO2/kWh
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
+  - 09:00: load=31.2 kW, co2=0.402 kg-CO2/kWh  ←Now!!!
+  - 10:00: load=30.8 kW, co2=0.404 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.405 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.411 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.412 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -817,8 +754,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",2,-4.832855651430998,-4.825911206986554,-4.818966762542109,-4.9556419864757855,0.28129474057110093,0.32320665174914187,0.3713632879264171,0.024135319753339986
-35,2025-05-06T11:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",2,-4.677616067375636,-4.674244170774094,-4.671466392996316,-4.8325775041074275,0.3080975862404773,0.3295916629490881,0.348420491345146,0.013890259465288475
+34,2025-06-03T10:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -833,8 +770,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-06 11:00:00
-- Current TES energy [kWh]: 250
+- Current time [h]: 2025-06-03 10:00:00
+- Current TES energy [kWh]: 262
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -842,19 +779,19 @@ Forecast features (raw values aligned with the RL look-ahead):
 - Remaining business hours today (08:00-17:00, close at 18:00):
   - 08:00: past hour -> omitted (state uses zero)
   - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: load=46.5 kW, co2=0.378 kg-CO2/kWh  ←Now!!!
-  - 12:00: load=37.4 kW, co2=0.377 kg-CO2/kWh
-  - 13:00: load=36.7 kW, co2=0.381 kg-CO2/kWh
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
+  - 10:00: load=30.8 kW, co2=0.404 kg-CO2/kWh  ←Now!!!
+  - 11:00: load=31.6 kW, co2=0.405 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.411 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.412 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -880,8 +817,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785633429208776,-3.9306419864757856,-4.131466762542109,-4.363317743849483,0.9469566649424377,0.05209568826171515,0.0009385554557934776,9.09134005349538e-06
-36,2025-05-06T12:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.718688615218538,-3.8984494007089694,-4.439954590635844,0.9631223574481923,0.03589221099730558,0.0009854120487116673,1.9505790256213952e-08
+35,2025-06-03T11:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -896,8 +833,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-06 12:00:00
-- Current TES energy [kWh]: 203
+- Current time [h]: 2025-06-03 11:00:00
+- Current TES energy [kWh]: 231
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -906,18 +843,18 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 08:00: past hour -> omitted (state uses zero)
   - 09:00: past hour -> omitted (state uses zero)
   - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: load=37.4 kW, co2=0.377 kg-CO2/kWh  ←Now!!!
-  - 13:00: load=36.7 kW, co2=0.381 kg-CO2/kWh
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.405 kg-CO2/kWh  ←Now!!!
+  - 12:00: load=28.9 kW, co2=0.411 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.412 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -943,8 +880,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785633429208776,-3.928688984764331,-4.128688984764332,-4.328688984764332,0.9449365595115097,0.054055250523469905,0.0009900564486279202,1.8133516392531587e-05
-37,2025-05-06T13:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.55479972632965,-3.720077504107427,-3.901227178486747,-4.081188615218538,0.9636835543609691,0.035346784346559364,0.0009438518482817513,2.5809444189782903e-05
+36,2025-06-03T12:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -959,637 +896,7 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-06 13:00:00
-- Current TES energy [kWh]: 166
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: load=36.7 kW, co2=0.381 kg-CO2/kWh  ←Now!!!
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785633429208776,-3.934244540319887,-4.139800095875443,-4.345919764253564,0.9505323953819809,0.04865721109475352,0.0007974699785192382,1.2923544746364321e-05
-38,2025-05-06T14:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-06 14:00:00
-- Current TES energy [kWh]: 129
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: past hour -> omitted (state uses zero)
-  - 14:00: load=37.0 kW, co2=0.386 kg-CO2/kWh  ←Now!!!
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785633429208776,-3.941188984764332,-4.153688984764332,-4.366188984764332,0.9567583651775414,0.04262494974000503,0.0006080122534507774,8.672829002759629e-06
-39,2025-05-06T15:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-06 15:00:00
-- Current TES energy [kWh]: 92
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: past hour -> omitted (state uses zero)
-  - 14:00: past hour -> omitted (state uses zero)
-  - 15:00: load=35.9 kW, co2=0.391 kg-CO2/kWh  ←Now!!!
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785069316386212,-3.948133429208776,-4.1675778736532205,-4.3870223180976655,0.9626296788261421,0.036906457357813845,0.00045817578566654995,5.688030377337528e-06
-40,2025-05-06T16:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-06 16:00:00
-- Current TES energy [kWh]: 56
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: past hour -> omitted (state uses zero)
-  - 14:00: past hour -> omitted (state uses zero)
-  - 15:00: past hour -> omitted (state uses zero)
-  - 16:00: load=20.1 kW, co2=0.387 kg-CO2/kWh  ←Now!!!
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785633429208776,-3.9431419864757857,-4.1564667625421094,-4.370919764253563,0.9583554409154035,0.04106054101618342,0.0005761150298705908,7.903038542567497e-06
-41,2025-05-06T17:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-06 17:00:00
-- Current TES energy [kWh]: 36
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: past hour -> omitted (state uses zero)
-  - 14:00: past hour -> omitted (state uses zero)
-  - 15:00: past hour -> omitted (state uses zero)
-  - 16:00: past hour -> omitted (state uses zero)
-  - 17:00: load=16.7 kW, co2=0.388 kg-CO2/kWh  ←Now!!!
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=44.5 kW (average cooling demand for next day)
-  - co2_low5_avg=0.212 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.200 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.785633429208776,-3.9439667625421095,-4.159244540319888,-4.374522318097665,0.9590300631739408,0.04041721290309382,0.0005453651005350455,7.358822430302545e-06
-56,2025-05-07T08:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-07 08:00:00
-- Current TES energy [kWh]: 20
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: load=46.6 kW, co2=0.274 kg-CO2/kWh  ←Now!!!
-  - 09:00: load=39.9 kW, co2=0.233 kg-CO2/kWh
-  - 10:00: load=43.5 kW, co2=0.213 kg-CO2/kWh
-  - 11:00: load=45.5 kW, co2=0.200 kg-CO2/kWh
-  - 12:00: load=43.8 kW, co2=0.205 kg-CO2/kWh
-  - 13:00: load=46.6 kW, co2=0.213 kg-CO2/kWh
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-48.54861254976214,-3.785633429208776,-3.842577873653221,-3.8995223180976657,0.0,0.7028956263087369,0.22504930756330915,0.07205506612795394
-57,2025-05-07T09:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-07 09:00:00
-- Current TES energy [kWh]: 6
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: load=39.9 kW, co2=0.233 kg-CO2/kWh  ←Now!!!
-  - 10:00: load=43.5 kW, co2=0.213 kg-CO2/kWh
-  - 11:00: load=45.5 kW, co2=0.200 kg-CO2/kWh
-  - 12:00: load=43.8 kW, co2=0.205 kg-CO2/kWh
-  - 13:00: load=46.6 kW, co2=0.213 kg-CO2/kWh
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",2,-59.14717784493941,-3.915233400494976,-3.405077873653221,-3.415042255418463,0.0,2.036708340909651e-05,0.5496464740688254,0.45033315884776554
-58,2025-05-07T10:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-07 10:00:00
-- Current TES energy [kWh]: 33
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: load=43.5 kW, co2=0.213 kg-CO2/kWh  ←Now!!!
-  - 11:00: load=45.5 kW, co2=0.200 kg-CO2/kWh
-  - 12:00: load=43.8 kW, co2=0.205 kg-CO2/kWh
-  - 13:00: load=46.6 kW, co2=0.213 kg-CO2/kWh
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-20.14379771032568,-2.792918330633506,-2.7751049346209697,-2.757855651430998,4.409367208570183e-152,0.22500889320380055,0.32131046841449096,0.4536806383817085
-59,2025-05-07T11:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-07 11:00:00
-- Current TES energy [kWh]: 90
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: load=45.5 kW, co2=0.200 kg-CO2/kWh  ←Now!!!
-  - 12:00: load=43.8 kW, co2=0.205 kg-CO2/kWh
-  - 13:00: load=46.6 kW, co2=0.213 kg-CO2/kWh
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-1.9831961084112837,-1.941529441744617,-1.90622460299909,-1.8703556514309985,0.05709239331195319,0.13136822056417538,0.26616089626015454,0.5453784898637168
-60,2025-05-07T12:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-07 12:00:00
-- Current TES energy [kWh]: 144
-
-Forecast data:
-Forecast features (raw values aligned with the RL look-ahead):
-
-- Remaining business hours today (08:00-17:00, close at 18:00):
-  - 08:00: past hour -> omitted (state uses zero)
-  - 09:00: past hour -> omitted (state uses zero)
-  - 10:00: past hour -> omitted (state uses zero)
-  - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: load=43.8 kW, co2=0.205 kg-CO2/kWh  ←Now!!!
-  - 13:00: load=46.6 kW, co2=0.213 kg-CO2/kWh
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
-
-- Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
-
-System parameters:
-ASHP rated capacity [kW]: 100.0
-ASHP base COP [-]: 4.0
-TES capacity [kWh]: 300.0
-
-Action space for the next hour:
-0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
-1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
-2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
-3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
-
-Operational notes:
-- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
-- TES charges automatically when ASHP output exceeds the load and free capacity exists.
-- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
-
-Decision requirements:
-- Optimise with a full-horizon perspective rather than a greedy step.
-- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
-- Prioritise emission reductions even if it requires near-term energy use.
-- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
-- Consider next-day information when making decisions.
-
-Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-1.129029441744617,-1.0943072195223946,-1.0659468252213122,-1.037022318097665,0.07793452870273038,0.15607139191659541,0.2752064185692718,0.49078766081140246
-61,2025-05-07T13:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
-Knowledge cutoff: 2024-06
-Current date: 2025-11-06
-
-Reasoning: medium
-
-# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
-
-You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
-Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
-
-<|end|><|start|>user<|message|>Objective:
-- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
-
-Current context:
-- Current time [h]: 2025-05-07 13:00:00
+- Current time [h]: 2025-06-03 12:00:00
 - Current TES energy [kWh]: 200
 
 Forecast data:
@@ -1600,17 +907,17 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 09:00: past hour -> omitted (state uses zero)
   - 10:00: past hour -> omitted (state uses zero)
   - 11:00: past hour -> omitted (state uses zero)
-  - 12:00: past hour -> omitted (state uses zero)
-  - 13:00: load=46.6 kW, co2=0.213 kg-CO2/kWh  ←Now!!!
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.411 kg-CO2/kWh  ←Now!!!
+  - 13:00: load=31.4 kW, co2=0.412 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -1636,8 +943,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-0.2415294417446168,-0.2184824434560702,-0.2012331602660989,-0.1834197642535632,0.12466854212958918,0.1976699099871497,0.2791039190050234,0.3985576288782378
-62,2025-05-07T14:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.727816718616996,-3.9172997263296496,-4.105594496394773,0.9692120221522416,0.030092054621449725,0.0006801792018431421,1.5744024465589806e-05
+37,2025-06-03T13:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -1652,8 +959,71 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-07 14:00:00
-- Current TES energy [kWh]: 254
+- Current time [h]: 2025-06-03 13:00:00
+- Current TES energy [kWh]: 171
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: load=31.4 kW, co2=0.412 kg-CO2/kWh  ←Now!!!
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.729799726329649,-3.920077504107427,-4.110355281885205,0.9703845243557155,0.028956943891232045,0.0006442003348944033,1.4331418157829584e-05
+38,2025-06-03T14:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-03 14:00:00
+- Current TES energy [kWh]: 139
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -1665,15 +1035,15 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 11:00: past hour -> omitted (state uses zero)
   - 12:00: past hour -> omitted (state uses zero)
   - 13:00: past hour -> omitted (state uses zero)
-  - 14:00: load=41.6 kW, co2=0.230 kg-CO2/kWh  ←Now!!!
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.409 kg-CO2/kWh  ←Now!!!
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -1699,8 +1069,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.7040802357464369,0.6982825206478618,0.6919206927267221,0.5727363002926794,0.36404123700413105,0.3241845160655017,0.2854526852089261,0.026321561721441067
-63,2025-05-07T15:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.7256330596629823,-3.911744170774094,-4.097855281885205,0.9678319849788852,0.0313906305993907,0.0007590309216806297,1.8353500043370807e-05
+39,2025-06-03T15:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -1715,8 +1085,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-07 15:00:00
-- Current TES energy [kWh]: 212
+- Current time [h]: 2025-06-03 15:00:00
+- Current TES energy [kWh]: 107
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -1729,14 +1099,14 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 12:00: past hour -> omitted (state uses zero)
   - 13:00: past hour -> omitted (state uses zero)
   - 14:00: past hour -> omitted (state uses zero)
-  - 15:00: load=45.9 kW, co2=0.273 kg-CO2/kWh  ←Now!!!
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.409 kg-CO2/kWh  ←Now!!!
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -1762,8 +1132,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.7046443485690016,0.6385602984256395,0.5730403611048425,0.5069563109614803,0.7364867049003766,0.19641115293415953,0.052974540739018944,0.014127601426444942
-64,2025-05-07T16:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.7256330596629823,-3.911744170774094,-4.097855281885205,0.9678319849788852,0.0313906305993907,0.0007590309216806297,1.8353500043370807e-05
+40,2025-06-03T16:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -1778,8 +1148,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-07 16:00:00
-- Current TES energy [kWh]: 166
+- Current time [h]: 2025-06-03 16:00:00
+- Current TES energy [kWh]: 72
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -1793,13 +1163,13 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 13:00: past hour -> omitted (state uses zero)
   - 14:00: past hour -> omitted (state uses zero)
   - 15:00: past hour -> omitted (state uses zero)
-  - 16:00: load=44.2 kW, co2=0.326 kg-CO2/kWh  ←Now!!!
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.416 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -1825,8 +1195,8 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.7040802357464369,0.5649491873145285,0.4252540260600554,0.2861229776281468,0.9381777764270953,0.058050800014269856,0.003551660584605763,0.00021976297402897876
-65,2025-05-07T17:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.7353552818852047,-3.9317827340423026,-4.127021948551872,0.9734837584740317,0.025994569568176813,0.0005113702509002263,1.0301706891146452e-05
+41,2025-06-03T17:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
 Knowledge cutoff: 2024-06
 Current date: 2025-11-06
 
@@ -1841,8 +1211,8 @@ Developer instructions: respond using ASCII characters only. Return a single lin
 - Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
 
 Current context:
-- Current time [h]: 2025-05-07 17:00:00
-- Current TES energy [kWh]: 122
+- Current time [h]: 2025-06-03 17:00:00
+- Current TES energy [kWh]: 42
 
 Forecast data:
 Forecast features (raw values aligned with the RL look-ahead):
@@ -1857,12 +1227,12 @@ Forecast features (raw values aligned with the RL look-ahead):
   - 14:00: past hour -> omitted (state uses zero)
   - 15:00: past hour -> omitted (state uses zero)
   - 16:00: past hour -> omitted (state uses zero)
-  - 17:00: load=47.0 kW, co2=0.377 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=32.3 kW, co2=0.419 kg-CO2/kWh  ←Now!!!
 
 - Next-day planning metrics (for terminal planning):
-  - load_mean=35.7 kW (average cooling demand for next day)
-  - co2_low5_avg=0.226 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
-  - co2_min=0.224 kg-CO2/kWh (minimum CO2 factor for next day)
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.275 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.268 kg-CO2/kWh (minimum CO2 factor for next day)
 
 System parameters:
 ASHP rated capacity [kW]: 100.0
@@ -1888,4 +1258,634 @@ Decision requirements:
 - Consider next-day information when making decisions.
 
 Return format:
-- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.7046443485690016,0.4943665707912237,0.2840887930134461,0.0738110152356681,0.9850875496709144,0.014690117144337371,0.00021906635789524238,3.2668268530441856e-06
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-3.5542056075058848,-3.739521948551872,-3.939521948551872,-4.139521948551872,0.9755851887586281,0.023967785638303037,0.00043898530671374145,8.04029635522922e-06
+56,2025-06-04T08:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 08:00:00
+- Current TES energy [kWh]: 10
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: load=36.6 kW, co2=0.286 kg-CO2/kWh  ←Now!!!
+  - 09:00: load=31.2 kW, co2=0.268 kg-CO2/kWh
+  - 10:00: load=30.8 kW, co2=0.280 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.270 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.275 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.283 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",1,-47.69142399858177,-3.5542056075058848,-3.5700775041074273,-3.58476116306144,0.0,0.44038132064913094,0.3206028268167804,0.2390158525340886
+57,2025-06-04T09:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 09:00:00
+- Current TES energy [kWh]: 7
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: load=31.2 kW, co2=0.268 kg-CO2/kWh  ←Now!!!
+  - 10:00: load=30.8 kW, co2=0.280 kg-CO2/kWh
+  - 11:00: load=31.6 kW, co2=0.270 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.275 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.283 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-43.86582488709097,-3.1915049562645255,-3.174838289597859,-3.157577504107427,0.0,0.22900964978220453,0.31960871270065927,0.4513816375171362
+58,2025-06-04T10:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 10:00:00
+- Current TES energy [kWh]: 75
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: load=30.8 kW, co2=0.280 kg-CO2/kWh  ←Now!!!
+  - 11:00: load=31.6 kW, co2=0.270 kg-CO2/kWh
+  - 12:00: load=28.9 kW, co2=0.275 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.283 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,-2.0409108374407605,-2.0484494007089697,-2.0553938451534144,-2.062338289597859,0.306746966064888,0.263816009799672,0.2296055963993577,0.1998314277360823
+59,2025-06-04T11:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 11:00:00
+- Current TES energy [kWh]: 45
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: load=31.6 kW, co2=0.270 kg-CO2/kWh  ←Now!!!
+  - 12:00: load=28.9 kW, co2=0.275 kg-CO2/kWh
+  - 13:00: load=31.4 kW, co2=0.283 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-2.095671622931192,-2.077021948551872,-2.059560511820081,-2.0409108374407605,0.13331722636430546,0.19358659591346236,0.2745006615863163,0.3985955161359159
+60,2025-06-04T12:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 12:00:00
+- Current TES energy [kWh]: 113
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: load=28.9 kW, co2=0.275 kg-CO2/kWh  ←Now!!!
+  - 13:00: load=31.4 kW, co2=0.283 kg-CO2/kWh
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",3,-0.9498382895978584,-0.9381330596629828,-0.9276160673756364,-0.9159108374407608,0.1725799468316201,0.2181025113248209,0.2691597402943222,0.3401578015492367
+61,2025-06-04T13:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 13:00:00
+- Current TES energy [kWh]: 184
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: load=31.4 kW, co2=0.283 kg-CO2/kWh  ←Now!!!
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.2293283770688079,0.1660087687026904,0.1032832791603376,0.0399636707942199,0.7220787288656499,0.20351546729866463,0.058045792072318664,0.016360011763366843
+62,2025-06-04T14:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 14:00:00
+- Current TES energy [kWh]: 153
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: load=32.8 kW, co2=0.304 kg-CO2/kWh  ←Now!!!
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.2293283770688079,0.1368421020360238,0.0449499458270044,-0.0475363292057802,0.8429924163999807,0.1325861285892559,0.021102454002567404,0.0033190010081961337
+63,2025-06-04T15:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 15:00:00
+- Current TES energy [kWh]: 120
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: load=34.9 kW, co2=0.331 kg-CO2/kWh  ←Now!!!
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.2293283770688079,0.0993421020360237,-0.0300500541729956,-0.1600363292057802,0.9256734962782539,0.0687719580934201,0.00517041497792193,0.00038413065040413517
+64,2025-06-04T16:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 16:00:00
+- Current TES energy [kWh]: 85
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: load=29.7 kW, co2=0.345 kg-CO2/kWh  ←Now!!!
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.2293283770688079,0.0798976575915793,-0.0695330618856494,-0.2183696625391136,0.9496475663431141,0.047821558067545976,0.0024081580336313894,0.00012271755570842708
+65,2025-06-04T17:00:00,"<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.
+Knowledge cutoff: 2024-06
+Current date: 2025-11-06
+
+Reasoning: medium
+
+# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
+
+You are an optimisation agent that supervises a thermal energy storage (TES) plant. Your job is to minimise cumulative CO₂ emissions over the full simulation horizon by planning TES charge and discharge decisions.
+Developer instructions: respond using ASCII characters only. Return a single line formatted exactly as `[action_index]`, where action_index is an integer in {0, 1, 2, 3}. Do not include additional text, explanations, markdown, or keys.
+
+<|end|><|start|>user<|message|>Objective:
+- Minimise total CO₂ emissions = electricity consumption × time-varying CO₂ intensity over the horizon.
+
+Current context:
+- Current time [h]: 2025-06-04 17:00:00
+- Current TES energy [kWh]: 55
+
+Forecast data:
+Forecast features (raw values aligned with the RL look-ahead):
+
+- Remaining business hours today (08:00-17:00, close at 18:00):
+  - 08:00: past hour -> omitted (state uses zero)
+  - 09:00: past hour -> omitted (state uses zero)
+  - 10:00: past hour -> omitted (state uses zero)
+  - 11:00: past hour -> omitted (state uses zero)
+  - 12:00: past hour -> omitted (state uses zero)
+  - 13:00: past hour -> omitted (state uses zero)
+  - 14:00: past hour -> omitted (state uses zero)
+  - 15:00: past hour -> omitted (state uses zero)
+  - 16:00: past hour -> omitted (state uses zero)
+  - 17:00: load=32.3 kW, co2=0.368 kg-CO2/kWh  ←Now!!!
+
+- Next-day planning metrics (for terminal planning):
+  - load_mean=32.0 kW (average cooling demand for next day)
+  - co2_low5_avg=0.238 kg-CO2/kWh (average of lowest 5 hours of CO2 factor for next day)
+  - co2_min=0.231 kg-CO2/kWh (minimum CO2 factor for next day)
+
+System parameters:
+ASHP rated capacity [kW]: 100.0
+ASHP base COP [-]: 4.0
+TES capacity [kWh]: 300.0
+
+Action space for the next hour:
+0 → ASHP output ratio = 0.00 (ASHP off; rely on TES if demand exists)
+1 → ASHP output ratio ≈ 0.33 (low output; TES covers most of the remaining demand)
+2 → ASHP output ratio ≈ 0.67 (medium output; TES supplements when load exceeds this level)
+3 → ASHP output ratio = 1.00 (full output; any surplus charges TES if capacity remains)
+
+Operational notes:
+- TES discharges automatically when load exceeds the scheduled ASHP output and energy is available.
+- TES charges automatically when ASHP output exceeds the load and free capacity exists.
+- Always maintain TES capacity between minimum and maximum bounds (0 < capacity < 300); violating these constraints incurs a large penalty.
+
+Decision requirements:
+- Optimise with a full-horizon perspective rather than a greedy step.
+- Keep TES utilisation efficient; avoid unnecessary saturation or depletion.
+- Prioritise emission reductions even if it requires near-term energy use.
+- Consider pre-charging during low-carbon periods and discharging during high-carbon periods while respecting TES energy limits.
+- Consider next-day information when making decisions.
+
+Return format:
+- Output a single token formatted as `[action_index]` (e.g., `[0]`, `[1]`, `[2]`, `[3]`).<|end|><|start|>assistant",0,0.2293283770688079,0.0482172659576969,-0.1328938451534141,-0.3140049562645253,0.9732772708397691,0.026009107997151375,0.000695047258448565,1.8573904631015215e-05
