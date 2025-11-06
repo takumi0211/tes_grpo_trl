@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config, loggi
 from peft import LoraConfig, get_peft_model
 from trl import GRPOTrainer, GRPOConfig
 import torch
-from torch.utils.data import IterableDataset 
+from torch.utils.data import IterableDataset
 from data_reward import load_prompt_dataset, reward_fn
 import os, random, logging
 
@@ -124,6 +124,8 @@ else:
 # ----------------- MoE router activity tracker ----------------
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
+eval_base = load_prompt_dataset(data_dir=os.path.join("data", "eval"))
+EVAL_BATCH_SIZE = max(1, min(len(eval_base), 10))
 random.seed(SEED)
 
 class StepStream(IterableDataset):
@@ -170,11 +172,13 @@ class StepStream(IterableDataset):
                         sample[key] = torch.atleast_1d(
                             torch.tensor(value, dtype=torch.float32)
                         )
+                sample["phase"] = "train"
                 for _ in range(self.num_generations):
-                    yield {
+                    yield_sample = {
                         key: (value.clone() if isinstance(value, torch.Tensor) else value)
                         for key, value in sample.items()
                     }
+                    yield yield_sample
 
 stream = StepStream(base, k=PROMPTS_PER_STEP, num_generations=NUM_GENERATIONS)
 logger.info(
@@ -184,6 +188,24 @@ logger.info(
     len(base),
     stream.keys,
 )
+logger.info(
+    "Eval dataset configured | rows=%d | per_device_eval_batch_size=%d",
+    len(eval_base),
+    EVAL_BATCH_SIZE,
+)
+
+
+def _prepare_eval_row(row):
+    for key in StepStream.KEEP_KEYS:
+        if key.startswith("reward_action_") and key in row:
+            row[key] = [row[key]]
+    row["phase"] = "eval"
+    return row
+
+
+if len(eval_base):
+    eval_base = eval_base.map(_prepare_eval_row)
+eval_dataset = eval_base if len(eval_base) else None
 
 # ----------------- TRL/GRPO + vLLM (colocate) -----------------
 # colocate: 学習プロセス内でvLLMを起動（省メモリのため sleep を有効化）。
@@ -216,6 +238,10 @@ args = GRPOConfig(
     per_device_train_batch_size=TRAIN_BATCH_SIZE,
     gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
     steps_per_generation=GRADIENT_ACCUMULATION_STEPS,
+    evaluation_strategy="steps",
+    eval_steps=2,
+    per_device_eval_batch_size=EVAL_BATCH_SIZE,
+    remove_unused_columns=False,
     
     # 長さまわり
     max_prompt_length=MAX_PROMPT_LEN,
@@ -260,6 +286,7 @@ trainer = GRPOTrainer(
     args=args,
     reward_funcs=reward_fn,
     train_dataset=stream,   # 各マイクロステップで 4 completion（1 prompt × 4）を供給
+    eval_dataset=eval_dataset,
 )
 logger.info("Starting training | total_steps=%d | output_dir=%s", TOTAL_STEPS, OUT)
 trainer.train()

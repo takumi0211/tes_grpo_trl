@@ -39,7 +39,7 @@ def _is_main_process() -> bool:
 CSV_LOG_ENABLED = os.getenv("GRPO_LOG_COMPLETIONS", "1") != "0" and _is_main_process()
 CSV_PATH = os.getenv(
     "GRPO_COMPLETION_LOG_PATH",
-    os.path.join("runs", "micro_step_completions.csv"),
+    os.path.join("runs_10step分", "micro_step_completions.csv"),
 )
 _CSV_FILE = None
 _CSV_WRITER = None
@@ -137,6 +137,32 @@ def _argmax_action(values) -> str:
     return str(best_idx) if best_idx is not None else "NaN"
 
 
+def _normalize_phase_values(values) -> list[str]:
+    """Convert various phase column encodings to a lowercase string list."""
+    if values is None:
+        return []
+    if isinstance(values, str):
+        return [values.lower()]
+    if hasattr(values, "tolist") and not isinstance(values, (str, bytes)):
+        try:
+            values = values.tolist()
+        except Exception:
+            pass
+    if isinstance(values, IterableSequence) and not isinstance(values, (str, bytes)):
+        normalized = []
+        for entry in values:
+            if isinstance(entry, (list, tuple)):
+                entry = entry[0] if entry else ""
+            elif hasattr(entry, "item"):
+                try:
+                    entry = entry.item()
+                except Exception:
+                    entry = str(entry)
+            normalized.append(str(entry).lower())
+        return normalized
+    return [str(values).lower()]
+
+
 # 報酬計算のメイン関数
 # completions: 完了したアクションのリスト (例: "[0]", "[1]" など)
 # reward_action_0 ~ reward_action_3: 各アクション(0-3)に対する報酬値 (スカラまたはリスト)
@@ -231,6 +257,8 @@ def reward_fn(
         action_tokens.append(action if 0 <= idx_int < 4 else "NaN")
         target_actions.append(target_action)
 
+    phase_sequence = _normalize_phase_values(kwargs.get("phase"))
+
     if CSV_LOG_ENABLED and size:
         _init_csv_logger()
         if _CSV_WRITER is not None:
@@ -245,10 +273,18 @@ def reward_fn(
                 prompt_text = ""
                 if prompts:
                     prompt_text = prompts[idx % len(prompts)]
-                micro_step_value = min(
-                    (idx // completions_per_micro) + 1,
-                    steps_per_generation,
+                phase_value = (
+                    phase_sequence[idx % len(phase_sequence)]
+                    if phase_sequence
+                    else "train"
                 )
+                if phase_value == "eval":
+                    micro_step_value = "eval"
+                else:
+                    micro_step_value = min(
+                        (idx // completions_per_micro) + 1,
+                        steps_per_generation,
+                    )
                 reward_csv = reward_val
                 if isinstance(reward_val, float) and math.isnan(reward_val):
                     reward_csv = "NaN"
@@ -265,6 +301,9 @@ def reward_fn(
                 )
             if _CSV_FILE is not None:
                 _CSV_FILE.flush()
+
+    is_eval_batch = bool(phase_sequence) and all(value == "eval" for value in phase_sequence)
+    if not is_eval_batch:
         _MICRO_STEP_COUNTER += 1
 
     return rewards
