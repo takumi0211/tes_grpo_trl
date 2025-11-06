@@ -24,37 +24,10 @@ SEED = 42
 # Reward logger uses this to reconstruct micro-step indices per optimizer step
 os.environ.setdefault("GRPO_STEPS_PER_GENERATION", str(GRADIENT_ACCUMULATION_STEPS))
 
-# --- ロギング設定 ---
-# os.makedirs(OUT, exist_ok=True)
-# logger = logging.getLogger("train_grpo")
-# logger.setLevel(logging.INFO)
-# if not logger.handlers:
-#     _formatter = logging.Formatter("%(asctime)s | %(levellevel)s | %(name)s | %(message)s")
-#     _stream_handler = logging.StreamHandler()
-#     _stream_handler.setFormatter(_formatter)
-#     _file_handler = logging.FileHandler(os.path.join(OUT, "training.log"), mode="a")
-#     _file_handler.setFormatter(_formatter)
-#     logger.addHandler(_stream_handler)
-#     logger.addHandler(_file_handler)
-# logger.propagate = False
-
-
 # trainer.pyが全体の設定を表示してくれる
 hf_logging.set_verbosity_info()
 hf_logging.enable_default_handler()
 hf_logging.enable_explicit_format()
-
-
-# class _RewardWarningFilter(logging.Filter):
-#     def filter(self, record: logging.LogRecord) -> bool:
-#         msg = record.getMessage()
-#         if "All reward functions returned None" in msg:
-#             return False
-#         return True
-
-
-# trl_logger = logging.getLogger("trl.trainer.grpo_trainer")
-# trl_logger.addFilter(_RewardWarningFilter())
 
 # --- トークナイザー ---
 tok = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True)
@@ -73,17 +46,9 @@ model = AutoModelForCausalLM.from_pretrained(
     use_cache=False,               # 勾配チェックポイントと相性良
     device_map="auto",
 )
-# logger.debug("Loaded policy model dtype=%s", next(model.parameters()).dtype)
-# logger.debug("HF device map: %s", getattr(model, "hf_device_map", "not available"))
 
 # --- LoRA r=4 ---
-# LoRA: MoE MLP を中・上位の3層（7, 15, 23番）に限定して適用
-# TARGET_MOE_LAYERS = [7, 15, 23]
-# expert_params = []
-# for layer_idx in TARGET_MOE_LAYERS:
-#     expert_params.append(f"model.layers.{layer_idx}.mlp.experts.gate_up_proj")
-#     expert_params.append(f"model.layers.{layer_idx}.mlp.experts.down_proj")
-
+# LoRA: Self-AttentionのQ, K, Vを対象に適用
 lora = LoraConfig(
     r=4, lora_alpha=8,
     target_modules="all-linear",
@@ -92,54 +57,10 @@ lora = LoraConfig(
 
 model = get_peft_model(model, lora)
 
-# --- 学習対象のLoRAレイヤーを確認 ---
-# base_lora_model = getattr(model, "base_model", None)
-# targeted_param_names = []
-# if base_lora_model is not None and hasattr(base_lora_model, "targeted_parameter_names"):
-#     targeted_param_names = sorted(base_lora_model.targeted_parameter_names)
-
-# trainable_lora_params = [
-#     f"{name} shape={tuple(param.shape)}"
-#     for name, param in model.named_parameters()
-#     if param.requires_grad and "lora" in name.lower()
-# ]
-# if trainable_lora_params:
-#     preview = trainable_lora_params[:20]
-#     remainder = len(trainable_lora_params) - len(preview)
-#     suffix = f" ... (+{remainder} more)" if remainder > 0 else ""
-#     # logger.debug(
-#     #     "Trainable LoRA parameters (%d): %s%s",
-#     #     len(trainable_lora_params),
-#     #     preview,
-#     #     suffix,
-#     # )
-#     pass
-# else:
-#     # logger.warning("No LoRA parameters detected as trainable.")
-#     pass
-
-# moe_trainable = [
-#     entry for entry in trainable_lora_params if "mlp.experts" in entry
-# ]
-# if moe_trainable:
-#     # logger.debug("MoE LoRA trainables (sample): %s", moe_trainable[:20])
-#     pass
-# else:
-#     # logger.warning("MoE expert parameters did not register LoRA adapters. Check target_parameters list.")
-#     pass
-
-# ----------------- MoE router activity tracker ----------------
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
 random.seed(SEED)
 stream = StepStream(base, k=PROMPTS_PER_STEP, num_generations=NUM_GENERATIONS)
-# logger.debug(
-#     "StepStream configured | prompts_per_micro_step=%d | num_generations=%d | dataset_rows=%d | keep_keys=%s",
-#     PROMPTS_PER_STEP,
-#     NUM_GENERATIONS,
-#     len(base),
-#     stream.keys,
-# )
 
 # ----------------- TRL/GRPO + vLLM (colocate) -----------------
 # colocate: 学習プロセス内でvLLMを起動（省メモリのため sleep を有効化）。
@@ -185,29 +106,6 @@ args = GRPOConfig(
         "eos_token_id": tok.eos_token_id,
     },
 )
-# micro_batch_completions = TRAIN_BATCH_SIZE
-# total_completions_per_update = TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS
-# split_batches_flag = getattr(args.accelerator_config, "split_batches", None)
-# logger.debug(
-#     "Generation config | num_generations=%d | generation_batch_size=%s | steps_per_generation=%s | "
-#     "per_device_train_batch_size=%d | grad_accum=%d | split_batches=%s | completions_per_micro_step=%d | "
-#     "completions_per_update=%d",
-#     NUM_GENERATIONS,
-#     args.generation_batch_size,
-#     args.steps_per_generation,
-#     args.per_device_train_batch_size,
-#     GRADIENT_ACCUMULATION_STEPS,
-#     split_batches_flag,
-#     micro_batch_completions,
-#     total_completions_per_update,
-# )
-# logger.debug(
-#     "Buffered generation enabled: %d prompts × %d completions → %d sequences generated before each set of %d micro updates",
-#     GRADIENT_ACCUMULATION_STEPS,
-#     NUM_GENERATIONS,
-#     NUM_GENERATIONS * GRADIENT_ACCUMULATION_STEPS,
-#     GRADIENT_ACCUMULATION_STEPS,
-# )
 
 # 実行
 trainer = GRPOTrainer(
@@ -217,7 +115,7 @@ trainer = GRPOTrainer(
     reward_funcs=reward_fn,
     train_dataset=stream,   # 各マイクロステップで 4 completion（1 prompt × 4）を供給
 )
-# logger.debug("Starting training | total_steps=%d | output_dir=%s", TOTAL_STEPS, OUT)
+
 trainer.train()
 
 # 保存（LoRAアダプタ形式）
