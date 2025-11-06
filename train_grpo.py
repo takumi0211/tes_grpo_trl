@@ -3,8 +3,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config, loggi
 from peft import LoraConfig, get_peft_model
 from trl import GRPOTrainer, GRPOConfig
 import torch
-from data_reward import load_prompt_dataset, reward_fn
-from step_stream import StepStream
+from train_support.data_reward import load_prompt_dataset, reward_fn
+from train_support.step_stream import StepStream
 import os, random
 # import os, random, logging
 

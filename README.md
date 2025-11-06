@@ -14,13 +14,13 @@ This repository contains the tooling used to fine-tune the `openai/gpt-oss-20b` 
 ## Repository Layout
 - `train_grpo.py` — Main training entry point; defines model, tokenizer, GRPO configuration, and training loop.
 - `data/` — Example prompt datasets (Harmony formatted CSVs) and auxiliary prompt files.
-- `data_reward.py` — Dataset loader, reward function implementation, and optional completion logging to CSV.
-- `step_stream.py` — Iterable dataset feeding prompts and reward tensors into GRPOTrainer.
-- `calculate_reward.py` — Converts `q_action_*` columns to `reward_action_*` via Boltzmann softmax.
-- `convert_to_harmony.py` — Converts legacy CSV prompts into Harmony chat prompts using the model's template.
-- `test_lora_adapter.py` / `test_lora_adapter_quantized.py` — Smoke tests for evaluating adapters with and without MXFP4 quantization.
-- `export_quantized_model.py` — Merges a trained LoRA adapter into the base model, attaches quantization metadata, and optionally uploads to Hugging Face Hub.
-- `run_exported_model.py` — Runs text generation against a merged model artifact.
+- `train_support/data_reward.py` — Dataset loader, reward function implementation, and optional completion logging to CSV.
+- `train_support/step_stream.py` — Iterable dataset feeding prompts and reward tensors into GRPOTrainer.
+- `preprocessing/calculate_reward.py` — Converts `q_action_*` columns to `reward_action_*` via Boltzmann softmax.
+- `preprocessing/convert_to_harmony.py` — Converts legacy CSV prompts into Harmony chat prompts using the model's template.
+- `run_deploy/test_lora_adapter.py` / `run_deploy/test_lora_adapter_quantized.py` — Smoke tests for evaluating adapters with and without MXFP4 quantization.
+- `run_deploy/export_quantized_model.py` — Merges a trained LoRA adapter into the base model, attaches quantization metadata, and optionally uploads to Hugging Face Hub.
+- `run_deploy/run_exported_model.py` — Runs text generation against a merged model artifact.
 - `Modelfile` — Example Ollama configuration for attaching a LoRA adapter to a GPT-OSS base image.
 - `runs/` — Default output directory for new GRPO checkpoints, trainer states, and tokenizer artifacts.
 
@@ -81,12 +81,12 @@ uv pip install --index-url https://download.pytorch.org/whl/cu128 "torch==2.8.0"
    - Optional reward columns (`reward_action_*`) if already computed.
 2. **Convert prompts to Harmony chat format:**
    ```bash
-   python convert_to_harmony.py data/dynamic_co2_factor_hourly_3day_0505_to_0507_q_dataset.csv
+   python preprocessing/convert_to_harmony.py data/dynamic_co2_factor_hourly_3day_0505_to_0507_q_dataset.csv
    ```
    The script adds the `_harmony` suffix and uses the GPT-OSS chat template so the tokenizer sees properly formatted system/user turns.
 3. **Generate reward distributions from Q-values:**
    ```bash
-   python calculate_reward.py data --tau 0.05 --overwrite
+   python preprocessing/calculate_reward.py data --tau 0.05 --overwrite
    ```
    This applies a Boltzmann softmax (temperature `tau`) to populate `reward_action_*` columns used by GRPO.
 4. **Optional: validate column coverage.** Ensure every CSV referenced by the training run has all required columns before launching training.
@@ -105,39 +105,39 @@ Key configuration constants (edit inside `train_grpo.py` if you need to change t
 The script loads MXFP4 weights, dequantizes to bfloat16 for training, instantiates LoRA adapters via PEFT, and wires up `GRPOTrainer`. Prompts stream from `StepStream`, which randomly samples prompts each micro-step and replicates them `NUM_GENERATIONS` times so TRL can draw multiple completions per prompt.
 
 ### Logging and Rewards
-- Reward computation is handled by `data_reward.reward_fn`, which parses completions for bracketed actions (`[0]` … `[3]`). Invalid or truncated generations return `NaN` so the trainer can mask them.
+- Reward computation is handled by `train_support.data_reward.reward_fn`, which parses completions for bracketed actions (`[0]` … `[3]`). Invalid or truncated generations return `NaN` so the trainer can mask them.
 - Set `GRPO_LOG_COMPLETIONS=1` (default) to log prompts, completions, actions, and rewards to `runs/micro_step_completions.csv`. Use `GRPO_COMPLETION_LOG_PATH` to override the file location.
 - `GRPO_STEPS_PER_GENERATION` is derived from gradient accumulation to maintain consistent micro-step indexing. You can override it via environment variable if you modify batching behavior.
 
 ## Evaluating the Adapter
 Use the test scripts to sanity-check your adapter directory:
-1. Edit `test_lora_adapter.py` and set the constants near the top (`ADAPTER_PATH`, `PROMPT_PATH`, decoding parameters, and optionally `BASE_MODEL_ID`) to match your run directory under `runs/`.
+1. Edit `run_deploy/test_lora_adapter.py` and set the constants near the top (`ADAPTER_PATH`, `PROMPT_PATH`, decoding parameters, and optionally `BASE_MODEL_ID`) to match your run directory under `runs/`.
 2. Run:
    ```bash
-   python test_lora_adapter.py
+   python run_deploy/test_lora_adapter.py
    ```
-3. Repeat the same process with `test_lora_adapter_quantized.py` if you want to exercise MXFP4 inference without dequantizing:
+3. Repeat the same process with `run_deploy/test_lora_adapter_quantized.py` if you want to exercise MXFP4 inference without dequantizing:
    ```bash
-   python test_lora_adapter_quantized.py
+   python run_deploy/test_lora_adapter_quantized.py
    ```
 
 ## Exporting a Merged Model
 After training, you can bake the LoRA weights back into the base model for standalone deployment:
-1. Edit `export_quantized_model.py` to point `ADAPTER_PATH` at your fresh run directory under `runs/`, and adjust `OUTPUT_DIR` as needed.
+1. Edit `run_deploy/export_quantized_model.py` to point `ADAPTER_PATH` at your fresh run directory under `runs/`, and adjust `OUTPUT_DIR` as needed.
 2. Export with optional Hugging Face Hub upload:
    ```bash
    export HF_TOKEN=<your-hf-token>
    export HF_REPO_ID=<username>/<private-repo>
-   python export_quantized_model.py
+   python run_deploy/export_quantized_model.py
    ```
    The script merges the adapter via PEFT, annotates the `quantization_config` with MXFP4 metadata, and copies tokenizer assets. Set `PUSH_TO_HUB = False` if you only need local artifacts.
 
 ## Inference with a Merged Model
-Use `run_exported_model.py` to run generations against the merged checkpoint:
+Use `run_deploy/run_exported_model.py` to run generations against the merged checkpoint:
 1. Update the constants at the top of the script (`MODEL_ID`, `PROMPT_PATH`, decoding parameters) to reference your exported folder or remote repository.
 2. Execute:
    ```bash
-   python run_exported_model.py
+   python run_deploy/run_exported_model.py
    ```
 Ensure the configured `MODEL_ID` resolves to the merged checkpoint and that a CUDA-capable GPU is available for MXFP4 inference.
 

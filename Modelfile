@@ -1,3 +1,0 @@
-FROM gpt-oss:20b
-ADAPTER ./runs_10step分/grpo_gptoss20b_lora4_tes
-

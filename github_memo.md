@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "delete log in train_grpo.py"
+git commit -m "clean directry"
 git push origin main
