@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change to reasoning medium"
+git commit -m "change prompt"
 git push origin main
