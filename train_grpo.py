@@ -18,6 +18,7 @@ PROMPTS_PER_STEP = 1          # マイクロステップごとにサンプルさ
 TRAIN_BATCH_SIZE = NUM_GENERATIONS  # マイクロバッチ = 1プロンプト分の完了数
 MAX_PROMPT_LEN = 1000
 MAX_COMPLETION_LEN = 4000
+EVAL_BATCH_SIZE = 10 # 1日の意思決定数
 SEED = 42
 
 # Reward logger uses this to reconstruct micro-step indices per optimizer step
@@ -125,7 +126,6 @@ else:
 # ----------------- Dataset (データローダ) ----------------
 base = load_prompt_dataset()
 eval_base = load_prompt_dataset(data_dir=os.path.join("data", "eval"))
-EVAL_BATCH_SIZE = max(1, min(len(eval_base), 10))
 random.seed(SEED)
 
 class StepStream(IterableDataset):
