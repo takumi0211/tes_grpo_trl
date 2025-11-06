@@ -3,7 +3,7 @@ timestep,timestamp,prompt,optimal_action,q_action_0,q_action_1,q_action_2,q_acti
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -65,7 +65,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -127,7 +127,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -189,7 +189,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -251,7 +251,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -313,7 +313,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -375,7 +375,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -437,7 +437,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -499,7 +499,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -561,7 +561,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -623,7 +623,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -685,7 +685,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -747,7 +747,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -809,7 +809,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -871,7 +871,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -933,7 +933,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -995,7 +995,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1057,7 +1057,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1119,7 +1119,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1181,7 +1181,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1243,7 +1243,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1305,7 +1305,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1367,7 +1367,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1429,7 +1429,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1491,7 +1491,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1553,7 +1553,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1615,7 +1615,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1677,7 +1677,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1739,7 +1739,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
@@ -1801,7 +1801,7 @@ Return format:
 Knowledge cutoff: 2024-06
 Current date: 2025-10-26
 
-Reasoning: medium
+Reasoning: low
 
 # Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>developer<|message|># Instructions
 
