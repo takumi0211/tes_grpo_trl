@@ -14,6 +14,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Mxfp4Config
 from peft import PeftModel
 
 # ------- テスト設定（必要に応じて書き換えてください） -------
+# ADAPTER_PATH = Path("output/grpo_gptoss20b_lora4_tes")  # output/ に移行する場合はこちらに差し替え
 ADAPTER_PATH = Path("runs_10step分/grpo_gptoss20b_lora4_tes")
 PROMPT_PATH = Path("data/test.md")
 BASE_MODEL_ID = "openai/gpt-oss-20b"

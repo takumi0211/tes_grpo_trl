@@ -105,13 +105,13 @@ python train_grpo.py
 - TRL の GRPOTrainer が vLLM をコロケート起動（`vllm_enable_sleep_mode=True` で VRAM 回収）
 - 1 step あたり 12 プロンプト × 各 8 生成（設定値は `train_grpo.py` を参照）
 
-成果物は `runs/grpo_gptoss20b_lora4_tes/` に保存されます（LoRA アダプタとトークナイザ）。
+成果物は `output/grpo_gptoss20b_lora4_tes/` に保存されます（LoRA アダプタとトークナイザ）。
 
 作成済み run をローカルへ持ち帰りたい場合は、リポジトリ直下で以下を実行して ZIP 化してください。
 
 ```
 # run ディレクトリを ZIP に固める（例）
-zip -r grpo_run.zip runs
+zip -r grpo_run.zip output
 ```
 
 ZIP 化した `grpo_run.zip` を `scp` / `rsync` / VS Code Remote などでダウンロードすれば完了です。

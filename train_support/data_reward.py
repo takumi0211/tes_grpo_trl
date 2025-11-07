@@ -38,7 +38,7 @@ def _is_main_process() -> bool:
 CSV_LOG_ENABLED = os.getenv("GRPO_LOG_COMPLETIONS", "1") != "0" and _is_main_process()
 CSV_PATH = os.getenv(
     "GRPO_COMPLETION_LOG_PATH",
-    os.path.join("runs", "micro_step_completions.csv"),
+    os.path.join("output", "micro_step_completions.csv"),
 )
 _CSV_FILE = None
 _CSV_WRITER = None

@@ -22,7 +22,7 @@ This repository contains the tooling used to fine-tune the `openai/gpt-oss-20b` 
 - `run_deploy/export_quantized_model.py` — Merges a trained LoRA adapter into the base model, attaches quantization metadata, and optionally uploads to Hugging Face Hub.
 - `run_deploy/run_exported_model.py` — Runs text generation against a merged model artifact.
 - `Modelfile` — Example Ollama configuration for attaching a LoRA adapter to a GPT-OSS base image.
-- `runs/` — Default output directory for new GRPO checkpoints, trainer states, and tokenizer artifacts.
+- `output/` — Default output directory for new GRPO checkpoints, trainer states, and tokenizer artifacts.
 
 ## Prerequisites
 - **Hardware:** Hopper-class GPU (e.g., NVIDIA H100) with >= 80 GB VRAM recommended for MXFP4 + BF16 training.
@@ -98,7 +98,7 @@ python train_grpo.py
 ```
 Key configuration constants (edit inside `train_grpo.py` if you need to change them):
 - `MODEL_ID` — Base checkpoint (defaults to `openai/gpt-oss-20b`).
-- `OUT` — Output directory under `runs/` where adapters, tokenizer, and trainer state are saved.
+- `OUT` — Output directory under `output/` where adapters, tokenizer, and trainer state are saved.
 - Sampling hyperparameters: `NUM_GENERATIONS`, `PROMPTS_PER_STEP`, `TRAIN_BATCH_SIZE`, `MAX_PROMPT_LEN`, `MAX_COMPLETION_LEN`.
 - Optimization budget: `TOTAL_STEPS`, `SAVE_STEPS`, learning rate, gradient accumulation steps.
 
@@ -106,12 +106,12 @@ The script loads MXFP4 weights, dequantizes to bfloat16 for training, instantiat
 
 ### Logging and Rewards
 - Reward computation is handled by `train_support.data_reward.reward_fn`, which parses completions for bracketed actions (`[0]` … `[3]`). Invalid or truncated generations return `NaN` so the trainer can mask them.
-- Set `GRPO_LOG_COMPLETIONS=1` (default) to log prompts, completions, actions, and rewards to `runs/micro_step_completions.csv`. Use `GRPO_COMPLETION_LOG_PATH` to override the file location.
+- Set `GRPO_LOG_COMPLETIONS=1` (default) to log prompts, completions, actions, and rewards to `output/micro_step_completions.csv`. Use `GRPO_COMPLETION_LOG_PATH` to override the file location.
 - `GRPO_STEPS_PER_GENERATION` is derived from gradient accumulation to maintain consistent micro-step indexing. You can override it via environment variable if you modify batching behavior.
 
 ## Evaluating the Adapter
 Use the test scripts to sanity-check your adapter directory:
-1. Edit `run_deploy/test_lora_adapter.py` and set the constants near the top (`ADAPTER_PATH`, `PROMPT_PATH`, decoding parameters, and optionally `BASE_MODEL_ID`) to match your run directory under `runs/`.
+1. Edit `run_deploy/test_lora_adapter.py` and set the constants near the top (`ADAPTER_PATH`, `PROMPT_PATH`, decoding parameters, and optionally `BASE_MODEL_ID`) to match your run directory under `output/`.
 2. Run:
    ```bash
    python run_deploy/test_lora_adapter.py
@@ -123,7 +123,7 @@ Use the test scripts to sanity-check your adapter directory:
 
 ## Exporting a Merged Model
 After training, you can bake the LoRA weights back into the base model for standalone deployment:
-1. Edit `run_deploy/export_quantized_model.py` to point `ADAPTER_PATH` at your fresh run directory under `runs/`, and adjust `OUTPUT_DIR` as needed.
+1. Edit `run_deploy/export_quantized_model.py` to point `ADAPTER_PATH` at your fresh run directory under `output/`, and adjust `OUTPUT_DIR` as needed.
 2. Export with optional Hugging Face Hub upload:
    ```bash
    export HF_TOKEN=<your-hf-token>
@@ -147,7 +147,7 @@ The included `Modelfile` demonstrates how to load the trained adapter into Ollam
    ```bash
    ollama pull gpt-oss:20b
    ```
-2. Update the `ADAPTER` path inside `Modelfile` to point at the adapter directory created under `runs/`.
+2. Update the `ADAPTER` path inside `Modelfile` to point at the adapter directory created under `output/`.
 3. Create and run the custom Ollama model:
    ```bash
    ollama create gptoss-20b-custom -f Modelfile

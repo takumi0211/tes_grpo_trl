@@ -9,7 +9,7 @@ import os, random
 # import os, random, logging
 
 MODEL_ID = "openai/gpt-oss-20b"
-OUT = "runs/grpo_gptoss20b_lora4_tes"
+OUT = "output/grpo_gptoss20b_lora4_tes"
 
 TOTAL_STEPS = 200
 SAVE_STEPS = 20

@@ -19,6 +19,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, Mxfp4Config
 
 # ----- Export parameters -----
 BASE_MODEL_ID = "openai/gpt-oss-20b"
+# ADAPTER_PATH = Path("output/grpo_gptoss20b_lora4_tes")  # output/ を使う場合はこの行を有効化
 ADAPTER_PATH = Path("runs_10step分/grpo_gptoss20b_lora4_tes")
 OUTPUT_DIR = Path("exports/grpo_gptoss20b_lora4_tes_merged")
 SAFE_SERIALIZATION = True  # set False to save as PyTorch binaries (.bin)
