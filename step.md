@@ -107,6 +107,15 @@ python train_grpo.py
 
 成果物は `runs/grpo_gptoss20b_lora4_tes/` に保存されます（LoRA アダプタとトークナイザ）。
 
+作成済み run をローカルへ持ち帰りたい場合は、リポジトリ直下で以下を実行して ZIP 化してください。
+
+```
+# run ディレクトリを ZIP に固める（例）
+zip -r grpo_run.zip runs
+```
+
+ZIP 化した `grpo_run.zip` を `scp` / `rsync` / VS Code Remote などでダウンロードすれば完了です。
+
 nvidia chipの使用状況確認
 ```
 watch -n 5 nvidia-smi
