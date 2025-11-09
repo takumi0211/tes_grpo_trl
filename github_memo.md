@@ -3,5 +3,5 @@ git reset --hard origin/main
 git clean -fd
 
 git add -A
-git commit -m "change runs to output"
+git commit -m "well done training"
 git push origin main

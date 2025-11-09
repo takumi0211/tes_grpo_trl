@@ -12,12 +12,12 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # パラメータ設定
-MODEL_ID = "takumi0211/tes_grpo_test"
+MODEL_ID = "takumi0211/tes_grpo"
 PROMPT_PATH = Path("data/test.md")
 MAX_NEW_TOKENS = 4000
 TEMPERATURE = 0.8
 TOP_P = 0.95
-DO_SAMPLE = False # True: サンプリング, False: 貪欲法
+DO_SAMPLE = True # True: サンプリング, False: 貪欲法
 
 # プロンプトの読み込み
 prompt_path = PROMPT_PATH.expanduser().resolve()
