@@ -75,10 +75,8 @@ _TOKENIZER: AutoTokenizer | None = None
 # LLMとのやり取りをログに記録するためのカラム定義
 LOG_COLUMNS = [
     "prompt",                  # LLMに送信したプロンプト全体
-    "thought_process",         # LLMの思考プロセス（推論内容）
-    "model_thinking",          # モデルの内部思考（APIが提供する場合）
     "applied_action_json",     # 実際に適用されたアクション（JSON形式）
-    "raw_response_text",       # LLMからの生のレスポンステキスト
+    "output",                  # LLMからの生のレスポンステキスト
 ]
 # ログファイルの保存先パス
 LOG_PATH = Path(__file__).resolve().parent / "llm_logs.csv"
@@ -174,16 +172,14 @@ def _safe_encode(text: Any) -> str:
     return value
 
 
-def _append_llm_log_row(*, prompt: str, thought_process: str, model_thinking: str, applied_action_json: str, raw_response_text: str) -> None:
+def _append_llm_log_row(*, prompt: str, applied_action_json: str, output: str) -> None:
     """
     LLMとのやり取りの1行をCSVログファイルに追記する
     
     Args:
         prompt: LLMに送信したプロンプト
-        thought_process: LLMの思考プロセス
-        model_thinking: モデルの内部思考
         applied_action_json: 適用されたアクション（JSON形式）
-        raw_response_text: 生のレスポンステキスト
+        output: LLMからの生レスポンステキスト
     
     Note:
         - ログディレクトリが存在しない場合は自動作成される
@@ -197,10 +193,8 @@ def _append_llm_log_row(*, prompt: str, thought_process: str, model_thinking: st
     # 各カラムのデータを安全にエンコード
     row = [
         _safe_encode(prompt),
-        _safe_encode(thought_process),
-        _safe_encode(model_thinking),
         _safe_encode(applied_action_json),
-        _safe_encode(raw_response_text),
+        _safe_encode(output),
     ]
     try:
         # UTF-8でCSVに書き込み
@@ -590,10 +584,8 @@ def get_llm_action(current_time, df_text, current_strage, model_name, params=par
         applied_action_json = json.dumps({"action": action})
         _append_llm_log_row(
             prompt=prompt_text,
-            thought_process=thought,
-            model_thinking=model_thinking,
             applied_action_json=applied_action_json,
-            raw_response_text=raw_text,
+            output=raw_text,
         )
         return thought, action
 
@@ -614,9 +606,7 @@ def get_llm_action(current_time, df_text, current_strage, model_name, params=par
         raw_response_text = "No response captured."
     _append_llm_log_row(
         prompt=prompt_text,
-        thought_process=fallback_thought,
-        model_thinking=last_model_thinking,
         applied_action_json=applied_action_json,
-        raw_response_text=raw_response_text,
+        output=raw_response_text,
     )
     return fallback_thought, fallback_action
