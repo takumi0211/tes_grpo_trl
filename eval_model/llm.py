@@ -1,20 +1,21 @@
 """
 LLM制御モジュール
-Ollamaを使用してローカルLLMにTES（蓄熱システム）の制御アクションを問い合わせる
+Hugging Face上のGRPOモデルにTES（蓄熱システム）の制御アクションを問い合わせる
 """
 from __future__ import annotations
 
 import csv
 import json
 import math
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
-from ollama import chat
 import numpy as np
 import platform
-from contextlib import contextmanager
 import re
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from config import params  # システムパラメータの読み込み
 
@@ -53,6 +54,24 @@ def timeout_handler(seconds):
             signal.signal(signal.SIGALRM, old_handler)
 
 
+# Hugging Face上で使用するモデル設定
+MODEL_ID = "takumi0211/tes_grpo"
+MAX_NEW_TOKENS = 4000
+TEMPERATURE = 0.8
+TOP_P = 0.95
+DO_SAMPLE = True
+
+_GENERATION_KWARGS = {
+    "max_new_tokens": MAX_NEW_TOKENS,
+    "temperature": TEMPERATURE,
+    "top_p": TOP_P,
+    "do_sample": DO_SAMPLE,
+}
+
+_MODEL: AutoModelForCausalLM | None = None
+_TOKENIZER: AutoTokenizer | None = None
+
+
 # LLMとのやり取りをログに記録するためのカラム定義
 LOG_COLUMNS = [
     "prompt",                  # LLMに送信したプロンプト全体
@@ -63,6 +82,64 @@ LOG_COLUMNS = [
 ]
 # ログファイルの保存先パス
 LOG_PATH = Path(__file__).resolve().parent / "llm_logs.csv"
+
+
+def _get_tokenizer() -> AutoTokenizer:
+    """Hugging Faceトークナイザーを遅延ロードする"""
+    global _TOKENIZER
+    if _TOKENIZER is None:
+        tok = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=True)
+        tok.padding_side = "left"
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
+        _TOKENIZER = tok
+    return _TOKENIZER
+
+
+def _get_model() -> AutoModelForCausalLM:
+    """Hugging Faceモデルを遅延ロードする"""
+    global _MODEL
+    if _MODEL is None:
+        if not torch.cuda.is_available():
+            raise RuntimeError("A CUDA-capable GPU (H100) is required for MXFP4 inference.")
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_ID,
+            device_map="auto",
+            torch_dtype=torch.bfloat16,
+            low_cpu_mem_usage=True,
+        )
+        model.eval()
+        _MODEL = model
+    return _MODEL
+
+
+def _render_harmony_prompt(messages: list[dict[str, str]]) -> str:
+    """Harmony Chat形式でプロンプトを整形する"""
+    tokenizer = _get_tokenizer()
+    return tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=False,
+    )
+
+
+def _call_hf_model(messages: list[dict[str, str]]) -> dict[str, Any]:
+    """Harmony形式のメッセージをHugging Faceモデルに入力して生成する"""
+    tokenizer = _get_tokenizer()
+    model = _get_model()
+    harmony_prompt = _render_harmony_prompt(messages)
+    inputs = tokenizer(harmony_prompt, return_tensors="pt").to("cuda")
+    generation_kwargs = {
+        **_GENERATION_KWARGS,
+        "pad_token_id": tokenizer.pad_token_id,
+        "eos_token_id": tokenizer.eos_token_id,
+    }
+    with torch.inference_mode():
+        outputs = model.generate(**inputs, **generation_kwargs)
+    prompt_len = inputs["input_ids"].shape[1]
+    generated = outputs[:, prompt_len:]
+    completion = tokenizer.batch_decode(generated, skip_special_tokens=False)[0]
+    return {"output_text": completion}
 
 
 def _safe_encode(text: Any) -> str:
@@ -321,7 +398,7 @@ def get_llm_action(current_time, df_text, current_strage, model_name, params=par
         current_time: 現在の時刻
         df_text: 予測データのテキスト
         current_strage: 現在のTES蓄熱量 [kWh]（変数名のtypoはそのまま維持）
-        model_name: 使用するLLMモデル名（Ollama経由）
+        model_name: 互換性維持用の名目引数（実際にはMODEL_ID固定）
         params: システムパラメータ辞書
     
     Returns:
@@ -345,7 +422,7 @@ def get_llm_action(current_time, df_text, current_strage, model_name, params=par
             tuple[str, str]: (出力テキスト, 思考プロセステキスト)
         
         Note:
-            様々なレスポンス形式（Ollama、OpenAI等）に対応するため、
+            様々なレスポンス形式（Hugging Face推論、旧Ollama APIなど）に対応するため、
             複数のフィールド名を試行して情報を抽出する
         """
 
@@ -410,7 +487,7 @@ def get_llm_action(current_time, df_text, current_strage, model_name, params=par
         message_parts: list[str] = []
         thinking_parts: list[str] = []
 
-        # Ollama形式のレスポンスから抽出
+        # 旧Ollama形式のレスポンスから抽出
         message_obj = _get(response, "message")
         if message_obj is not None:
             _collect_text(_get(message_obj, "content"), message_parts)
@@ -467,7 +544,7 @@ def get_llm_action(current_time, df_text, current_strage, model_name, params=par
         try:
             # タイムアウト付きでLLMを呼び出し
             with timeout_handler(int(timeout_seconds)):
-                response = chat(model=model_name, messages=messages)
+                response = _call_hf_model(messages)
         except TimeoutError as exc:
             # タイムアウトエラーの場合
             last_error = f"LLM呼び出しがタイムアウトしました: {exc}"

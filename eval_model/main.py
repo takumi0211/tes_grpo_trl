@@ -6,7 +6,7 @@ LLMベースのTES制御シミュレーションのメインスクリプト
 CO2排出量を最小化するシミュレーションを実行する。
 
 主な機能：
-- OllamaまたはOpenAI APIを使用したLLM制御
+- Hugging Face Transformersを使用したLLM制御
 - 予測情報（負荷、CO2排出係数）を含むプロンプトの生成
 - シミュレーション結果の可視化とログ記録
 """
@@ -23,7 +23,7 @@ sys.path.append(os.path.abspath(os.path.join(SCRIPT_DIR, "..")))
 
 from eval_model.environment import ThermalStorageEnv
 from eval_model.plot import plot_three_panels
-from eval_model.llm import get_llm_action
+from eval_model.llm import MODEL_ID as HF_MODEL_ID, get_llm_action
 
 # --- データ読み込み ---
 # 3日間の時系列データ（負荷、CO2排出係数など）を読み込む
@@ -142,7 +142,7 @@ def build_forecast_prompt(env: ThermalStorageEnv, current_step: int) -> str:
     return "\n".join(lines)
 
 # --- モデル設定 ---
-model_name = 'gpt-oss:20b'  # 使用するLLMモデル名（Ollamaまたは OpenAI）
+model_name = HF_MODEL_ID  # Hugging Faceで公開されているGRPOモデルID
 
 # LLMエラー時の再試行設定
 MAX_LLM_RETRIES = 5  # エラー時の最大リトライ回数
