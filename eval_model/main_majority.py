@@ -164,6 +164,8 @@ def _contains_error_pattern(text: str) -> bool:
 def _is_valid_sample(sample: SampledAction) -> bool:
     """A sample is valid only when parsing succeeded and no error pattern is present."""
 
+    if sample.action is None:
+        return False
     if not sample.parsed_successfully:
         return False
     return not _contains_error_pattern(sample.thought)
@@ -175,25 +177,31 @@ def summarize_majority(samples: list[SampledAction]) -> tuple[str, int, bool]:
     if not samples:
         raise ValueError("No samples provided for majority voting.")
 
+    action_hist = Counter(sample.action for sample in samples if sample.action is not None)
+    null_count = sum(1 for sample in samples if sample.action is None)
+    print("count of samples:")
+    for idx in range(4):
+        print(f"  {idx}: {action_hist.get(idx, 0)}")
+    print(f"  null: {null_count}")
+
     valid_samples = [sample for sample in samples if _is_valid_sample(sample)]
-    used_pool = valid_samples if valid_samples else samples
-
-    counts = Counter(sample.action for sample in used_pool)
-    best_action, best_support = max(counts.items(), key=lambda item: (item[1], -item[0]))
-
-    lines = [
-        (
-            f"Majority vote selected action {best_action} "
-            f"(support {best_support}/{len(used_pool)}; "
-            f"valid_votes={len(valid_samples)}/{len(samples)})."
-        )
-    ]
+    lines: list[str] = []
     if not valid_samples:
+        best_action = 0
+        best_support = 0
+        lines.append("No valid samples for majority vote (all actions treated as NaN).")
+        lines.append("Sample breakdown:")
+    else:
+        counts = Counter(sample.action for sample in valid_samples if sample.action is not None)
+        best_action, best_support = max(counts.items(), key=lambda item: (item[1], -item[0]))
         lines.append(
-            "All samples were marked invalid (format errors or fallbacks); using the batch as-is."
+            (
+                f"Majority vote selected action {best_action} "
+                f"(support {best_support}/{len(valid_samples)}; "
+                f"valid_votes={len(valid_samples)}/{len(samples)})."
+            )
         )
-
-    lines.append("Sample breakdown:")
+        lines.append("Sample breakdown:")
     for sample in samples:
         status_tokens: list[str] = []
         if _is_valid_sample(sample):
@@ -206,8 +214,9 @@ def summarize_majority(samples: list[SampledAction]) -> tuple[str, int, bool]:
             if not status_tokens:
                 status_tokens.append("invalid")
         status = ",".join(status_tokens)
+        action_display = "NaN" if sample.action is None else str(sample.action)
         lines.append(
-            f"- Sample {sample.sample_id}: action={sample.action}, status={status}, thought={sample.thought}"
+            f"- Sample {sample.sample_id}: action={action_display}, status={status}, thought={sample.thought}"
         )
 
     return "\n".join(lines), best_action, bool(valid_samples)
@@ -298,8 +307,6 @@ with open(text_name, 'w', encoding='utf-8') as f:
             action_index = 0  # アクション0 = ASHP停止
 
         # コンソールに出力
-        print('====')
-        print("Thought Process:", thought)
         print('====')
         print("Action Index:", action_index)
         print('======================')

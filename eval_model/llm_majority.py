@@ -23,10 +23,8 @@ from eval_model.llm import (
 
 
 MAX_ATTEMPTS = 5
-TIMEOUT_SECONDS = 200.0
+TIMEOUT_SECONDS = 1000.0
 ACTION_PATTERN = re.compile(r"\[\s*([0-3])\s*\]")
-FALLBACK_DIGIT_PATTERN = re.compile(r"\b([0-3])\b")
-
 
 @dataclass
 class SampledAction:
@@ -34,7 +32,7 @@ class SampledAction:
 
     sample_id: int
     thought: str
-    action: int
+    action: int | None  # None represents NaN / ignored in majority vote
     raw_response_text: str
     parsed_successfully: bool
 
@@ -63,9 +61,6 @@ def _parse_action(text: str) -> tuple[int | None, bool]:
     match = ACTION_PATTERN.search(text)
     if match:
         return int(match.group(1)), True
-    fallback = FALLBACK_DIGIT_PATTERN.search(text)
-    if fallback:
-        return int(fallback.group(1)), True
     return None, False
 
 
@@ -129,13 +124,13 @@ def get_llm_action_samples(
 
     for sample_id, raw_text in enumerate(completions, start=1):
         parsed_action, parsed_successfully = _parse_action(raw_text)
-        if parsed_action is None:
-            parsed_action = int(np.random.choice([0, 1, 2, 3]))
+        if not parsed_successfully:
+            parsed_action = None
         thought = raw_text.strip() or "Model returned no textual content."
         sample = SampledAction(
             sample_id=sample_id,
             thought=thought,
-            action=int(parsed_action),
+            action=None if parsed_action is None else int(parsed_action),
             raw_response_text=raw_text,
             parsed_successfully=bool(parsed_successfully),
         )
